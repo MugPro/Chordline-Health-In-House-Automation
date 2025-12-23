@@ -1,10 +1,7 @@
 
 ---
 
-## 📄 `docs/ci-cd.md`
-
-```md
-# CI/CD Configuration
+## CI/CD Configuration
 
 ## Overview
 Automation is executed using GitHub Actions with:

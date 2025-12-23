@@ -150,3 +150,71 @@ QA Wolf will continue running in parallel until migration is complete and signed
 
 ### Project Structure
 
+
+chordline-automation/
+├─ package.json
+├─ playwright.config.js
+├─ helpers/
+│ └─ helpers.js # QA Wolf helpers (unchanged)
+├─ tests/
+│ ├─ staging-workflows/
+│ └─ qawolf2-workflows/
+├─ .github/workflows/
+│ └─ ci.yml
+└─ docs/
+└─ qa-wolf-migration-plan.md
+
+
+
+
+---
+
+## 6. Helper Strategy
+
+- Reuse the existing QA Wolf helper file without modification
+- Avoid refactoring during migration to reduce risk
+- Refactor helpers only after full migration and stabilization
+
+---
+
+## 7. CI/CD Integration
+
+- GitHub Actions used for automation execution
+- Daily scheduled regression runs
+- Manual and on-demand execution supported
+- HTML reports and video recordings stored as artifacts
+- Secrets managed via GitHub Actions
+
+---
+
+## 8. Migration Completion Criteria
+
+QA Wolf can be safely decommissioned once:
+- All workflows are migrated
+- CI runs are stable and reliable
+- Coverage parity is confirmed
+- Stakeholders approve the transition
+
+---
+
+## 9. Risks & Mitigation
+
+| Risk | Mitigation |
+|----|----|
+| Test flakiness | Retries, stabilization window |
+| Environment instability | Parallel QA Wolf execution |
+| PTO / illness | 12-week buffer |
+| Helper complexity | No refactor during migration |
+
+---
+
+## 10. Outcome
+
+This migration will deliver:
+- Full QA Wolf feature parity
+- CI-driven automation execution
+- Improved maintainability and debugging
+- Complete ownership of test automation
+- No vendor lock-in
+
+

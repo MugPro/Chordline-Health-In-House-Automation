@@ -29,6 +29,7 @@ npm init -y
 npm install playwright dotenv
 npx playwright install
 
+---
 
 
 ### Step 4: Folder Structure
@@ -38,6 +39,7 @@ helpers/
 environments/
 .github/workflows/
 
+---
 
 
 ### Step 5: .gitignore
@@ -46,6 +48,7 @@ node_modules/
 playwright-report/
 .env*
 
+---
 
 
 ### Step 6: Shared Helpers
@@ -57,11 +60,8 @@ playwright-report/
 3. No duplicated logic per test
 
 
-
-
-
-
 ---
+
 
 ## 📄 `docs/ci-cd.md`
 

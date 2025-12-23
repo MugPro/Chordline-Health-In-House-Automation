@@ -24,10 +24,12 @@ This document describes how to build, run, and maintain the internal Playwright 
 
 ### Step 3: Install Dependencies
 
-```bash
-npm init -y
-npm install playwright dotenv
-npx playwright install
+
+1. npm init -y
+   
+2. npm install playwright dotenv
+   
+3. npx playwright install
 
 
 ---

@@ -37,30 +37,33 @@ This document describes how to build, run, and maintain the internal Playwright 
 
 ### Step 4: Folder Structure
 
+```text
 workflows/
 helpers/
 environments/
 .github/workflows/
-
+```
 ---
 
 
 ### Step 5: .gitignore
 
+```text
 node_modules/
 playwright-report/
 .env*
+```
 
 ---
 
 
 ### Step 6: Shared Helpers
 
-1. Create helpers/Node20Helpers.js
+- Create helpers/Node20Helpers.js
 
-2. All workflows must reuse this file
+- All workflows must reuse this file
 
-3. No duplicated logic per test
+- No duplicated logic per test
 
 
 ---

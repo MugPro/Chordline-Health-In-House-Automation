@@ -75,6 +75,8 @@ Detailed documentation is available in the `docs/` directory:
 - **Implementation Guide:** [`docs/implementation-guide.md`](docs/implementation-guide.md)
 - **CI/CD Configuration:** [`docs/ci-cd.md`](docs/ci-cd.md)
 - **Workflow Structure & Migration:** [`docs/workflows.md`](docs/workflows.md)
+- **Risks & Mitigations:** [`docs/risks-and-mitigations.md`](docs/risks-and-mitigations.md)
+  
 
 ---
 

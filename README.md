@@ -90,3 +90,20 @@ Workflow migration and CI/CD integration will proceed incrementally per the road
 ## Ownership
 
 This framework is maintained internally and serves as the long-term replacement for QA Wolf automation.
+
+
+---
+
+
+## AUT Issues Mapping & Progress Tracking
+
+For detailed task-level mapping of all automation workflows (AUT-1 to AUT-19), including Phase, Weeks, Estimated Duration, and reference to the 25-Step Guide, see:
+
+[AUT Issues Mapping](docs/AUT-Issues-Mapping.md)
+
+Each AUT is also tracked as a GitHub Issue and visualized on the Project board for progress tracking:
+
+- **To Do → In Progress → Done**
+- You can see which tasks are started, in progress, or completed in real time.
+
+[View Project Board](https://github.com/users/matas-backevicius_chord/projects/1) 

@@ -1,0 +1,26 @@
+{
+  "type": "module",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.58.1",
+    "date-fns": "^4.1.0",
+    "dotenv": "^17.2.3",
+    "mailslurp-client": "^16.0.0",
+    "pdf-lib": "^1.17.1",
+    "playwright": "^1.58.1"
+  },
+  "name": "chordline-automation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "playwright.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@faker-js/faker": "^10.3.0",
+    "pdf-parse": "^2.4.5",
+    "pdfjs-dist": "^5.5.207"
+  }
+}

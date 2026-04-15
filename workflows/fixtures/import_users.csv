@@ -1,0 +1,5 @@
+first_name,last_name,title,email_address,phone_number,security_role_name,member_role_name,access_justification_description,require_sso,login_id
+Sarah,Connor,QA User,sarah.connor+import@chordline.com,,Administrator,All Member Access,Test import user,,NULL
+Michael,Scott,QA User,michael.scott+import@chordline.com,,Administrator,All Member Access,Test import user,,NULL
+Test,User,QA User,test.user+import@chordline.com,,Administrator,All Member Access,Test import user,,NULL
+Laura,Palmer,QA User,laura.palmer+import@chordline.com,,Administrator,All Member Access,Test import user,,NULL

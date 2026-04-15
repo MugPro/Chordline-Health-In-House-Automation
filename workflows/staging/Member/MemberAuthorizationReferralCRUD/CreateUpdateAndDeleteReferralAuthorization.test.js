@@ -1,0 +1,315 @@
+import { test, expect } from '@playwright/test';
+import {
+    logIn,
+    waitUntilLoaded,
+    cleanupTabOnMembersPage2,
+} from '../../../../helpers/Node20Helpers.js';
+
+/* -------------------------------------------
+   Small helper pauses
+-------------------------------------------- */
+const PAUSE_MS = 400;
+const pause = (page, ms = PAUSE_MS) => page.waitForTimeout(ms);
+const clickAndWait = async (page, locator) => {
+    await locator.click();
+    await pause(page);
+};
+const fillAndWait = async (page, locator, value) => {
+    await locator.fill(value);
+    await pause(page);
+};
+
+/* -------------------------------------------
+   Reusable helpers
+-------------------------------------------- */
+const handleDuplicateProviderPopupIfPresent = async (page) => {
+    const popup = page.getByText('This record uses the same', { exact: false });
+    if (await popup.isVisible({ timeout: 3000 })) {
+        await page.getByRole('button', { name: 'Okay' }).click();
+    }
+};
+
+const lookupAndSelectProvider = async (page, lookupButtonSelector, providerName) => {
+    await page.locator(lookupButtonSelector).click();
+    await waitUntilLoaded(page);
+
+    const outOfNetwork = page.getByRole('checkbox', { name: 'Out of Network' });
+    const inNetwork = page.getByRole('checkbox', { name: 'In Network' });
+    if (await outOfNetwork.isVisible().catch(() => false)) await outOfNetwork.check();
+    if (await inNetwork.isVisible().catch(() => false)) await inNetwork.check();
+
+    const lookupDialog = page.getByRole('dialog', { name: 'Lookup' });
+    await lookupDialog.getByRole('textbox', { name: 'Search...' }).fill(providerName);
+    await lookupDialog.locator('#lookup-search-button').click();
+    await waitUntilLoaded(page);
+
+    await lookupDialog.getByRole('gridcell', { name: providerName }).first().click();
+    await page.getByRole('button', { name: 'Select', exact: true }).click();
+    await waitUntilLoaded(page);
+
+    await handleDuplicateProviderPopupIfPresent(page);
+};
+
+test('Create, Update, and Delete a Referral Authorization', async () => {
+    //--------------------------------
+    // Arrange
+    //--------------------------------
+    //const loginID = `AuthBHRefCrud`;
+    const loginID = `AuthRefCrud`;
+
+    const member = {
+        name: `Jones, Mark`,
+        insuranceCompany: `Wonderful Health Plan`,
+        memberId: `QAWINS1771591823127`,
+        plan: `PLAN A`,
+        startDate: `02/20/2026`,
+    };
+
+    const tab = `Authorizations`;
+    const gridId = `[id="authorizations-grid"]`;
+    const authorizationType = `Referral`;
+    const authType = `RF`;
+    const authStatus = `In Progress`;
+    const team = `Case Team`;
+    const team2 = `Compliance Team`;
+    const provider = `St. Catherine's Hospital`;
+
+    const todaysDate = new Date().toLocaleDateString('en-us', {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric',
+    });
+
+    const authNumText = `Referral Auth #`;
+    const workLogTitle = `New Work Log`;
+
+    const { page } = await logIn({ loginID });
+
+    // Cleanup existing Referral auths for idempotency
+    await cleanupTabOnMembersPage2(page, {
+        tab,
+        memberName: member.name,
+        loginID,
+        gridId,
+    });
+
+    //--------------------------------
+    // Act: CREATE
+    //--------------------------------
+    await page
+        .getByRole('button')
+        .filter({ hasText: 'Authorization Inpatient' })
+        .hover();
+
+    await page
+        .getByLabel(member.name)
+        .getByText(authorizationType, { exact: true })
+        .click();
+
+    await waitUntilLoaded(page);
+
+/*
+    // Ref Status
+    await fillAndWait(
+        page,
+        page.locator(`input[name="aush_status_id__1_input"]`),
+        authStatus,
+    );
+    await page.getByRole('option', { name: authStatus }).locator('span').click();
+
+
+    await page.locator('span').filter({ hasText: 'In Progress 4' }).getByLabel('expand combobox').click();
+*/
+
+
+
+
+    //await page.getByText('In Progress').click();
+
+
+
+    //await page.getByText('In Progress').click();
+
+    //await page.locator(`input[name="aush_status_id__1_input"]`).click();
+
+
+
+
+
+
+
+
+
+
+    // Team
+    await fillAndWait(
+        page,
+        page.locator(`input[name="auth_team_reference_id_input"]`),
+        team,
+    );
+    await page.getByRole('option', { name: team }).click();
+
+    // Requesting Provider
+    await lookupAndSelectProvider(
+        page,
+        `[name="auth_provider_1_site_id"] ~ button[title="Lookup"]`,
+        provider,
+    );
+
+    // Servicing Provider
+    await lookupAndSelectProvider(
+        page,
+        'div:nth-child(4) > .formField.fieldcol1.rowFirst .lookup-search-button',
+        provider,
+    );
+
+    // Save
+    await clickAndWait(page, page.getByRole('button', { name: ' Save' }));
+    //await waitUntilLoaded(page);
+
+    //--------------------------------
+    // Handle Work Log (optional)
+    //--------------------------------
+    let worklogActivityDate = null;
+    try {
+        await expect(page.getByText(workLogTitle)).toBeVisible({ timeout: 3000 });
+        worklogActivityDate = await page
+            .locator('#work_activity_date')
+            .evaluate((e) => e.value.substring(0, 14));
+        await page.getByRole('button', { name: ' Save and Close' }).click();
+    } catch {}
+
+    await waitUntilLoaded(page);
+
+    //--------------------------------
+    // Assert: CREATE
+    //--------------------------------
+    await expect(page.getByText(authNumText)).toBeVisible();
+    const authNumber = (await page.getByText(authNumText).innerText()).split('#')[1];
+    expect(Number(authNumber)).toBeGreaterThan(1);
+
+    // Primary banner
+    await expect(
+        page.getByText(
+            `Primary: ${member.memberId} - ${member.insuranceCompany} - ${member.startDate} -`,
+        ),
+    ).toBeVisible();
+
+    // Summary fields
+
+    // Assert entered data is correct
+    await expect(
+        page.getByText(`* Referral Status: ${authStatus}`),
+    ).toBeVisible();
+    await expect(page.getByText(`* Team: ${team}`)).toBeVisible();
+    //await expect(page.getByText(`* Reviewer: ${loginID}`)).toBeVisible();
+    await expect(
+        page.getByText(`* Referring Provider: ${provider}`),
+    ).toBeVisible();
+    await expect(
+        page.getByText(`* Servicing Provider: ${provider}`),
+    ).toBeVisible();
+
+    // Assert "Entry By" user is correct
+    await expect(
+        page.getByText(`Entered By: ${loginID}`).first(),
+    ).toBeVisible();
+
+    // Assert Referral decision is "Pending" by default
+    await expect(
+        page.getByText(`* Referral Decision: Pending`),
+    ).toBeVisible();
+    //--------------------------------
+    // Verify grid row
+    //--------------------------------
+    await page.getByRole('button', { name: ' All Auths' }).click();
+    await waitUntilLoaded(page);
+
+    const rowByNumber = `${gridId} table tbody tr:visible:has-text("${authNumber}")`;
+    let rowText = await page.locator(rowByNumber).innerText();
+
+    [
+        authNumber,
+        member.memberId,
+        authType,
+        team,
+        'Pending',
+        provider,
+    ].forEach((str) => expect(rowText).toContain(str));
+
+    //--------------------------------
+    // Act: UPDATE
+    //--------------------------------
+    const saveButton = page.getByRole('button', { name: ' Save' });
+
+    await page.locator(rowByNumber).hover();
+    await page.locator(`${rowByNumber} .k-grid-editAction`).click();
+    await waitUntilLoaded(page);
+
+    await page
+        .locator(
+            `[data-bind="attr: { class: fields.auth_team_reference_id.inputClass }"] [type="button"]`,
+        )
+        .click();
+    await page.getByRole('option', { name: team2 }).click();
+
+    await expect(saveButton).toBeEnabled();
+    await saveButton.click();
+    //await waitUntilLoaded(page);
+
+    // Optional work log
+    try {
+        await expect(page.getByText(workLogTitle)).toBeVisible({ timeout: 3000 });
+        await page.getByRole('button', { name: ' Save and Close' }).click();
+    } catch {}
+
+    await waitUntilLoaded(page);
+
+    //--------------------------------
+    // Assert: UPDATE
+    //--------------------------------
+    await expect(page.getByText(`${authNumText}${authNumber}`)).toBeVisible();
+    await expect(page.getByText(`* Team: ${team2}`)).toBeVisible();
+
+
+    // Verify in All Auths grid
+    await page.getByRole('button', { name: ' All Auths' }).click();
+    await waitUntilLoaded(page);
+
+    rowText = await page.locator(rowByNumber).innerText();
+    [
+        authNumber,
+        member.memberId,
+        authType,
+        team2,
+        'Pending',
+        provider,
+    ].forEach((str) => {
+        expect(str).toBeDefined(); // catches bugs early
+        expect(rowText).toContain(str);
+    });
+
+    //--------------------------------
+    // Act: DELETE
+    //--------------------------------
+    const rowsToDelete = page.locator(
+        `${gridId} table tbody tr:visible:has-text("${authNumber}")`,
+    );
+
+    while (await rowsToDelete.count() > 0) {
+        const r = rowsToDelete.first();
+        await r.hover();
+        await r.locator('[title="Delete"]').click();
+        await page.getByRole('button', { name: 'Yes' }).click();
+        //await expect(r).toBeHidden({ timeout: 5000 });
+        await waitUntilLoaded(page);
+    }
+
+    //--------------------------------
+    // Assert: DELETE
+    //--------------------------------
+    await expect(page.locator(rowByNumber)).not.toBeVisible();
+    await expect(
+        page.getByRole('button').filter({ hasText: 'Authorization Inpatient' }),
+    ).toBeEnabled();
+});

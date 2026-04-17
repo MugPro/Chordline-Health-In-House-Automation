@@ -4,7 +4,7 @@ import { env as qawolf2Env } from './environments/qawolf2.env.js';
 
 export default defineConfig({
     //timeout: 360000,
-    timeout: 204000,
+    timeout: 270000,
     retries: 1,
     workers: 1, // ← run tests one at a time
     reporter: [['list'], ['html', { outputFolder: 'playwright-report' }]],

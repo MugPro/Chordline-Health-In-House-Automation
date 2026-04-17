@@ -57,7 +57,7 @@ export async function launchWithoutLogin(options = {}) {
     const url = options.url || process.env.DEFAULT_URL;
 
     // Launch Playwright browser
-    const browser = await chromium.launch({ headless: false, slowMo: 50 });
+    const browser = await chromium.launch({ headless: true, slowMo: 50 });
 
     // Create a context
     const context = await browser.newContext();

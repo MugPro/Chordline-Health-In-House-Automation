@@ -1,6 +1,6 @@
 /*
 
-// File: tests/1_CreateCarePlanGoal.test.js
+// File: tests/CreateAndEditCarePlanGoal.test.js
 // Purpose: Create a new Care Plan Goal with a random description and a default tag,
 //          then verify the goal and tag appear in the Goals grid.
 

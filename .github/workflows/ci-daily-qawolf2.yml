@@ -2,8 +2,8 @@ name: CI Daily – QAWolf2
 
 on:
   schedule:
-    # Runs daily at ~12–1 PM PT (20:00 UTC)
-    - cron: '0 20 * * *'
+    # Runs daily at around 11:20 AM PT (18:00 UTC)
+    - cron: '0 18 * * *'
   workflow_dispatch:
 
 jobs:

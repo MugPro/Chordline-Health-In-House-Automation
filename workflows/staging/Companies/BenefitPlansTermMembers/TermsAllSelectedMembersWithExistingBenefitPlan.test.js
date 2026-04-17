@@ -50,30 +50,30 @@ test.describe('Term Members — All selected members with existing benefit plan'
         const calendarTitleShort = `${weekday}, ${monthName} ${day},`;
 
         // Login
-        const { page, context, browser } = await logIn({ loginID });
+        const { page, context, browser } = await logIn({ loginID, slowMo: 10 });
 
         try {
             //--------------------------------
             // Create new member (in the given benefit plan)
             //--------------------------------
             await addMember(page, {dontCloseWorklog: true});
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
             //--------------------------------
             // Act:
             //--------------------------------
             // Save and close the member record
             await page.getByRole(`button`, {name: ` Save and Close`}).click();
-            await waitUntilLoaded(page);
+           // await waitUntilLoaded(page);
 
             // Tools > Companies
             await page.getByText(`Tools`).click();
             await page.getByText(`Companies`).click();
-            await waitUntilLoaded(page);
+           // await waitUntilLoaded(page);
 
             // Benefit Plans tab
             await page.getByText(`Benefit Plans`, {exact: true}).click();
-            await waitUntilLoaded(page);
+           // await waitUntilLoaded(page);
 
             // Plan Maintenance (Term and Re-*)
             await page
@@ -88,16 +88,16 @@ test.describe('Term Members — All selected members with existing benefit plan'
 
             // Existing Benefit Plan combobox (expand & pick by description)
             await page.getByRole(`button`, {name: `expand combobox`}).click();
-            await waitUntilLoaded(page);
-            await page.getByRole(`option`, {name: 'PLAN A'}).locator(`span`).first().click();
-            await waitUntilLoaded(page);
+           // await waitUntilLoaded(page);
+            await page.getByRole(`option`, {name: 'benefits description'}).locator(`span`).first().click();
+           // await waitUntilLoaded(page);
 
             // Open calendar for Term Date
             await page
                 .getByRole(`dialog`, {name: `Term Members`})
                 .getByLabel(`select`)
                 .click();
-            await waitUntilLoaded(page);
+           // await waitUntilLoaded(page);
 
             // Pick the date (try full title first; fallback to shorter title if needed)
             const calendar = page.locator(`#plan_benefit_plan_term_date_dateview`);

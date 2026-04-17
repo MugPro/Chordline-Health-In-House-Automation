@@ -55,7 +55,7 @@ test.describe(
             const templateType = 'BH Observation';
             const loginID = '398042';
 
-            const { page } = await logIn({ loginID, slowMo: 1500 });
+            const { page } = await logIn({ loginID, slowMo: 750 });
 
             await cleanupScreenTemplateCopy(page, {
                 screenName,
@@ -73,7 +73,7 @@ test.describe(
             });
 
 
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
             //--------------------------------
             // Act – Configure visibility rule (Field based)

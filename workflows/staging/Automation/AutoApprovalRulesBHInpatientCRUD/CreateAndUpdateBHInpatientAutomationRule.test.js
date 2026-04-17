@@ -1,3 +1,7 @@
+
+
+
+
 // Filename: CreateAndUpdateBHInpatientAutomationRule.test.js
 
 import { test, expect } from '@playwright/test';
@@ -18,7 +22,7 @@ test.describe('BH Inpatient Automation Rules — Create & Update', () => {
         const ruleType = 'BH Inpatient';
 
         // Sign in to the app
-        const { page, context, browser } = await logIn({ loginID, slowMo: 1500 });
+        const { page, context, browser } = await logIn({ loginID, slowMo: 100 });
 
         try {
             //--------------------------------
@@ -49,6 +53,8 @@ test.describe('BH Inpatient Automation Rules — Create & Update', () => {
                     )
                     .check({ delay: 500, force: true });
             }
+
+            await waitUntilLoaded(page);
 
             // Select Birth Gender
             await page

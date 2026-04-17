@@ -52,8 +52,4 @@ test('Able to initiate forgot password flow', async () => {
     // Verify confirmation message
     await expect(loginPage.getByText(`We've sent you an email to reset your password`)).toBeVisible();
 
-    //--------------------------------
-    // Cleanup
-    //--------------------------------
-    await loginPage.close();
 });

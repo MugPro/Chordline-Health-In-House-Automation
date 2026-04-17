@@ -16,7 +16,7 @@ test.describe('Benefit Plans — Create & Update', () => {
         const companyComment = `benefits comment`;
 
         // Login
-        const { page, context, browser } = await logIn({ loginID });
+        const { page, context, browser } = await logIn({ loginID, slowMo: 300 });
 
         try {
             //--------------------------------
@@ -28,7 +28,7 @@ test.describe('Benefit Plans — Create & Update', () => {
             // Click `Companies` button from dropdown menu
             await page.getByText(`Companies`).click();
 
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
             // Click `Benefit Plans` button
             await page.getByLabel(`Manage Companies`).getByText(`Benefit Plans`).click();
@@ -36,7 +36,7 @@ test.describe('Benefit Plans — Create & Update', () => {
             // Click `New` button (NBSP between icon and New)
             await page.getByRole(`button`, { name: ` \u00A0New` }).click();
 
-            await waitUntilLoaded(page);
+
 
             // Fill in Company code
             await page.locator(`#plan_benefit_plan_code`).fill(benefitsPlan);
@@ -44,19 +44,19 @@ test.describe('Benefit Plans — Create & Update', () => {
             // Fill in description
             await page.locator(`#plan_benefit_plan_description`).fill(benefitsPlansDesc);
 
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
             // Click `Effective Date` calendar button (3rd select in form)
             await page.getByRole(`button`, { name: `select` }).nth(2).click();
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
             await page.keyboard.press(`Enter`);
 
 
-            await waitUntilLoaded(page);
+
 
             // Click `Save and close` button
             await page.getByRole(`button`, { name: ` Save and Close` }).click();
-            await waitUntilLoaded(page);
+
 
             // Fill in newly created company name in search
             await page
@@ -66,7 +66,7 @@ test.describe('Benefit Plans — Create & Update', () => {
 
             // Click `Search` button
             await page.locator(`#admin-search-button`).click();
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
             //--------------------------------
             // Assert (after create):
@@ -86,7 +86,7 @@ test.describe('Benefit Plans — Create & Update', () => {
             // Click `Edit` button
             await page.getByRole(`button`, { name: `` }).click();
 
-            await waitUntilLoaded(page);
+
 
             // Fill in updated description
             await page.locator(`#plan_benefit_plan_description`).fill(editedCompanyDesc);
@@ -98,24 +98,47 @@ test.describe('Benefit Plans — Create & Update', () => {
             // (Using generic label as provided in source data)
             await page.getByLabel(``, { exact: true }).click();
 
-            await waitUntilLoaded(page);
+           // await waitUntilLoaded(page);
 
-            // Click `Effective Date` calendar button (first select on edit form)
-            await page.locator(`button[aria-label="select"][role="button"]`).first().click();
+            // Click Term Date
+            await page
+                .locator(`button[aria-label="select"][role="button"]`)
+                .last()
+                .click()
 
-            await waitUntilLoaded(page);
+            //Select date with enter
+            await page.keyboard.press(`Enter`);
 
-            // Click back (previous month) & pick same day
+            // Click `Effective Date` calendar button
+            await page
+                .locator(`button[aria-label="select"][role="button"]`)
+                .first()
+                .click();
+
+            // Click back button
             await page.getByRole(`button`, { name: `Previous`, exact: true }).click();
-            await waitUntilLoaded(page);
+            await page.keyboard.press(`Enter`);
+
+            // Click Term Date
+            await page
+                .locator(`button[aria-label="select"][role="button"]`)
+                .last()
+                .click()
+
+            //Select date with enter
             await page.keyboard.press(`Enter`);
 
 
-            await waitUntilLoaded(page);
+
+
+
+
+
+
 
             // Click `Save and close` button
             await page.getByRole(`button`, { name: ` Save and Close` }).click();
-            await waitUntilLoaded(page);
+
 
             //--------------------------------
             // Assert (after update):

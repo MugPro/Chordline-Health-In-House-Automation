@@ -1,4 +1,4 @@
-// File: tests/1_CreateAssessment.test.js
+// File: tests/DeleteAndCreateAssessment.test.js
 // Description: Creates a new Assessment with 3 random sections and 3 random questions,
 //              then verifies the selected sections/questions are present on the Edit page.
 
@@ -292,11 +292,5 @@ test.describe('Assessments - Create Assessment', () => {
             ).toBeVisible({ timeout: 3000 });
         }
 
-        await waitUntilLoaded(page);
-        // End test body
-
-        // Ensure the test cleans up browser resources it started
-        await context.close();
-        await browser.close();
     });
 });

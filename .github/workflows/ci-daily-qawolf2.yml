@@ -1,0 +1,44 @@
+name: CI Daily – QAWolf2
+
+on:
+  schedule:
+    # Runs daily at ~12–1 PM PT (20:00 UTC)
+    - cron: '0 20 * * *'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Set Environment Variables (QAWolf2)
+        run: |
+          echo "DEFAULT_URL=${{ secrets.QAWOLF2_DEFAULT_URL }}" >> $GITHUB_ENV
+          echo "DEFAULT_URL_2=${{ secrets.QAWOLF2_DEFAULT_URL_2 }}" >> $GITHUB_ENV
+          echo "DEFAULT_LOGIN=${{ secrets.QAWOLF2_DEFAULT_LOGIN }}" >> $GITHUB_ENV
+          echo "DEFAULT_PASSWORD=${{ secrets.QAWOLF2_DEFAULT_PASSWORD }}" >> $GITHUB_ENV
+          echo "DEFAULT_PASS_JUNE_2025=${{ secrets.QAWOLF2_DEFAULT_PASS_JUNE_2025 }}" >> $GITHUB_ENV
+          echo "DEFAULT_PASS_OCT_2025=${{ secrets.QAWOLF2_DEFAULT_PASS_OCT_2025 }}" >> $GITHUB_ENV
+          echo "QAWA_API_KEY=${{ secrets.QAWOLF2_QAWA_API_KEY }}" >> $GITHUB_ENV
+
+      - name: Run Playwright Tests (QAWolf2)
+        run: npx playwright test --project=qawolf2
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-qawolf2
+          path: test-results/

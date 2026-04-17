@@ -1,0 +1,46 @@
+name: CI Daily – Staging
+
+on:
+  schedule:
+    # Runs daily at ~5–6 AM PT (13:00 UTC)
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Set Environment Variables (STAGING)
+        run: |
+          echo "DEFAULT_URL=${{ secrets.STAGING_DEFAULT_URL }}" >> $GITHUB_ENV
+          echo "DEFAULT_URL_2=${{ secrets.STAGING_DEFAULT_URL_2 }}" >> $GITHUB_ENV
+          echo "DEFAULT_URL_3=${{ secrets.STAGING_DEFAULT_URL_3 }}" >> $GITHUB_ENV
+          echo "INTERNAL_PDF_VIEWER=${{ secrets.STAGING_INTERNAL_PDF_VIEWER }}" >> $GITHUB_ENV
+          echo "DEFAULT_LOGIN=${{ secrets.STAGING_DEFAULT_LOGIN }}" >> $GITHUB_ENV
+          echo "DEFAULT_PASSWORD=${{ secrets.STAGING_DEFAULT_PASSWORD }}" >> $GITHUB_ENV
+          echo "DEFAULT_PASS_JUNE_2025=${{ secrets.STAGING_DEFAULT_PASS_JUNE_2025 }}" >> $GITHUB_ENV
+          echo "DEFAULT_PASS_OCT_2025=${{ secrets.STAGING_DEFAULT_PASS_OCT_2025 }}" >> $GITHUB_ENV
+          echo "QAWA_API_KEY=${{ secrets.STAGING_QAWA_API_KEY }}" >> $GITHUB_ENV
+
+      - name: Run Playwright Tests (STAGING)
+        run: npx playwright test --project=staging
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-staging
+          path: test-results/

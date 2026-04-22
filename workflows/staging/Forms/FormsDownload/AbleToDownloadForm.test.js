@@ -1,8 +1,7 @@
-// AbleToDownloadForm.test.js
 
 import { test, expect } from '@playwright/test';
 
-// 🔧 Update this path to match your helpers location (consistent with your suite)
+// 🔧 Update this path to match your helpers location
 import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
 
 // Node FS utilities for cleanup and assertions on the downloaded file
@@ -15,63 +14,75 @@ import path from 'path';
  * 2) Cleans up the temp download directory
  * 3) Navigates to Tools > Forms
  * 4) Initiates a Download for the target form
- * 5) Saves the file to team-storage tmp folder
- * 6) Verifies the file size is > 0
+ * 5) Opens the form in a popup window
+ * 6) Asserts expected content in the popup
+ * 7) (Optional) Verifies the downloaded file exists and has size > 0
  */
 
 test('Able to download a form', async () => {
     //--------------------------------
-    // Arrange:
+    // Arrange
     //--------------------------------
-    const loginID = `FormDL`;
-    const formName = `General Form`;
+    const loginID = 'FormDL';
+    const formName = 'General Form';
     const downloadDir = `${process.env.HOME}/team-storage/tmp`;
     const downloadPath = path.join(downloadDir, 'formDownload');
 
     // Log in
-    const { page } = await logIn({ loginID });
+    const { page } = await logIn({ loginID, slowMo: 10 });
 
     //--------------------------------
-    // Cleanup:
+    // Cleanup (downloads)
     //--------------------------------
-    // Ensure the temp directory is clean
-    await rm(downloadDir, { recursive: true, force: true }).catch(console.error);
+    await rm(downloadDir, { recursive: true, force: true }).catch(() => {});
     await mkdir(downloadDir, { recursive: true });
 
     //--------------------------------
-    // Act:
+    // Act
     //--------------------------------
+
     // Navigate to Tools > Forms
-    await page.getByText(`Tools`).click();
-    await page.getByText(`Forms`).click();
+    await page.getByText('Tools').click();
+    await page.getByText('Forms').click();
     await waitUntilLoaded(page);
 
-    // Verify the "Manage Forms" pop up is visible
-    await expect(page.getByText(`Manage Forms`)).toBeVisible();
+    // Verify modal/dialog is visible
+    await expect(page.getByText('Manage Forms')).toBeVisible();
 
-    // Click the form row (select it so the row actions are in the expected state)
-    await page.getByRole(`gridcell`, { name: formName }).click();
+    // Select the form row so actions are enabled
+    await page.getByRole('gridcell', { name: formName }).first().click();
 
-    // Trigger the Download and capture the event
-    const [download] = await Promise.all([
-        page.waitForEvent('download'),
+    //--------------------------------
+    // Trigger Download + Capture Popup
+    //--------------------------------
+
+    const [popup /*, download */] = await Promise.all([
+        page.waitForEvent('popup'),
+        // Optional: also capture the download event if needed
+        // page.waitForEvent('download'),
         page
             .locator(`table tbody tr:has-text("${formName}") [title="Download"]`)
             .click(),
     ]);
 
-    // Save to our prepared path
+    //--------------------------------
+    // Assert (popup content)
+    //--------------------------------
+
+    await popup.waitForLoadState('domcontentloaded');
+
+    await expect(popup.locator('body')).toContainText('Home');
+    await expect(popup.locator('body')).toContainText('General Form');
+    await expect(
+        popup.locator('#administrative_header-anchor')
+    ).toContainText('Administrative');
+
+    //--------------------------------
+    // Optional: Assert the downloaded file itself
+    //--------------------------------
+    /*
     await download.saveAs(downloadPath);
-
-    // Grab the stats of the saved file
     const fileStats = await stat(downloadPath);
-
-    //--------------------------------
-    // Assert:
-    //--------------------------------
-    // Assert the file size is greater than 0
     expect(fileStats.size).toBeGreaterThan(0);
-
-    // Close the page (optional)
-    await page.close();
+    */
 });

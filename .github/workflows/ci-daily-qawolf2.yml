@@ -10,6 +10,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6, 7, 8]
+
     steps:
       - uses: actions/checkout@v4
 
@@ -33,12 +38,15 @@ jobs:
           echo "DEFAULT_PASS_OCT_2025=${{ secrets.QAWOLF2_DEFAULT_PASS_OCT_2025 }}" >> $GITHUB_ENV
           echo "QAWA_API_KEY=${{ secrets.QAWOLF2_QAWA_API_KEY }}" >> $GITHUB_ENV
 
-      - name: Run Playwright Tests (QAWolf2)
-        run: npx playwright test --project=qawolf2
+      - name: Run Playwright Tests (QAWolf2 – Shard ${{ matrix.shard }}/8)
+        run: |
+          npx playwright test \
+            --project=qawolf2 \
+            --shard=${{ matrix.shard }}/8
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-qawolf2
+          name: test-results-qawolf2-shard-${{ matrix.shard }}
           path: test-results/

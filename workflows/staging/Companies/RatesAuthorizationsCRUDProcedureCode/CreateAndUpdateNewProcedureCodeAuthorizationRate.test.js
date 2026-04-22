@@ -25,15 +25,19 @@ test('Create and update new Procedure Code Authorization Rate', async () => {
     const loginID = `AuthorizationRate`;
     const bedLevelDesc = `${loginID}${Date.now()}`;
     const editedBedLevelDesc = bedLevelDesc + ' edited';
-    const company = `Excellent Health Plan`;
-    const updatedCompany = `Wonderful Health Plan`;
+    //const company = `Excellent Health Plan`;
+    const company = `company description`;
+    //const updatedCompany = `Wonderful Health Plan`;
+    const updatedCompany = `Excellent Health Plan`;
     const itemDesc = `0001F - HEART FAILURE`;
     const updatedItemDesc = `0001U - RBC DNA HEA 35 AG 11`;
 
     // Login
     const { page } = await logIn({
-        loginID,
+        loginID, slowMo: 450
     });
+
+    await waitUntilLoaded(page);
 
     // Clean-up baseline: deactivate all matching authorizations
     await deactivateAllRateAuthorizations(page, { description: loginID });
@@ -50,7 +54,7 @@ test('Create and update new Procedure Code Authorization Rate', async () => {
     // Click `Rates`
     await page.getByText(`Rates`).click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     // Click `Authorizations` tab
     await page.getByLabel(`Manage Companies`).getByText(`Authorizations`).click();
@@ -61,12 +65,12 @@ test('Create and update new Procedure Code Authorization Rate', async () => {
         .locator(`#grid-toolbar-new-button-menu`)
         .click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     // Click `Procedure Code`
     await page.getByText(`Procedure Code`).click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     // Fill in `Description`
     await page.locator(`#athr_description`).fill(bedLevelDesc);
@@ -74,9 +78,11 @@ test('Create and update new Procedure Code Authorization Rate', async () => {
     // Select `Company`
     await page.getByRole(`button`, { name: `expand combobox` }).first().click();
     //await waitUntilLoaded(page);
-    await page.getByRole(`option`, { name: company }).locator(`span`).click();
+    //await page.getByRole(`option`, { name: company }).locator(`span`).click();
 
-    await waitUntilLoaded(page);
+    await page.getByRole('option', { name: company }).first().click();
+
+    //await waitUntilLoaded(page);
 
     // Close any open dropdown
     await page.keyboard.press('Enter');
@@ -88,7 +94,7 @@ test('Create and update new Procedure Code Authorization Rate', async () => {
         )
         .click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     // Select Procedure Code item
     await page.getByText(itemDesc).last().click();
@@ -96,12 +102,12 @@ test('Create and update new Procedure Code Authorization Rate', async () => {
     // Increase rate
     await page.getByRole(`button`, { name: `Increase value` }).click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     // Save and Close
     await page.getByRole(`button`, { name: ` Save and Close` }).click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     // Search for created authorization
     await page
@@ -114,7 +120,7 @@ test('Create and update new Procedure Code Authorization Rate', async () => {
         .locator(`#admin-search-button`)
         .click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     //--------------------------------
     // Assert: Verify creation
@@ -140,7 +146,7 @@ test('Create and update new Procedure Code Authorization Rate', async () => {
     // Click Edit
     await page.getByRole(`button`, { name: `` }).click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     // Update Description
     await page.locator(`#athr_description`).fill(editedBedLevelDesc);
@@ -152,7 +158,7 @@ test('Create and update new Procedure Code Authorization Rate', async () => {
         )
         .click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     // Select updated company from lookup dialog
     await page
@@ -161,17 +167,17 @@ test('Create and update new Procedure Code Authorization Rate', async () => {
         )
         .click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     // Click Select
     await page.getByRole(`button`, { name: `Select`, exact: true }).click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     // Save and Close
     await page.getByRole(`button`, { name: ` Save and Close` }).click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     //--------------------------------
     // Assert: Verify updates
@@ -194,14 +200,4 @@ test('Create and update new Procedure Code Authorization Rate', async () => {
         page.getByRole(`gridcell`, { name: updatedCompany }),
     ).toBeVisible();
 
-    //--------------------------------
-    // Clean-up:
-    //--------------------------------
-    // Close authorization window
-    await page.getByText(`Close`, { exact: true }).click();
-
-    // Deactivate created authorization
-    await deactivateAllRateAuthorizations(page, {
-        description: bedLevelDesc,
-    });
 });

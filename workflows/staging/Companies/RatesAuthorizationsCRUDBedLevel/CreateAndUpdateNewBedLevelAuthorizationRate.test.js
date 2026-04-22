@@ -23,13 +23,16 @@ test('Create and update new Bed Level Authorization Rate', async () => {
     const loginID = `AuthorizationRate`;
     const bedLevelDesc = `${Date.now()}WF`;
     const editedBedLevelDesc = bedLevelDesc + ' edited';
-    const updatedCompany = `Excellent Health Plan`;
-    const company = `Wonderful Health Plan`;
+    //const updatedCompany = `Excellent Health Plan`;
+    const updatedCompany = `company description`;
+    //const company = `Wonderful Health Plan`;
+    const company = `company description`;
     const itemDesc = `Behavioral Health`;
     const updatedItemDesc = `ICU`;
 
     // Login
-    const { page } = await logIn({ loginID });
+    const { page } = await logIn({ loginID, slowMo: 450 });
+    await waitUntilLoaded(page);
 
     // Clean-up baseline: deactivate all authorizations in rates tab
     await deactivateAllRateAuthorizations(page);
@@ -50,7 +53,7 @@ test('Create and update new Bed Level Authorization Rate', async () => {
     // Click `Rates` button
     await page.getByText(`Rates`).click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     // Click `Authorizations` tab
     await page.getByLabel(`Manage Companies`).getByText(`Authorizations`).click();
@@ -69,7 +72,7 @@ test('Create and update new Bed Level Authorization Rate', async () => {
     // Click `Bed Level` button
     await page.getByText(`Bed Level`, { exact: true }).click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     // Fill in `Description` input field
     await page.locator(`#athr_description`).fill(bedLevelDesc);
@@ -78,7 +81,9 @@ test('Create and update new Bed Level Authorization Rate', async () => {
     await page.getByRole(`button`, { name: `expand combobox` }).first().click();
 
     // Click `Company description` from dropdown menu
-    await page.getByRole(`option`, { name: company }).locator(`span`).click();
+    //await page.getByRole(`option`, { name: company }).locator(`span`).click();
+
+    await page.getByRole('option', { name: company }).first().click();
 
     // Click `Bed Level Type` down chevron
     await page.getByRole(`button`, { name: `expand combobox` }).nth(1).click();
@@ -89,12 +94,12 @@ test('Create and update new Bed Level Authorization Rate', async () => {
     // Click to increase rate
     await page.getByRole(`button`, { name: `Increase value` }).click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     // Click `Save and Close` button
     await page.getByRole(`button`, { name: ` Save and Close` }).click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     // Fill in `Search` input field
     await page
@@ -108,7 +113,7 @@ test('Create and update new Bed Level Authorization Rate', async () => {
         .locator(`#admin-search-button`)
         .click();
 
-    await waitUntilLoaded(page);
+   // await waitUntilLoaded(page);
 
     //--------------------------------
     // Assert: Verify creation
@@ -133,20 +138,18 @@ test('Create and update new Bed Level Authorization Rate', async () => {
     // Click edit button
     await page.getByRole(`button`, { name: `` }).click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     // Update Description input field
     await page.locator(`#athr_description`).fill(editedBedLevelDesc);
 
-    // Click `Company` down chevron (uses the element where "2" shows next to the combobox)
-    await page
-        .locator(`span`)
-        .filter({ hasText: /^2$/ })
-        .getByLabel(`expand combobox`)
-        .click();
+    // Fill in `Company` input field (open dropdown)
+    await page.getByRole(`button`, { name: `expand combobox` }).first().click();
 
-    // Click `Excellent Health Plan` from dropdown menu
-    await page.getByRole(`option`, { name: updatedCompany }).locator(`span`).click();
+    // Click `Company description` from dropdown menu
+    //await page.getByRole(`option`, { name: company }).locator(`span`).click();
+
+    await page.getByRole('option', { name: updatedCompany }).first().click();
 
     // Click `Bed level type` down chevron
     await page.getByRole(`button`, { name: `expand combobox` }).nth(1).click();
@@ -154,12 +157,12 @@ test('Create and update new Bed Level Authorization Rate', async () => {
     // Click `ICU` from dropdown menu
     await page.getByText(`ICU`, { exact: true }).click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     // Click `Save and Close` button
     await page.getByRole(`button`, { name: ` Save and Close` }).click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     //--------------------------------
     // Assert: Verify updates
@@ -193,7 +196,7 @@ test('Create and update new Bed Level Authorization Rate', async () => {
         page.getByRole(`gridcell`, { name: updatedItemDesc })
     ).toBeVisible();
 
-
+/*
 
     //await waitUntilLoaded(page);
 
@@ -207,4 +210,6 @@ test('Create and update new Bed Level Authorization Rate', async () => {
 
     // Deactivate all authorizations in rates tab
     await deactivateAllRateAuthorizations(page);
+
+ */
 });

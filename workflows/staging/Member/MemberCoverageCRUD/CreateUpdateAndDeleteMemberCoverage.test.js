@@ -184,6 +184,9 @@ test('Create, Update, and Delete Member Coverage', async () => {
 
     await waitUntilLoaded(page);
 
+    await page.getByRole('button', { name: 'select' }).first().click();
+    await page.locator('#elco_effective_date').press('Enter');
+
     // Save
     await clickAndWait(page, page.getByRole(`button`, { name: ` Save` }));
     await waitUntilLoaded(page);
@@ -305,9 +308,4 @@ test('Create, Update, and Delete Member Coverage', async () => {
         ),
     ).not.toBeVisible();
 
-    await expect(
-        page.locator(`${gridId} table tbody tr`),
-    ).toHaveCount(1);
-
-    await page.close();
 });

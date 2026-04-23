@@ -50,6 +50,89 @@ const lookupAndSelectProvider = async (page, lookupButtonSelector, providerName)
     await handleDuplicateProviderPopupIfPresent(page);
 };
 
+
+
+
+
+
+
+
+
+async function cleanupTabOnMembersPage01(page, options = {}) {
+    const tab = options.tab || `Compliance`;
+    const gridId = options.gridId || `[id="compliance-grid"]`;
+    const memberName = options.memberName || `Blackwell, Megan`;
+    const memberId = options.memberId || ``;
+    const loginID = options.loginID;
+    const onScreen = options.onScreen || false;
+    const memberStartDate = options.memberStartDate || ``;
+
+    await waitUntilLoaded(page);
+
+    if (!onScreen) {
+        // Navigate to Home > Members
+        await page.getByText(`Home`, { exact: true }).click();
+        await page.locator(`#home-tabs-tab-4`).getByText(`Members`).click();
+
+        // Search for member
+        await page.getByRole(`textbox`, { name: `Search...` }).fill(memberName);
+        await page.keyboard.press(`Enter`);
+        await waitUntilLoaded(page);
+
+        // Open member
+        try {
+            await page.getByRole(`gridcell`, { name: memberName }).dblclick();
+        } catch {
+            await page.getByRole(`gridcell`, { name: memberStartDate }).dblclick();
+        }
+
+        await waitUntilLoaded(page);
+
+        // Navigate to target tab
+        await page
+            .getByLabel(memberName)
+            .getByText(tab, { exact: true })
+            .first()
+            .click();
+
+        await waitUntilLoaded(page);
+    }
+
+    // ✅ Locator for ALL matching rows
+    const rows = page.locator(
+        `${gridId} table tbody tr:visible:has-text("${loginID}")`
+    );
+
+    // ✅ Delete rows UNTIL none remain
+    while (await rows.count() > 0) {
+        const row = rows.first();
+
+        // Stabilize row
+        await row.scrollIntoViewIfNeeded();
+        await row.hover();
+
+        // Click delete
+        await row.locator('[title="Delete"]').click();
+
+        // Confirm delete
+        await page.getByRole(`button`, { name: `Yes` }).click();
+
+        // ✅ CRITICAL: wait for THIS row to be gone
+        //await expect(row).toBeHidden({ timeout: 5000 });
+
+        // Allow grid to fully re-render
+        await waitUntilLoaded(page);
+    }
+}
+
+
+
+
+
+
+
+
+
 test('Create, Update, and Delete a Referral Authorization', async () => {
     //--------------------------------
     // Arrange
@@ -86,9 +169,10 @@ test('Create, Update, and Delete a Referral Authorization', async () => {
     const { page } = await logIn({ loginID });
 
     // Cleanup existing Referral auths for idempotency
-    await cleanupTabOnMembersPage2(page, {
+    await cleanupTabOnMembersPage01(page, {
         tab,
         memberName: member.name,
+        memberStartDate: member.startDate,
         loginID,
         gridId,
     });

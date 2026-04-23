@@ -32,7 +32,9 @@ test(
         };
 
         // Sign in
-        const { page } = await logIn({ loginID });
+        const { page } = await logIn({ loginID, slowMo: 800 });
+
+        await waitUntilLoaded(page);
 
         // Navigate to Home > Members
         await page.getByText('Home', { exact: true }).click();
@@ -43,8 +45,8 @@ test(
         await page.keyboard.press('Enter');
 
         // Open member
-        await page.getByRole('gridcell', { name: member.name }).dblclick();
-        await waitUntilLoaded(page);
+        await page.getByRole('gridcell', { name: member.plan }).dblclick();
+        //await waitUntilLoaded(page);
 
         // Navigate to tab on members page
         await page
@@ -106,7 +108,7 @@ test(
         await page.getByRole('button', { name: 'Okay' }).click();
         await saveButton.waitFor();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Fill vaccination name and select option
         await page.locator(`input[name="pvac_vaccine_id__1_input"]`).fill(vaccination.name);

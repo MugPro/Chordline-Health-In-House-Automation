@@ -18,7 +18,9 @@ test.describe('Care Plan Template - Create and Edit Problem', () => {
         //CREATE A NEW PROBLEM:
 
         // Log in
-        const { page, context, browser } = await logIn({ loginID });
+        const { page, context, browser } = await logIn({ loginID, slowMo: 700 });
+
+        await waitUntilLoaded(page);
 
         try {
             //--------------------------------
@@ -33,7 +35,7 @@ test.describe('Care Plan Template - Create and Edit Problem', () => {
             // Click "Care Plan Template"
             await page.getByText('Care Plan Template').click();
 
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
 
 
@@ -42,7 +44,7 @@ test.describe('Care Plan Template - Create and Edit Problem', () => {
             await page.getByRole('button', { name: ' \u00A0New' }).click();
 
             // Wait for loading
-            await waitUntilLoaded(page);
+           // await waitUntilLoaded(page);
 
             // Verify "New problem" popup is visible
             await expect(page.getByText('New Problem')).toBeVisible();
@@ -71,7 +73,7 @@ test.describe('Care Plan Template - Create and Edit Problem', () => {
 
 
 
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
 
 
@@ -83,7 +85,7 @@ test.describe('Care Plan Template - Create and Edit Problem', () => {
             await page.getByRole(`button`, { name: `expand combobox` }).first().click();
 
 
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
 
 // Click the "Adherence" option
@@ -95,7 +97,7 @@ test.describe('Care Plan Template - Create and Edit Problem', () => {
 
 
 
-            await waitUntilLoaded(page);
+           // await waitUntilLoaded(page);
 
 
 
@@ -103,7 +105,7 @@ test.describe('Care Plan Template - Create and Edit Problem', () => {
             await page.getByRole('button', { name: ' Save and Close' }).click();
 
             // Wait for loading
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
             // Search for our problem in the problems tab
             const outcomesTab = page.getByRole('tabpanel', { name: 'Problems' });
@@ -113,7 +115,7 @@ test.describe('Care Plan Template - Create and Edit Problem', () => {
             await page.keyboard.press('Enter');
 
             // Wait for loading
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
             //--------------------------------
 
@@ -162,7 +164,7 @@ test.describe('Care Plan Template - Create and Edit Problem', () => {
                 // Click the pencil icon to be taken to the "Edit problem" pop up
                 await page.getByTitle('Edit').click();
 
-                await waitUntilLoaded(page);
+                //await waitUntilLoaded(page);
 
                 // Verify we are taken to the "Edit outcome" page
                 await expect(page.getByText(`Edit Problem #`)).toBeVisible(
@@ -186,24 +188,24 @@ test.describe('Care Plan Template - Create and Edit Problem', () => {
                 await expect(page.getByText(`Edit Problem #`)).toBeVisible();
             }
 
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
 // Click the "x" on the tag to delete it
             await page.locator('.k-icon.k-font-icon.k-i-x-circle').click();
 
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
 
 // Fill in the description with {descEdit}
             await page.locator('#cptp_description').fill(updatedDesc);
 
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
 // Click the "Save and Close" button
             await page.getByRole(`button`, { name: ` Save and Close` }).click();
 
 // Wait for loading
-            await waitUntilLoaded(page);
+           // await waitUntilLoaded(page);
 
 // Fill in the new problem description in the search bar
             await page
@@ -216,7 +218,7 @@ test.describe('Care Plan Template - Create and Edit Problem', () => {
 
 
 // Wait for loading
-            await waitUntilLoaded(page);
+           // await waitUntilLoaded(page);
 
 //--------------------------------
 // Assert:
@@ -242,9 +244,7 @@ test.describe('Care Plan Template - Create and Edit Problem', () => {
 
 
         } finally {
-            // Cleanup resources
-            await context.close();
-            await browser.close();
+
         }
     });
 });

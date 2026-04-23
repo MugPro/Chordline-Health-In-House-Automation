@@ -6,8 +6,8 @@ export default defineConfig({
     //3.7 minutes
     timeout: 222000,
     retries: 1,
-    //workers: 1, // ← run tests one at a time
-    workers: 2,
+    workers: 1, // ← run tests one at a time
+   // workers: 2,
     reporter: [['list'], ['html', { outputFolder: 'playwright-report' }]],
     projects: [
         {

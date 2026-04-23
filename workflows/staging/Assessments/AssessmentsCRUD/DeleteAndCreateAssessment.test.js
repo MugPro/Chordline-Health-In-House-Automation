@@ -41,14 +41,16 @@ test.describe('Assessments - Create Assessment', () => {
         };
 
         // Log in (launches its own browser/context)
-        const { page, context, browser } = await logIn({ loginID });
+        const { page, context, browser } = await logIn({ loginID, slowMo: 800 });
+
+        await waitUntilLoaded(page);
 
         try {
             // Navigate to Tools > Assessments
             await page.getByText('Tools').click();
             await page.locator('#menu-tools').getByText('Assessments').click();
 
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
             //--------------------------------
             // Cleanup:
@@ -60,7 +62,7 @@ test.describe('Assessments - Create Assessment', () => {
                 .fill('assessmentsCRUD');
             await page.keyboard.press('Enter');
 
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
             try {
                 // If there are no results, this should pass quickly
@@ -77,7 +79,7 @@ test.describe('Assessments - Create Assessment', () => {
                     )
                     .count();
 
-                await waitUntilLoaded(page);
+                //await waitUntilLoaded(page);
 
                 for (let i = 0; i < count; i++) {
                     // Click the first assessment in the table
@@ -99,11 +101,11 @@ test.describe('Assessments - Create Assessment', () => {
                         .first()
                         .click();
 
-                    await waitUntilLoaded(page);
+                    //await waitUntilLoaded(page);
 
                     // Confirm delete and wait for loading to complete
                     await page.getByRole('button', { name: 'Yes' }).click();
-                    await waitUntilLoaded(page);
+                    //await waitUntilLoaded(page);
                 }
             }
             // If cleanup itself throws
@@ -122,7 +124,7 @@ test.describe('Assessments - Create Assessment', () => {
         //--------------------------------
         // Click + New and wait for load
         await page.getByRole('button', { name: ' \u00A0New' }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Verify "New Assessment" page
         await expect(page.getByText('New Assessment')).toBeVisible();
@@ -130,12 +132,12 @@ test.describe('Assessments - Create Assessment', () => {
         // Fill in the Assessment name
         await page.locator('#assessment_name').fill(assessmentName);
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Click the Sections dropdown
         await page.getByText('Sections').click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Grab section locators and names
         const sectionLocators = await page
@@ -145,7 +147,7 @@ test.describe('Assessments - Create Assessment', () => {
             .locator(`[id="manage-rules-sections"] ul li span[class="k-menu-link-text"]`)
             .allInnerTexts();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Randomly select 3 section indexes
         const threeRandomIndexes = randomIdxsHelper(0, sectionLocators.length - 1);
@@ -157,7 +159,7 @@ test.describe('Assessments - Create Assessment', () => {
                 .check({ force: true });
         }
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Click the first "+ Question" button (visible)
         await page
@@ -168,7 +170,7 @@ test.describe('Assessments - Create Assessment', () => {
         // Click the "Add a new question" dropdown (Question Library)
         await page.getByText('Question Library', { exact: true }).nth(2).click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Grab dropdown option names
         const questionDropDownNames = await page
@@ -181,7 +183,7 @@ test.describe('Assessments - Create Assessment', () => {
             questionDropDownNames.length - 1,
         );
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Close the dropdown
         await page
@@ -189,7 +191,7 @@ test.describe('Assessments - Create Assessment', () => {
             .getByTitle('Close')
             .click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Click the + Question for each section and add a question
         let idx2 = 0;
@@ -201,12 +203,12 @@ test.describe('Assessments - Create Assessment', () => {
                 .click({ force: true });
             idx2++;
 
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
             // Open Question types dropdown
             await page.locator(`[aria-controls="fieldTypes_listbox"]`).click();
 
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
             // Select by visible name
             let name = questionDropDownNames[idx];
@@ -214,17 +216,17 @@ test.describe('Assessments - Create Assessment', () => {
                 .locator(`[id="fieldTypes_listbox"]:visible li div:text-is("${name}")`)
                 .click();
 
-            await waitUntilLoaded(page);
+           // await waitUntilLoaded(page);
 
             // Click Add
             await page.getByRole('button', { name: 'Add', exact: true }).click();
 
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
             // Special-case handling per provided logic
             if (name.trim() === 'Question Library') {
                 await page
-                    .getByRole('gridcell', { name: 'Can you verify who is your' })
+                    .getByRole('gridcell', { name: 'Date' })
                     .click();
                 await page.getByRole('button', { name: 'Select', exact: true }).click();
             }
@@ -237,16 +239,16 @@ test.describe('Assessments - Create Assessment', () => {
             }
         }
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Save the assessment
         await page.getByRole('button', { name: 'Save' }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Close the New Assessment modal
         await page.getByLabel('New Assessment').getByText('Close').click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Search for the assessment by name
         await page
@@ -255,7 +257,7 @@ test.describe('Assessments - Create Assessment', () => {
             .fill(assessmentName);
         await page.keyboard.press('Enter');
 
-        await waitUntilLoaded(page);
+       await waitUntilLoaded(page);
 
         // Open the assessment (double click) to edit
         await page.getByRole('gridcell', { name: assessmentName }).dblclick();

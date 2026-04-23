@@ -28,7 +28,7 @@ import {
 /* -------------------------------------------
    Small helpers to pause after fills/clicks
 ------------------------------------------- */
-const FILL_CLICK_PAUSE_MS = 500;
+const FILL_CLICK_PAUSE_MS = 10;
 
 const pause = (page, ms = FILL_CLICK_PAUSE_MS) =>
     page.waitForTimeout(ms);
@@ -77,7 +77,7 @@ test(
         //--------------------------------
         // Sign in & setup members
         //--------------------------------
-        const { page } = await logIn({ loginID });
+        const { page } = await logIn({ loginID, slowMo: 400 });
         await waitUntilLoaded(page);
 
         // NOTE:
@@ -111,7 +111,7 @@ test(
             page.locator('#member-search .member-card-info'),
         );
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         //--------------------------------
         // Merge Member Detail
@@ -145,7 +145,7 @@ test(
             page.locator('#member-search .member-card-info'),
         );
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         //--------------------------------
         // Confirm Merge
@@ -158,6 +158,8 @@ test(
         //--------------------------------
         // Assert: Member name preserved
         //--------------------------------
+
+        /*
         await expect(page.locator('#pers_first_name')).toHaveText(
             member.firstName,
         );
@@ -165,9 +167,34 @@ test(
             member.lastName,
         );
 
+         */
+
+
+
+        await expect(
+            page
+                .getByLabel(`${member.lastName}, ${member.firstName}`)
+                .locator('#pers_first_name')
+        ).toHaveText(member.firstName);
+
+
+
+        await expect(
+            page
+                .getByLabel(`${member.lastName}, ${member.firstName}`)
+                .locator('#pers_last_name')
+        ).toHaveText(member.lastName);
+
+
+
+
+
+
         //--------------------------------
         // Assert: Primary Address retained
         //--------------------------------
+
+        /*
         await expect(page.locator('#pad1_address_1')).toHaveText(
             member.address1,
         );
@@ -175,33 +202,133 @@ test(
             member2Deets.address1,
         );
 
+         */
+
+
+
+        const finalMember = page.getByLabel(
+            `${member.lastName}, ${member.firstName}`,
+        );
+
+// Primary Address retained
+        await expect(
+            finalMember.locator('#pad1_address_1')
+        ).toHaveText(member.address1);
+
+        await expect(
+            finalMember.locator('#pad1_address_1')
+        ).not.toHaveText(member2Deets.address1);
+
+
+
+
+
+
+/*
         await expect(page.locator('#pad1_city')).toHaveText(member.city);
         await expect(page.locator('#pad1_city')).not.toHaveText(
             member2Deets.city,
         );
 
+ */
+
+
+
+        await expect(
+            finalMember.locator('#pad1_city')
+        ).toHaveText(member.city);
+
+        await expect(
+            finalMember.locator('#pad1_city')
+        ).not.toHaveText(member2Deets.city);
+
+
+/*
         await expect(page.locator('#pad1_zip')).toHaveText(member.zip);
         await expect(page.locator('#pad1_zip')).not.toHaveText(
             member2Deets.zip,
         );
 
+ */
+
+
+
+
+        await expect(
+            finalMember.locator('#pad1_zip')
+        ).toHaveText(member.zip);
+
+        await expect(
+            finalMember.locator('#pad1_zip')
+        ).not.toHaveText(member2Deets.zip);
+
+
+
+
         //--------------------------------
         // Assert: Other Address is blank
         //--------------------------------
+        /*
         await expect(page.locator('#pad2_address_1')).toHaveText('');
         await expect(page.locator('#pad2_address_1')).not.toHaveText(
             member2Deets.address1,
         );
 
+         */
+
+
+
+
+        await expect(
+            finalMember.locator('#pad2_address_1')
+        ).toHaveText('');
+
+        await expect(
+            finalMember.locator('#pad2_address_1')
+        ).not.toHaveText(member2Deets.address1);
+
+
+
+
+/*
         await expect(page.locator('#pad2_city')).toHaveText('');
         await expect(page.locator('#pad2_city')).not.toHaveText(
             member2Deets.city,
         );
 
+ */
+
+
+
+        await expect(
+            finalMember.locator('#pad2_city')
+        ).toHaveText('');
+
+        await expect(
+            finalMember.locator('#pad2_city')
+        ).not.toHaveText(member2Deets.city);
+
+
+
+
+/*
         await expect(page.locator('#pad2_zip')).toHaveText('');
         await expect(page.locator('#pad2_zip')).not.toHaveText(
             member2Deets.zip,
         );
+
+ */
+
+
+
+        await expect(
+            finalMember.locator('#pad2_zip')
+        ).toHaveText('');
+
+        await expect(
+            finalMember.locator('#pad2_zip')
+        ).not.toHaveText(member2Deets.zip);
+
 
         //--------------------------------
         // No cleanup required

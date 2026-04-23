@@ -122,7 +122,7 @@ test('Able to download "Data Loads and Extracts Guide" PDF and verify download',
 
     const { page } = await helpers.logIn({
         loginID,
-        url: process.env.DEFAULT_URL_2
+        //url: process.env.DEFAULT_URL_2
     });
 
     //--------------------------------

@@ -59,7 +59,7 @@ test.describe(
                     screenTemplateGroup,
                     defaultTemplate,
                     screenName,
-                    dontClose: true,
+                    //dontClose: true,
                 });
 
                 await cleanupScreenTemplateCopy(page, {
@@ -217,22 +217,6 @@ test.describe(
                 page.locator('#flyout-div'),
             ).toHaveClass(/k-success-colored/);
 
-
-
-            //--------------------------------
-            // Cleanup
-            //--------------------------------
-            await clickAndWait(
-                page,
-                page.getByRole('button', { name: 'Cancel' }),
-            );
-
-            await clickAndWait(
-                page,
-                page
-                    .getByLabel('New Screen - Internal')
-                    .getByText('Close', { exact: true }),
-            );
 
 
         });

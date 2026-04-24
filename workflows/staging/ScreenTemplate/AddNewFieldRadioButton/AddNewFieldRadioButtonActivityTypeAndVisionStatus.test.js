@@ -55,7 +55,7 @@ test.describe(
                     screenTemplateGroup,
                     defaultTemplate,
                     screenName,
-                    dontClose: true,
+                    //dontClose: true,
                 });
 
                 await cleanupScreenTemplateCopy(page, {
@@ -302,56 +302,6 @@ test.describe(
 
 
 
-
-
-            /*
-
-            //--------------------------------
-            // Assert – With Visibility Rule
-            //--------------------------------
-            await expect(radioContent).toHaveScreenshot(
-                'addedRadio_has_vis_rule.png',
-                {
-                    maxDiffPixelRatio: 0.06,
-                },
-            );
-
-             */
-
-
-            //--------------------------------
-            // Cleanup
-            //--------------------------------
-            await clickAndWait(
-                page,
-                page
-                    .getByLabel('New Screen - Internal')
-                    .getByText('Close'),
-            );
-
-            /*
-            try {
-                await cleanupScreenTemplateCopy(page, {
-                    screenTemplateGroup,
-                    defaultTemplate,
-                    screenName: screenTemplateCopyName,
-                    onScreen: true,
-                    dontClose: true,
-                });
-            } catch (e) {
-                await reportCleanupFailed({
-                    dedupKey: 'cleanupScreenTemplateCopy',
-                    errorMsg: e.message,
-                });
-            }
-
-            await page.close();
-
-             */
-
-            console.log(
-                '✅ Radio Button field supports responses and visibility rule indicator',
-            );
         });
     },
 );

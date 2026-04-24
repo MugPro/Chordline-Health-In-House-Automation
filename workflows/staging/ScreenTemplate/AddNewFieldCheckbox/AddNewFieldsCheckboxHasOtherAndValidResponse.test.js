@@ -232,53 +232,7 @@ test.describe(
                     .first(),
             ).toBeVisible();
 
-            //--------------------------------
-            // Cleanup – Close Preview & Template
-            //--------------------------------
-            await clickAndWait(
-                page,
-                page.getByRole('button', { name: ' Close' }),
-            );
 
-            //await waitUntilLoaded(page);
-
-            await clickAndWait(
-                page,
-                page
-                    .getByLabel('New Screen - Internal')
-                    .getByText('Close'),
-            );
-
-            /*
-            await waitUntilLoaded(page);
-
-            try {
-
-
-                await page.getByText('Close', { exact: true }).click();
-
-
-                await cleanupScreenTemplateCopy(page, {
-                    screenTemplateGroup,
-                    defaultTemplate,
-                    screenName: screenTemplateCopyName,
-                    onScreen: true,
-                    dontClose: true,
-                });
-            } catch (e) {
-                await reportCleanupFailed({
-                    dedupKey: 'cleanupScreenTemplateCopy',
-                    errorMsg: e.message,
-                });
-            }
-
-            //await page.close();
-
-             */
-
-            console.log(
-                '✅ Checkbox field supports Valid Responses and Has Other option correctly',
-            );
         });
     },
 );

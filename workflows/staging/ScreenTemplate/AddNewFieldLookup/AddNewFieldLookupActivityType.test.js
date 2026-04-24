@@ -10,7 +10,7 @@ import {
 /* -------------------------------------------
    Small helpers to pause after fills/clicks
 ------------------------------------------- */
-const FILL_CLICK_PAUSE_MS = 20;
+const FILL_CLICK_PAUSE_MS = 0;
 
 const pause = (page, ms = FILL_CLICK_PAUSE_MS) =>
     page.waitForTimeout(ms);
@@ -60,7 +60,7 @@ test.describe(
                     screenTemplateGroup,
                     defaultTemplate,
                     screenName,
-                    dontClose: true,
+                    //dontClose: true,
                 });
 
                 await cleanupScreenTemplateCopy(page, {
@@ -218,46 +218,7 @@ test.describe(
                 ).toBeVisible();
             }
 
-            //--------------------------------
-            // Cleanup – Close Preview & Template
-            //--------------------------------
-            await clickAndWait(
-                page,
-                page.getByRole('button', { name: ' Close' }),
-            );
 
-            await waitUntilLoaded(page);
-
-            await clickAndWait(
-                page,
-                page
-                    .getByLabel('New Screen - Internal')
-                    .getByText('Close'),
-            );
-
-            /*
-            try {
-                await cleanupScreenTemplateCopy(page, {
-                    screenTemplateGroup,
-                    defaultTemplate,
-                    screenName: screenTemplateCopyName,
-                    onScreen: true,
-                    dontClose: true,
-                });
-            } catch (e) {
-                await reportCleanupFailed({
-                    dedupKey: 'cleanupScreenTemplateCopy',
-                    errorMsg: e.message,
-                });
-            }
-
-            await page.close();
-
-             */
-
-            console.log(
-                '✅ Lookup Activity Type field loads correct values in preview',
-            );
         });
     },
 );

@@ -43,7 +43,7 @@ test.describe(
             const fieldTextAfter = `Should appear AFTER *Team`;
             const fieldTextBefore = `Should appear BEFORE *Team`;
 
-            const { page } = await logIn({ loginID });
+            const { page } = await logIn({ loginID, slowMo: 400 });
             await waitUntilLoaded(page);
 
             //--------------------------------
@@ -54,7 +54,7 @@ test.describe(
                     screenTemplateGroup,
                     defaultTemplate,
                     screenName,
-                    dontClose: true,
+                    //dontClose: true,
                 });
 
                 await cleanupScreenTemplateCopy(page, {

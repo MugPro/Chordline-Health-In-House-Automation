@@ -71,7 +71,8 @@ test('Able to generate an Invoice Report', async () => {
     // Arrange
     //--------------------------------
     const loginID = 'RepInvRep';
-    const insuranceCompany = 'Excellent Health Plan';
+    //const insuranceCompany = 'Excellent Health Plan';
+    const insuranceCompany = 'company description';
 
     const date1 = new Date('2025-08-01');
     const date2 = new Date('2025-08-14');
@@ -83,7 +84,9 @@ test('Able to generate an Invoice Report', async () => {
     const startDigits = format(date1, 'MMddyyyy');
     const endDigits = format(date2, 'MMddyyyy');
 
-    const { page } = await helpers.logIn({ loginID });
+    const { page } = await helpers.logIn({ loginID, slowMo: 400 });
+
+    await helpers.waitUntilLoaded(page);
 
     //--------------------------------
     // Act
@@ -92,8 +95,18 @@ test('Able to generate an Invoice Report', async () => {
     await page.getByLabel('Reports').getByTitle('Invoice Report').click();
 
     // Select insurance company
+    /*
     await page.getByRole('combobox').first().click();
     await page.getByRole('option', { name: insuranceCompany }).locator('span').click();
+
+     */
+
+
+
+     await page.getByRole('combobox').first().click();
+  await page.getByRole('combobox').first().fill('company description');
+  await page.getByRole('combobox').first().press('Enter');
+
 
     // Select 'Yes' for detailed report
     await page.getByText('No', { exact: true }).first().click();
@@ -118,7 +131,7 @@ test('Able to generate an Invoice Report', async () => {
 
     // Submit
     await page.getByRole('button', { name: ' Submit' }).click();
-    await helpers.waitUntilLoaded(page);
+    //await helpers.waitUntilLoaded(page);
 
     //--------------------------------
     // Assert

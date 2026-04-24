@@ -11,7 +11,7 @@ import {
 /* -------------------------------------------
    Small helpers to pause after fills/clicks
 ------------------------------------------- */
-const FILL_CLICK_PAUSE_MS = 20;
+const FILL_CLICK_PAUSE_MS = 0;
 
 const pause = (page, ms = FILL_CLICK_PAUSE_MS) =>
     page.waitForTimeout(ms);
@@ -44,7 +44,7 @@ test.describe(
             const resp1 = `Valid response 1`;
             const resp2 = `Another response 2`;
 
-            const { page } = await logIn({ loginID });
+            const { page } = await logIn({ loginID, slowMo: 400 });
             await waitUntilLoaded(page);
 
             //--------------------------------
@@ -55,7 +55,7 @@ test.describe(
                     screenTemplateGroup,
                     defaultTemplate,
                     screenName,
-                    dontClose: true,
+                    //dontClose: true,
                 });
 
                 //await waitUntilLoaded(page);
@@ -90,7 +90,7 @@ test.describe(
                 .nth(1)
                 .click();
 
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
             // Hover default template & click copy
             await page.getByRole('gridcell', { name: defaultTemplate, exact: true }).hover();
@@ -102,7 +102,7 @@ test.describe(
 
 
 
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
             await fillAndWait(
                 page,
@@ -114,7 +114,7 @@ test.describe(
                 page,
                 page.getByRole('button', { name: 'Save' }),
             );
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
             //--------------------------------
             // Act – Add Checkbox Field
@@ -209,7 +209,7 @@ test.describe(
                 page.getByRole('button', { name: 'Yes' }),
             );
 
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
             //--------------------------------
             // Assert – Preview UI
@@ -240,7 +240,7 @@ test.describe(
                 page.getByRole('button', { name: ' Close' }),
             );
 
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
             await clickAndWait(
                 page,

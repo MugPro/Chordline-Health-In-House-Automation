@@ -628,6 +628,112 @@ const fillAndWait = async (page, locator, value, ms = FILL_CLICK_PAUSE_MS) => {
     await pause(page, ms);
 };
 
+
+
+
+
+
+
+
+async function cleanup1(page, options = {}) {
+    const { screenTemplateGroup, screenName, defaultTemplate } = options;
+    const onScreen = options.onScreen;
+    const dontClose = options.dontClose;
+    const external = options.external;
+
+    if (!onScreen) {
+        // Hover over the "Tools" text
+        await page.getByText(`Tools`).hover();
+
+        // Hover over the "Screen Templates" text
+        await page.getByText(`Screen Templates`).click();
+
+        // Wait page load
+        await waitUntilLoaded(page);
+
+        // Click the treeitem to expand the group
+        await page
+            .getByRole(`treeitem`, { name: `${screenTemplateGroup}`, exact: true })
+            .locator(`span`)
+            .nth(1)
+            .click();
+
+        if (external) {
+            // Click `Externat` tab
+            await waitUntilLoaded(page);
+            await page.getByText(`External`).click();
+        }
+
+        // Wait page load
+        await waitUntilLoaded(page);
+    }
+
+    if (
+        !(await page
+            .locator(`[role="row"]:has(:text-is("${defaultTemplate}")) input`, {
+                exact: true,
+            })
+            .first()
+            .isDisabled({ timeout: 7000 }))
+    ) {
+        await page
+            .locator(`[role="row"]:has(:text-is("${defaultTemplate}")) input`, {
+                exact: true,
+            })
+            .first()
+            .click({ timeout: 70000 });
+    }
+    // Wait page load
+    await waitUntilLoaded(page);
+
+    const screenTemplateCopyCount = await page
+        .locator(
+            `[id="browse-grid"] table tbody tr:has(td:nth-child(4):has-text("${screenName}"))`,
+        )
+        .count();
+
+    console.log("screenTemplateCopyCount: ", screenTemplateCopyCount);
+    for (let i = 0; i < screenTemplateCopyCount; i++) {
+        // Hover over the screen template name in the grid to reveal action buttons
+        await page
+            .locator(
+                `[id="browse-grid"] table tbody tr:has(td:nth-child(4):has-text("${screenName}"))`,
+            )
+            .first()
+            .hover();
+
+        // Click the delete button for the specified screen template
+        await page
+            .locator(
+                `[id="browse-grid"] table tbody tr:has(td:nth-child(4):has-text("${screenName}"))`,
+            )
+            .first()
+            .locator(`[title="Delete"]`)
+            .click();
+
+        // Confirm the deletion by clicking the "Yes" button in the confirmation dialog
+        await page.getByRole(`button`, { name: `Yes` }).click();
+    }
+
+    // Verify that the screen template is NOT visible,
+    await expect(
+        page.getByRole(`gridcell`, { name: screenName }),
+    ).not.toBeVisible();
+
+    // Click the "Close" label to fully exit the dialog or screen
+    if (!dontClose) await page.getByLabel(`Close`).click();
+}
+
+
+
+
+
+
+
+
+
+
+
 test.describe(
     'External – Valid Entries (Multiple and Single)',
     () => {
@@ -652,7 +758,7 @@ test.describe(
             // Cleanup (pre-test)
             //--------------------------------
             try {
-                await cleanupScreenTemplateCopy(page, {
+                await cleanup1(page, {
                     screenName,
                     screenTemplateGroup,
                     defaultTemplate,
@@ -892,16 +998,6 @@ test.describe(
                 ).toBeVisible();
             }
 
-            //--------------------------------
-            // Cleanup
-            //--------------------------------
-            await clickAndWait(page, page.getByRole('button', { name: ' Close' }));
-            await clickAndWait(
-                page,
-                page
-                    .getByLabel('New Screen - External')
-                    .getByText('Close'),
-            );
 
 
         });

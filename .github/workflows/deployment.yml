@@ -6,9 +6,9 @@ on:
       env:
         description: 'Environment to run'
         required: true
-        default: 'staging'
+        default: 'qawolf2'
         type: choice
-        options: [staging, qawolf2]
+        options: [qawolf2]
       workflow-folder:
         description: 'Optional workflow folder to run'
         required: false
@@ -37,25 +37,15 @@ jobs:
 
       - name: Set Environment Variables
         run: |
-          if [ "${{ github.event.inputs.env }}" = "qawolf2" ]; then
-            echo "DEFAULT_URL=${{ secrets.QAWOLF2_DEFAULT_URL }}" >> $GITHUB_ENV
-            echo "DEFAULT_URL_2=${{ secrets.QAWOLF2_DEFAULT_URL_2 }}" >> $GITHUB_ENV
-            echo "DEFAULT_LOGIN=${{ secrets.QAWOLF2_DEFAULT_LOGIN }}" >> $GITHUB_ENV
-            echo "DEFAULT_PASSWORD=${{ secrets.QAWOLF2_DEFAULT_PASSWORD }}" >> $GITHUB_ENV
-            echo "DEFAULT_PASS_JUNE_2025=${{ secrets.QAWOLF2_DEFAULT_PASS_JUNE_2025 }}" >> $GITHUB_ENV
-            echo "DEFAULT_PASS_OCT_2025=${{ secrets.QAWOLF2_DEFAULT_PASS_OCT_2025 }}" >> $GITHUB_ENV
-            echo "QAWA_API_KEY=${{ secrets.QAWOLF2_QAWA_API_KEY }}" >> $GITHUB_ENV
-          else
-            # Default to STAGING
-            echo "DEFAULT_URL=${{ secrets.STAGING_DEFAULT_URL }}" >> $GITHUB_ENV
-            echo "DEFAULT_URL_2=${{ secrets.STAGING_DEFAULT_URL_2 }}" >> $GITHUB_ENV
-            echo "DEFAULT_URL_3=${{ secrets.STAGING_DEFAULT_URL_3 }}" >> $GITHUB_ENV
-            echo "INTERNAL_PDF_VIEWER=${{ secrets.STAGING_INTERNAL_PDF_VIEWER }}" >> $GITHUB_ENV
-            echo "DEFAULT_LOGIN=${{ secrets.STAGING_DEFAULT_LOGIN }}" >> $GITHUB_ENV
-            echo "DEFAULT_PASSWORD=${{ secrets.STAGING_DEFAULT_PASSWORD }}" >> $GITHUB_ENV
-            echo "DEFAULT_PASS_JUNE_2025=${{ secrets.STAGING_DEFAULT_PASS_JUNE_2025 }}" >> $GITHUB_ENV
-            echo "DEFAULT_PASS_OCT_2025=${{ secrets.STAGING_DEFAULT_PASS_OCT_2025 }}" >> $GITHUB_ENV
-            echo "QAWA_API_KEY=${{ secrets.STAGING_QAWA_API_KEY }}" >> $GITHUB_ENV
+          
+          echo "DEFAULT_URL=${{ secrets.QAWOLF2_DEFAULT_URL }}" >> $GITHUB_ENV
+          echo "DEFAULT_URL_2=${{ secrets.QAWOLF2_DEFAULT_URL_2 }}" >> $GITHUB_ENV
+          echo "DEFAULT_LOGIN=${{ secrets.QAWOLF2_DEFAULT_LOGIN }}" >> $GITHUB_ENV
+          echo "DEFAULT_PASSWORD=${{ secrets.QAWOLF2_DEFAULT_PASSWORD }}" >> $GITHUB_ENV
+          echo "DEFAULT_PASS_JUNE_2025=${{ secrets.QAWOLF2_DEFAULT_PASS_JUNE_2025 }}" >> $GITHUB_ENV
+          echo "DEFAULT_PASS_OCT_2025=${{ secrets.QAWOLF2_DEFAULT_PASS_OCT_2025 }}" >> $GITHUB_ENV
+          echo "QAWA_API_KEY=${{ secrets.QAWOLF2_QAWA_API_KEY }}" >> $GITHUB_ENV
+          
           fi
 
       - name: Run Playwright Tests

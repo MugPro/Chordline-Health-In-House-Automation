@@ -1,6 +1,9 @@
 import { test, expect } from '@playwright/test';
 import * as helpers from '../../../../helpers/Node20Helpers.js';
 import { env } from '../../../../environments/qawolf2.env.js';
+import {logIn} from "../../../../helpers/Node20Helpers.js";
+
+let page;
 
 test('Create BH Outpatient Automation Rule', async () => {
     //--------------------------------
@@ -12,6 +15,9 @@ test('Create BH Outpatient Automation Rule', async () => {
 
     const ruleNameEdited = `${ruleName} - edit`;
 
+
+    /*
+
     const password = process.env.DEFAULT_PASS_OCT_2025;
 
     // Login
@@ -21,6 +27,12 @@ test('Create BH Outpatient Automation Rule', async () => {
         password,
         url: env.DEFAULT_URL_2,
     });
+
+     */
+
+
+
+    ({ page } = await logIn({ loginID, slowMo: 700, url: env.DEFAULT_URL_2 }));
 
     //--------------------------------
     // Act

@@ -117,7 +117,49 @@ export async function reportCleanupFailed({ dedupKey, errorMsg } = {}) {
 
 
 
+/*
+export async function logIn(options = {}) {
+  const loginID = options.loginID ?? process.env.DEFAULT_LOGIN;
+  const password = options.password ?? process.env.DEFAULT_PASS_OCT_2025;
+  const url =
+    options.url ??
+    process.env.DEFAULT_URL_2 ??
+    process.env.DEFAULT_URL;
 
+  if (!loginID || !password || !url) {
+    throw new Error('Missing loginID, password, or URL');
+  }
+
+  const { browser } = await launch(options);
+  const context = await browser.newContext({
+    viewport: { width: 1366, height: 768 }
+  });
+  const page = await context.newPage();
+
+  await page.goto(url);
+
+  // Fill login form
+  await page.getByRole('textbox', { name: 'Enter your Login ID' }).fill(loginID);
+  await page.getByRole('textbox', { name: 'Enter your Password' }).fill(password);
+  await page.getByRole('button', { name: 'SIGN IN' }).click();
+
+  // ✅ Wait for either success OR error
+  const loginError = page.getByText('Error Logging In');
+
+  await Promise.race([
+    page.waitForURL(/dashboard|home|main/i),
+    loginError.waitFor({ timeout: 6000 }).catch(() => {})
+  ]);
+
+  if (await loginError.isVisible()) {
+    throw new Error(
+      `Login failed for ${loginID} at ${url} (credentials/environment mismatch)`
+    );
+  }
+
+  return { page, context, browser };
+}
+ */
 
 
 

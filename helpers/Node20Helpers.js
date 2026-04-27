@@ -117,7 +117,7 @@ export async function reportCleanupFailed({ dedupKey, errorMsg } = {}) {
 
 
 
-/*
+
 export async function logIn(options = {}) {
   const loginID = options.loginID ?? process.env.DEFAULT_LOGIN;
   const password = options.password ?? process.env.DEFAULT_PASS_OCT_2025;
@@ -159,11 +159,16 @@ export async function logIn(options = {}) {
 
   return { page, context, browser };
 }
- */
 
 
 
 
+
+
+
+
+
+/*
 export async function logIn(options = {}) {
     const loginID = options.loginID || process.env.DEFAULT_LOGIN;
     const password = options.password || process.env.DEFAULT_PASS_OCT_2025;
@@ -209,6 +214,8 @@ export async function logIn(options = {}) {
 
     return { page, context, browser };
 }
+
+ */
 
 
 

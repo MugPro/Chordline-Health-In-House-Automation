@@ -117,7 +117,7 @@ export async function reportCleanupFailed({ dedupKey, errorMsg } = {}) {
 
 
 
-
+/*
 export async function logIn(options = {}) {
   const loginID = options.loginID ?? process.env.DEFAULT_LOGIN;
   const password = options.password ?? process.env.DEFAULT_PASS_OCT_2025;
@@ -159,16 +159,11 @@ export async function logIn(options = {}) {
 
   return { page, context, browser };
 }
+ */
 
 
 
 
-
-
-
-
-
-/*
 export async function logIn(options = {}) {
     const loginID = options.loginID || process.env.DEFAULT_LOGIN;
     const password = options.password || process.env.DEFAULT_PASS_OCT_2025;
@@ -215,10 +210,69 @@ export async function logIn(options = {}) {
     return { page, context, browser };
 }
 
- */
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export async function logIn2(options = {}) {
+    const loginID = options.loginID;
+    const password = process.env.DEFAULT_PASS_OCT_2025;
+    const url2 = process.env.DEFAULT_URL_2;
+
+    // Allow explicit override via CLI --headed
+    if (options.headless === undefined && process.argv.includes('--headed')) {
+        options.headless = false;
+    }
+
+    const { browser } = await launch(options);
+    const context = await browser.newContext({ viewport: { width: 1366, height: 768 } });
+    const page = await context.newPage();
+    await page.goto(url2);
+
+
+    // ----- Login steps -----
+    try {
+        await page.getByRole('textbox', { name: 'Enter your Login ID' }).fill(loginID);
+        await page.getByRole('textbox', { name: 'Enter your Password' }).fill(password);
+        await page.getByRole('button', { name: 'SIGN IN' }).click();
+
+        await page.waitForTimeout(3500);
+        await expect(page.getByText('Error Logging In')).not.toBeVisible({ timeout: 2500 });
+    } catch {
+        await page.getByText('Return To Login Screen').click();
+        await page.getByRole('textbox', { name: 'Enter your Login ID' }).fill(loginID);
+        await page.getByRole('textbox', { name: 'Enter your Password' }).fill(process.env.DEFAULT_PASS_OCT_2025);
+        await page.getByRole('button', { name: 'SIGN IN' }).click();
+        await page.waitForTimeout(3500);
+        await expect(page.getByText('Error Logging In')).not.toBeVisible();
+    }
+
+    // Handle Change Password screen
+    try {
+        await page.getByText('Change Your Password', { exact: true }).waitFor({ timeout: 5000 });
+        await page.getByRole('textbox', { name: 'Enter your New Password', exact: true }).fill(password);
+        await page.getByRole('textbox', { name: 'Re-Enter your New Password' }).fill(password);
+        await page.getByText('Reset password').click();
+    } catch {
+        console.log('Change Your Password did not appear.');
+    }
+
+    return { page, context, browser };
+}
 
 
 

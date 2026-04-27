@@ -22,11 +22,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [1]
-
     steps:
       - uses: actions/checkout@v4
 
@@ -51,6 +46,7 @@ jobs:
             echo "DEFAULT_PASS_OCT_2025=${{ secrets.QAWOLF2_DEFAULT_PASS_OCT_2025 }}" >> $GITHUB_ENV
             echo "QAWA_API_KEY=${{ secrets.QAWOLF2_QAWA_API_KEY }}" >> $GITHUB_ENV
           else
+            # Default to STAGING
             echo "DEFAULT_URL=${{ secrets.STAGING_DEFAULT_URL }}" >> $GITHUB_ENV
             echo "DEFAULT_URL_2=${{ secrets.STAGING_DEFAULT_URL_2 }}" >> $GITHUB_ENV
             echo "DEFAULT_URL_3=${{ secrets.STAGING_DEFAULT_URL_3 }}" >> $GITHUB_ENV
@@ -62,23 +58,23 @@ jobs:
             echo "QAWA_API_KEY=${{ secrets.STAGING_QAWA_API_KEY }}" >> $GITHUB_ENV
           fi
 
-      - name: Run Playwright Tests (Shard ${{ matrix.shard }}/8)
+      - name: Run Playwright Tests
         run: |
           if [ -n "${{ github.event.inputs.test-file }}" ]; then
-            npx playwright test workflows/${{ github.event.inputs.env }}/${{ github.event.inputs.test-file }} \
-              --shard=${{ matrix.shard }}/8
+            npx playwright test workflows/${{ github.event.inputs.env }}/${{ github.event.inputs.test-file }}
           elif [ -n "${{ github.event.inputs.workflow-folder }}" ]; then
-            npx playwright test workflows/${{ github.event.inputs.env }}/${{ github.event.inputs.workflow-folder }} \
-              --shard=${{ matrix.shard }}/8
+            npx playwright test workflows/${{ github.event.inputs.env }}/${{ github.event.inputs.workflow-folder }}
           else
-            npx playwright test \
-              --project=${{ github.event.inputs.env }} \
-              --shard=${{ matrix.shard }}/8
+            npx playwright test --project=${{ github.event.inputs.env }}
           fi
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-deployment-${{ github.event.inputs.env }}-shard-${{ matrix.shard }}
+          name: test-results-deployment-${{ github.event.inputs.env }}
           path: test-results/
+
+
+
+

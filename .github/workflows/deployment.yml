@@ -19,6 +19,9 @@ on:
         default: ''
 
 jobs:
+  # -----------------------------
+  # STAGING (GitHub-hosted Linux)
+  # -----------------------------
   test-staging:
     if: github.event.inputs.env == 'staging'
     runs-on: ubuntu-latest
@@ -37,6 +40,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Set Environment Variables (STAGING)
+        shell: bash
         run: |
           echo "DEFAULT_URL=${{ secrets.STAGING_DEFAULT_URL }}" >> $GITHUB_ENV
           echo "DEFAULT_URL_2=${{ secrets.STAGING_DEFAULT_URL_2 }}" >> $GITHUB_ENV
@@ -48,7 +52,8 @@ jobs:
           echo "DEFAULT_PASS_OCT_2025=${{ secrets.STAGING_DEFAULT_PASS_OCT_2025 }}" >> $GITHUB_ENV
           echo "QAWA_API_KEY=${{ secrets.STAGING_QAWA_API_KEY }}" >> $GITHUB_ENV
 
-      - name: Run Playwright Tests
+      - name: Run Playwright Tests (STAGING)
+        shell: bash
         run: |
           if [ -n "${{ github.event.inputs.test-file }}" ]; then
             npx playwright test workflows/staging/${{ github.event.inputs.test-file }}
@@ -58,13 +63,17 @@ jobs:
             npx playwright test --project=staging
           fi
 
-      - name: Upload test results
+      - name: Upload test results (STAGING)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results-deployment-staging
           path: test-results/
 
+
+  # ----------------------------------
+  # QAWOLF2 (Self-hosted Windows runner)
+  # ----------------------------------
   test-qawolf2:
     if: github.event.inputs.env == 'qawolf2'
     runs-on: [self-hosted, qawolf2]
@@ -83,6 +92,7 @@ jobs:
         run: npx playwright install
 
       - name: Set Environment Variables (QAWOLF2)
+        shell: bash
         run: |
           echo "DEFAULT_URL=${{ secrets.QAWOLF2_DEFAULT_URL }}" >> $GITHUB_ENV
           echo "DEFAULT_URL_2=${{ secrets.QAWOLF2_DEFAULT_URL_2 }}" >> $GITHUB_ENV
@@ -92,7 +102,8 @@ jobs:
           echo "DEFAULT_PASS_OCT_2025=${{ secrets.QAWOLF2_DEFAULT_PASS_OCT_2025 }}" >> $GITHUB_ENV
           echo "QAWA_API_KEY=${{ secrets.QAWOLF2_QAWA_API_KEY }}" >> $GITHUB_ENV
 
-      - name: Run Playwright Tests
+      - name: Run Playwright Tests (QAWOLF2)
+        shell: bash
         run: |
           if [ -n "${{ github.event.inputs.test-file }}" ]; then
             npx playwright test workflows/qawolf2/${{ github.event.inputs.test-file }}
@@ -102,7 +113,7 @@ jobs:
             npx playwright test --project=qawolf2
           fi
 
-      - name: Upload test results
+      - name: Upload test results (QAWOLF2)
         if: always()
         uses: actions/upload-artifact@v4
         with:

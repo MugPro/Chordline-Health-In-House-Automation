@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as helpers from '../../../../helpers/Node20Helpers.js';
 //import { env } from '../../../../environments/qawolf2.env.js';
-import {logIn, logIn2} from "../../../../helpers/Node20Helpers.js";
+import {logIn} from "../../../../helpers/Node20Helpers.js";
 
 let page;
 
@@ -34,8 +34,14 @@ test('Create BH Outpatient Automation Rule', async () => {
 
 
 
-   ({ page } = await logIn2({ loginID, slowMo: 700}));
+   // ({ page } = await logIn({ loginID, password, slowMo: 700, url: env.DEFAULT_URL_2 }));
 
+    ({ page } = await logIn({
+        loginID,
+        password: process.env.DEFAULT_PASS_OCT_2025,
+        slowMo: 700,
+        url: process.env.DEFAULT_URL_2
+    }));
 
 
     //--------------------------------

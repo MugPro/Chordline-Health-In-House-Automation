@@ -28,8 +28,10 @@ test.describe('Unable to Update Default Text Area Field Text', () => {
         //--------------------------------
         const screenTemplateGroup = 'Medical Review - BH OBS';
         const defaultTemplate = 'Medical Review - OBS - BH - Default';
-        const screenName = `${defaultTemplate} - copy`;
+        const screenName = `${defaultTemplate} - copy2`;
         const loginID = 'UnableToDefault';
+
+        const customScreenName = screenName;
 
         const { page } = await logIn({ loginID });
 
@@ -49,7 +51,8 @@ test.describe('Unable to Update Default Text Area Field Text', () => {
         await copyDefaultScreenTemplate(page, {
             screenTemplateGroup,
             defaultTemplate,
-            screenName,
+            //screenName,
+            customScreenName: customScreenName,
             //dontClose: true,
         });
 

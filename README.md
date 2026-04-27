@@ -17,6 +17,9 @@ The goal is to own our automation end-to-end, improve maintainability, reduce ex
 - Provide clear reporting, artifacts, and video recordings
 - Create a maintainable and extensible foundation for future automation
 
+- qawolf2 tests are executed locally (headed or headless) because the environment enforces execution‑context trust that CI runners do not satisfy.
+- CI coverage is provided via staging, where automation is supported.
+
 ---
 
 ## Tech Stack

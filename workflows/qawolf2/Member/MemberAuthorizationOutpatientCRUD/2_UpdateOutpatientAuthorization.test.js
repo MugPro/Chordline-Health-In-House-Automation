@@ -90,7 +90,7 @@ test('Update Outpatient Authorization', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
-    const loginID = 'OutpatientCRUD';
+    const loginID = 'AdvancedSearch';
     const password = process.env.DEFAULT_PASS_OCT_2025;
 
     const member = {

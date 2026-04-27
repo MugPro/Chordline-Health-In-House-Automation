@@ -15,6 +15,8 @@ test('Create BH Outpatient Automation Rule', async () => {
 
     const ruleNameEdited = `${ruleName} - edit`;
 
+    const password = process.env.DEFAULT_PASS_OCT_2025;
+
 
     /*
 
@@ -32,7 +34,7 @@ test('Create BH Outpatient Automation Rule', async () => {
 
 
 
-    ({ page } = await logIn({ loginID, slowMo: 700, url: env.DEFAULT_URL_2 }));
+    ({ page } = await logIn({ loginID, password, slowMo: 700, url: env.DEFAULT_URL_2 }));
 
     //--------------------------------
     // Act

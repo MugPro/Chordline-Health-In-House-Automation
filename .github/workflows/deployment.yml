@@ -18,10 +18,10 @@ on:
         required: false
         default: ''
 
+################################################################################
+# STAGING – GitHub‑hosted Linux (bash)
+################################################################################
 jobs:
-  # -----------------------------
-  # STAGING (GitHub-hosted Linux)
-  # -----------------------------
   test-staging:
     if: github.event.inputs.env == 'staging'
     runs-on: ubuntu-latest
@@ -33,11 +33,8 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Install Playwright
-        run: npx playwright install --with-deps chromium
+      - run: npm install
+      - run: npx playwright install --with-deps chromium
 
       - name: Set Environment Variables (STAGING)
         shell: bash
@@ -63,17 +60,15 @@ jobs:
             npx playwright test --project=staging
           fi
 
-      - name: Upload test results (STAGING)
+      - uses: actions/upload-artifact@v4
         if: always()
-        uses: actions/upload-artifact@v4
         with:
           name: test-results-deployment-staging
           path: test-results/
 
-
-  # ----------------------------------
-  # QAWOLF2 (Self-hosted Windows runner)
-  # ----------------------------------
+  ################################################################################
+  # QAWOLF2 – Self‑hosted Windows (PowerShell)
+  ################################################################################
   test-qawolf2:
     if: github.event.inputs.env == 'qawolf2'
     runs-on: [self-hosted, qawolf2]
@@ -85,37 +80,35 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Install Playwright
-        run: npx playwright install
+      - run: npm install
+      - run: npx playwright install
 
       - name: Set Environment Variables (QAWOLF2)
-        shell: bash
+        shell: pwsh
         run: |
-          echo "DEFAULT_URL=${{ secrets.QAWOLF2_DEFAULT_URL }}" >> $GITHUB_ENV
-          echo "DEFAULT_URL_2=${{ secrets.QAWOLF2_DEFAULT_URL_2 }}" >> $GITHUB_ENV
-          echo "DEFAULT_LOGIN=${{ secrets.QAWOLF2_DEFAULT_LOGIN }}" >> $GITHUB_ENV
-          echo "DEFAULT_PASSWORD=${{ secrets.QAWOLF2_DEFAULT_PASSWORD }}" >> $GITHUB_ENV
-          echo "DEFAULT_PASS_JUNE_2025=${{ secrets.QAWOLF2_DEFAULT_PASS_JUNE_2025 }}" >> $GITHUB_ENV
-          echo "DEFAULT_PASS_OCT_2025=${{ secrets.QAWOLF2_DEFAULT_PASS_OCT_2025 }}" >> $GITHUB_ENV
-          echo "QAWA_API_KEY=${{ secrets.QAWOLF2_QAWA_API_KEY }}" >> $GITHUB_ENV
+          Add-Content $env:GITHUB_ENV "DEFAULT_URL=${{ secrets.QAWOLF2_DEFAULT_URL }}"
+          Add-Content $env:GITHUB_ENV "DEFAULT_URL_2=${{ secrets.QAWOLF2_DEFAULT_URL_2 }}"
+          Add-Content $env:GITHUB_ENV "DEFAULT_LOGIN=${{ secrets.QAWOLF2_DEFAULT_LOGIN }}"
+          Add-Content $env:GITHUB_ENV "DEFAULT_PASSWORD=${{ secrets.QAWOLF2_DEFAULT_PASSWORD }}"
+          Add-Content $env:GITHUB_ENV "DEFAULT_PASS_JUNE_2025=${{ secrets.QAWOLF2_DEFAULT_PASS_JUNE_2025 }}"
+          Add-Content $env:GITHUB_ENV "DEFAULT_PASS_OCT_2025=${{ secrets.QAWOLF2_DEFAULT_PASS_OCT_2025 }}"
+          Add-Content $env:GITHUB_ENV "QAWA_API_KEY=${{ secrets.QAWOLF2_QAWA_API_KEY }}"
 
       - name: Run Playwright Tests (QAWOLF2)
-        shell: bash
+        shell: pwsh
         run: |
-          if [ -n "${{ github.event.inputs.test-file }}" ]; then
-            npx playwright test workflows/qawolf2/${{ github.event.inputs.test-file }}
-          elif [ -n "${{ github.event.inputs.workflow-folder }}" ]; then
-            npx playwright test workflows/qawolf2/${{ github.event.inputs.workflow-folder }}
-          else
+          if ($env:GITHUB_EVENT_INPUTS_TEST_FILE) {
+            npx playwright test "workflows/qawolf2/$env:GITHUB_EVENT_INPUTS_TEST_FILE"
+          }
+          elseif ($env:GITHUB_EVENT_INPUTS_WORKFLOW_FOLDER) {
+            npx playwright test "workflows/qawolf2/$env:GITHUB_EVENT_INPUTS_WORKFLOW_FOLDER"
+          }
+          else {
             npx playwright test --project=qawolf2
-          fi
+          }
 
-      - name: Upload test results (QAWOLF2)
+      - uses: actions/upload-artifact@v4
         if: always()
-        uses: actions/upload-artifact@v4
         with:
           name: test-results-deployment-qawolf2
           path: test-results/

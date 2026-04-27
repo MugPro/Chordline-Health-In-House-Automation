@@ -550,7 +550,7 @@ test('UpdateObservationAuthorization', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
-    const loginID = 'ObservationCRUD';
+    const loginID = 'AdvancedSearch';
     const password = process.env.DEFAULT_PASS_OCT_2025;
     const member = {
         name: 'Blackwell, Megan',

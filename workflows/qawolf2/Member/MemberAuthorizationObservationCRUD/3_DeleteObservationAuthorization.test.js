@@ -220,7 +220,7 @@ export async function cleanupTabOnMembersPage(page, options = {}) {
 }
 
 test('Delete Outpatient and other Authorizations', async () => {
-    const loginID = 'ObservationCRUD';
+    const loginID = 'AdvancedSearch';
     const password = process.env.DEFAULT_PASS_OCT_2025;
     const member = { name: 'Blackwell, Megan' };
     const tab = 'Authorizations';

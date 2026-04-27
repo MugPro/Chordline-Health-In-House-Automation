@@ -10,7 +10,7 @@ test('Create BH Outpatient Automation Rule', async () => {
     // Arrange
     //--------------------------------
     //const loginID = `BHOutpatientAutomationRule`;
-    const loginID = `LetterCRUD`;
+    const loginID = `ObservationCRUD`;
     const ruleName = `BH Outpatient Rule ${Math.floor(1000 + Math.random() * 9000)}`;
 
     const ruleNameEdited = `${ruleName} - edit`;

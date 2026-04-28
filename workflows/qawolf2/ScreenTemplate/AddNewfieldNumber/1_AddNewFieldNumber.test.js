@@ -90,34 +90,5 @@ test('AddNewFieldNumber', async () => {
         page.getByText(`Medical Review From:`, { exact: true })
     ).toBeVisible();
 
-    //--------------------------------
-    // Clean-up
-    //--------------------------------
 
-    // Close Preview modal if open
-    try {
-        await page.getByRole('button', { name: ' Close' }).click();
-    } catch {}
-
-    // Close Edit Screen modal safely
-    const editModal = page.getByLabel('Edit Screen - Internal');
-    if (await editModal.count() > 0) {
-        const closeButtons = editModal.getByRole('button', { name: 'Close', exact: true });
-        if (await closeButtons.count() > 0) {
-            await closeButtons.first().click();
-            try {
-                await editModal.waitFor({ state: 'hidden', timeout: 7000 });
-            } catch {}
-        }
-    }
-
-    await waitForLoader(page);
-
-    // Fallback close
-    try {
-        const fallbackClose = page.getByRole('button', { name: 'Close', exact: true }).first();
-        if (await fallbackClose.count() > 0) {
-            await fallbackClose.click();
-        }
-    } catch {}
 });

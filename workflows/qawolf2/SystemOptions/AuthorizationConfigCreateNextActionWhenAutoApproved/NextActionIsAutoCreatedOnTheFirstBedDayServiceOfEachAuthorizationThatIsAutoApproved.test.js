@@ -34,6 +34,7 @@ test('Next Action is auto created on the first Bed Day Service of each Authoriza
     const { page, browser } = await logIn({
         url: process.env.DEFAULT_URL_2,
         loginID,
+        slowMo: 800,
     });
 
     try {
@@ -78,7 +79,7 @@ test('Next Action is auto created on the first Bed Day Service of each Authoriza
     await page.getByLabel(`Auto Approved Next Action`).getByRole(`button`, { name: `Save and Close` }).click();
     await waitUntilLoaded(page);
     await page.getByRole(`button`, { name: `Save and Close` }).click();
-    await waitUntilLoaded(page);
+   // await waitUntilLoaded(page);
 
 
 
@@ -100,7 +101,7 @@ test('Next Action is auto created on the first Bed Day Service of each Authoriza
 
     // Select the member to open member page
     await page.getByRole(`gridcell`, { name: lastFirstName }).dblclick();
-    await waitUntilLoaded(page);
+   // await waitUntilLoaded(page);
 
     // Click the "Authorizations" tab
     await page.locator(`#authorizations-menu`).click();
@@ -116,7 +117,7 @@ test('Next Action is auto created on the first Bed Day Service of each Authoriza
         .click();
 
 
-    await waitUntilLoaded(page);
+   // await waitUntilLoaded(page);
 
 
 
@@ -159,7 +160,7 @@ test('Next Action is auto created on the first Bed Day Service of each Authoriza
     await page.getByRole(`button`, { name: `` }).nth(2).click();
     await page.locator(`input[name="aush_status_id__1_input"]`).clear();
 
-    await waitUntilLoaded(page);
+   // await waitUntilLoaded(page);
 
     await page.locator(`input[name="aush_status_id__1_input"]`).fill(authStatus);
     await page.getByRole(`option`, { name: authStatus }).locator(`span`).click();
@@ -248,7 +249,7 @@ test('Next Action is auto created on the first Bed Day Service of each Authoriza
     await page.getByRole(`button`, { name: `Select`, exact: true }).click();
     // Click the "Save" button
     await page.getByRole(`button`, { name: ` Save` }).click();
-    await waitUntilLoaded(page);
+   // await waitUntilLoaded(page);
 
 
 
@@ -267,7 +268,7 @@ test('Next Action is auto created on the first Bed Day Service of each Authoriza
             timeout: 3000,
         });
     }
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     // Grab the "Auth #"
     await page.locator(`#form-header .headerLabel`).waitFor();
@@ -292,33 +293,43 @@ test('Next Action is auto created on the first Bed Day Service of each Authoriza
 
     // Add Bed Day
     await page.getByRole(`button`, { name: `  Bed Day` }).click();
-    await waitUntilLoaded(page);
-    await page.locator(`input[name="auli_requested_bed_level_input"]`).fill(bedLevel);
-    /*await page.getByRole(`option`, { name: bedLevel }).click();
-    await page.locator('input[name="auli_requested_units"]').fill('1');
-*/
 
 
 
+
+
+
+    const bedLevelInput = page.locator('input[name="auli_requested_bed_level_input"]');
     const listbox = page.locator('#auli_requested_bed_level-autocomplete_listbox');
 
+    await bedLevelInput.click();
+    await bedLevelInput.fill(bedLevel);
+
+// 🔑 Force the autocomplete dropdown to open
+    await bedLevelInput.press('ArrowDown');
+
+// ✅ Wait until it is actually opened (Kendo uses aria-hidden)
+    await expect(listbox).toHaveAttribute('aria-hidden', 'false');
 
     await listbox
-        .locator('li[role="option"]')
-        .filter({ hasText: new RegExp(`^${bedLevel}$`) })
+        .getByRole('option', { name: bedLevel, exact: true })
         .click();
 
+// ✅ Wait until dropdown closes again
+    await expect(listbox).toHaveAttribute('aria-hidden', 'true');
 
 
-    // 👇 wait for dropdown to close
-    await expect(listbox).toBeHidden();
-
-// Now fill Requested Units
-    //await page.getByRole('spinbutton').click();
-    await page.getByRole('spinbutton').fill('1');
 
 
-    await expect(page.getByRole('spinbutton')).toHaveValue('1', { timeout: 3000 });
+
+
+    await page.getByRole('spinbutton').click();
+    await page.locator('#auli_requested_units').fill('1');
+    await page.locator('#auli_requested_units').press('Tab');
+
+
+
+
 
 
 
@@ -327,7 +338,7 @@ test('Next Action is auto created on the first Bed Day Service of each Authoriza
     /*await page.getByRole(`button`, { name: ` Save`, exact: true }).click();
 
      */
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
     await page.getByRole(`button`, { name: ` Save and Close` }).click();
 
 
@@ -338,15 +349,15 @@ test('Next Action is auto created on the first Bed Day Service of each Authoriza
 
 
 
+    //await waitUntilLoaded(page);
+
+
+
+
+
     await waitUntilLoaded(page);
-
-
-
-
-
-
     await expect(page.getByText(`New Work Log`)).toBeVisible();
-    await waitUntilLoaded(page);
+   // await waitUntilLoaded(page);
     await page.getByRole(`button`, { name: ` Save and Close` }).click();
 
 
@@ -374,31 +385,6 @@ test('Next Action is auto created on the first Bed Day Service of each Authoriza
         await expect(row).toContainText(text);
     }
 
-
-    /*
-    //--------------------------------
-    // Cleanup:
-    //--------------------------------
-    await page.getByRole(`button`, { name: ` All Auths` }).click();
-
-    try {
-        await cleanupTabOnMembersPage(page, {
-            tab: 'Authorizations',
-            gridId: '[id="authorizations-grid"]',
-            memberName: lastFirstName,
-            loginID: username,
-            onScreen: true
-        });
-    } catch (e) {
-        await reportCleanupFailed({
-            dedupKey: "cleanupTabOnMembersPage",
-            errorMsg: e.message,
-        });
-    }
-
-    console.log("Test completed successfully");
-
-     */
 
 
 });

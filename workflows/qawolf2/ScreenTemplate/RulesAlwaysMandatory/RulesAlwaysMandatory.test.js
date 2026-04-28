@@ -17,6 +17,7 @@ test('RulesAlwaysMandatory', async () => {
     const { page } = await helpers.logIn({
         url,
         loginID,
+        slowMo: 400,
         password: process.env.DEFAULT_PASS_OCT_2025,
     });
 
@@ -85,7 +86,7 @@ test('RulesAlwaysMandatory', async () => {
     // Verify required asterisk is visible
     await expect(
         saveRadioboxElement.locator(`[class*="required-asterisk"]`)
-    ).toBeVisible({ timeout: 3000 });
+    ).toBeVisible();
 
     // Screenshot comparison
     await expect(
@@ -95,31 +96,5 @@ test('RulesAlwaysMandatory', async () => {
         { maxDiffPixelRatio: 0.5 }
     );
 
-    //--------------------------------
-    // Clean-up
-    //--------------------------------
 
-    // Close Preview
-    try {
-        await page.getByRole(`button`, { name: ` Close` }).click();
-    } catch {}
-
-    // Close Edit Screen modal safely
-    const editModal = page.getByLabel(`Edit Screen - Internal`);
-    if (await editModal.count() > 0) {
-        const closeBtn = editModal.getByRole(`button`, { name: `Close`, exact: true });
-        if (await closeBtn.count() > 0) {
-            await closeBtn.first().click();
-        }
-    }
-
-    /*
-    // Final cleanup
-    await helpers.cleanupScreenTemplateCopy(page, {
-        screenName,
-        screenTemplateGroup,
-        defaultTemplate,
-    });
-
-     */
 });

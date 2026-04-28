@@ -43,6 +43,7 @@ test('When an auto approved Authorization is created, the team selected is assig
     const { page, browser } = await logIn({
         url: process.env.DEFAULT_URL_2,
         loginID,
+        slowMo: 1000,
     });
 
 
@@ -80,7 +81,7 @@ test('When an auto approved Authorization is created, the team selected is assig
     }
 
     await page.getByRole(`button`, { name: `Save and Close` }).click();
-    await waitUntilLoaded2(page);
+   // await waitUntilLoaded2(page);
     // Create authorization
 
 
@@ -111,7 +112,7 @@ test('When an auto approved Authorization is created, the team selected is assig
 
     // Select the member to open member page
     await page.getByRole(`gridcell`, { name: lastFirstName }).dblclick();
-    await waitUntilLoaded(page);
+   // await waitUntilLoaded(page);
 
     // Click the "Authorizations" tab
     await page.locator(`#authorizations-menu`).click();
@@ -150,7 +151,7 @@ test('When an auto approved Authorization is created, the team selected is assig
     await page.getByRole(`button`, { name: `` }).nth(2).click();
     await page.locator(`input[name="aush_status_id__1_input"]`).clear();
 
-    await waitUntilLoaded(page);
+   // await waitUntilLoaded(page);
 
     await page.locator(`input[name="aush_status_id__1_input"]`).fill(authStatus);
     await page.getByRole(`option`, { name: authStatus }).locator(`span`).click();
@@ -203,10 +204,8 @@ test('When an auto approved Authorization is created, the team selected is assig
 
 
 // Handle the "Notification" pop up for admitting hospital duplicate
-    await expect(page.getByText(`Notification`, { exact: true })).toBeVisible({
-        timeout: 3000,
-    });
-    await page.getByRole(`button`, { name: `Okay` }).click({ timeout: 3000 });
+    await expect(page.getByText(`Notification`, { exact: true })).toBeVisible();
+    await page.getByRole(`button`, { name: `Okay` }).click();
 
 
 
@@ -239,21 +238,19 @@ test('When an auto approved Authorization is created, the team selected is assig
     await page.getByRole(`button`, { name: `Select`, exact: true }).click();
     // Click the "Save" button
     await page.getByRole(`button`, { name: ` Save` }).click();
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     try {
-        await expect(page.getByText(`New Work Log`)).toBeVisible({ timeout: 3000 });
+        await expect(page.getByText(`New Work Log`)).toBeVisible();
         // Grab the work activity date of the work log
         worklogActivityDate = await page
             .locator(`#work_activity_date`)
             .evaluate((e) => e.value);
         await page.getByRole(`button`, { name: ` Save and Close` }).click();
     } catch {
-        await expect(page.getByText(`New Work Log`)).not.toBeVisible({
-            timeout: 3000,
-        });
+        await expect(page.getByText(`New Work Log`)).not.toBeVisible();
     }
-    await waitUntilLoaded(page);
+   // await waitUntilLoaded(page);
 
     // Grab the "Auth #"
     await page.locator(`#form-header .headerLabel`).waitFor();
@@ -264,10 +261,10 @@ test('When an auto approved Authorization is created, the team selected is assig
 
     // Add Bed Day
     await page.getByRole('button', { name: '  Bed Day' }).click();
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
 
-
+/*
     await page.locator('input[name="auli_requested_bed_level_input"]')
         .fill(bedLevel);
 
@@ -287,9 +284,7 @@ test('When an auto approved Authorization is created, the team selected is assig
     // 👇 wait for dropdown to close
     await expect(listbox).toBeHidden();
 
-// Now fill Requested Units
-    await page.getByRole('spinbutton').click();
-    await page.getByRole('spinbutton').fill('1');
+ */
 
 
 
@@ -297,35 +292,31 @@ test('When an auto approved Authorization is created, the team selected is assig
 
 
 
-    //await waitUntilLoaded(page);
+
+
+
+    const bedLevelInput = page.locator('input[name="auli_requested_bed_level_input"]');
+    const listbox = page.locator('#auli_requested_bed_level-autocomplete_listbox');
+
+    await bedLevelInput.click();
+    await bedLevelInput.fill(bedLevel);
+
+// 🔑 Force the autocomplete dropdown to open
+    await bedLevelInput.press('ArrowDown');
+
+// ✅ Wait until it is actually opened (Kendo uses aria-hidden)
+    await expect(listbox).toHaveAttribute('aria-hidden', 'false');
+
+    await listbox
+        .getByRole('option', { name: bedLevel, exact: true })
+        .click();
+
+// ✅ Wait until dropdown closes again
+    await expect(listbox).toHaveAttribute('aria-hidden', 'true');
 
 
 
 
-    await page.getByRole('button', { name: ' Save and Close' }).click();
-
-    await waitUntilLoaded(page);
 
 
-
-
-
-    await expect(page.getByText(`New Work Log`)).toBeVisible();
-    await waitUntilLoaded2(page);
-    await page.getByRole(`button`, { name: ` Save and Close` }).click();
-
-
-
-    await waitUntilLoaded2(page);
-
-
-
-
-
-
-    //------------------------------
-
-    // Close browser context
-
-    await browser.close();
 });

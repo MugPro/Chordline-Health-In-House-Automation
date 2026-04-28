@@ -18,6 +18,7 @@ test('RulesReadOnlyAlwaysReadOnly', async () => {
     const { page } = await helpers.logIn({
         url,
         loginID,
+        slowMo: 400,
         password: process.env.DEFAULT_PASS_OCT_2025,
     });
 
@@ -96,24 +97,6 @@ test('RulesReadOnlyAlwaysReadOnly', async () => {
     await expect(
         page.getByRole(`radio`, { name: res2, exact: true })
     ).toBeDisabled();
-
-    //--------------------------------
-    // Clean-up
-    //--------------------------------
-
-    // Close Preview
-    try {
-        await page.getByRole(`button`, { name: ` Close` }).click();
-    } catch {}
-
-    // Close Edit Screen modal safely
-    const editModal = page.getByLabel(`Edit Screen - Internal`);
-    if (await editModal.count() > 0) {
-        const closeBtn = editModal.getByRole(`button`, { name: `Close`, exact: true });
-        if (await closeBtn.count() > 0) {
-            await closeBtn.first().click();
-        }
-    }
 
 
 

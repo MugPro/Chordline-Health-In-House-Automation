@@ -22,6 +22,69 @@ async function maybeHandleNotificationOk(
     return true;
 }
 
+
+
+
+
+
+async function NewCleanupNotesFromMember(page, options = {}) {
+    const onMemberPage = options.onMemberPage || false;
+    const loginID = options.loginID;
+    const memberName = options.memberName;
+
+    if (!onMemberPage) {
+        // Navigate to Home > Members
+        await page.getByText(`Home`, { exact: true }).click();
+        await page.locator(`#home-tabs-tab-4`).getByText(`Members`).click();
+
+        // Fill in memberName and press enter
+        await page.getByRole(`textbox`, { name: `Search...` }).fill(memberName);
+        await page.keyboard.press("Enter");
+
+        // Double click the member name to open the member page
+        await page.getByRole(`gridcell`, { name: memberName }).dblclick();
+    }
+
+    // Navigate to the Notes section
+    await page.locator(`[id="shortcuts"] [data-value="notes-anchor"]`).click();
+
+    // Fill in the search bar for Notes section and hit enter
+    await page
+        .locator(`#notes-anchor`)
+        .getByRole(`textbox`, { name: `Search...` })
+        .fill(`${loginID}`);
+    await page.keyboard.press("Enter");
+    //await waitUntilLoaded(page);
+
+    let count = await page
+        .locator(`[id="notes-child-grid"] table tbody tr:has-text("${loginID}")`)
+        .count();
+
+    for (let i = 0; i < count; i++) {
+        // Hover over the note and click the delete button
+        await page
+            .locator(`[id="notes-child-grid"] table tbody tr:has-text("${loginID}")`)
+            .first()
+            .hover();
+        await page
+            .locator(
+                `[id="notes-child-grid"] table tbody tr:has-text("${loginID}") [title="Delete"]`,
+            )
+            .first()
+            .click();
+
+        // Click the "Yes" button
+        await page.getByRole(`button`, { name: `Yes` }).click();
+        //await waitUntilLoaded(page);
+    }
+}
+
+
+
+
+
+
+
 test.describe('Work Log Prompt – Member Detail: Note Records', () => {
     let browser, context, page;
 
@@ -30,14 +93,11 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
         ({ browser, context, page } = await logIn({
             url: process.env.DEFAULT_URL_2,
             loginID,
+            slowMo: 600,
             password: process.env.DEFAULT_PASS_OCT_2025,
         }));
     });
 
-    test.afterEach(async () => {
-        await context?.close();
-        await browser?.close();
-    });
 
     test('Work Logs appear on Note create and edit', async () => {
         //--------------------------------
@@ -49,21 +109,6 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
         const reason = `Member Activity`; // ["Member Activity", "Member Question", "Provider Question"]
         const noteSummary = `Note Record Created ${Date.now()}`;
         const noteSummaryEdit = `Note Record Edited ${Date.now()}`;
-
-        //--------------------------------
-        // Pre-cleanup (remove existing notes & related worklogs by this user)
-        //--------------------------------
-        try {
-            await cleanupNotesFromMember(page, {
-                loginID,
-                memberName,
-            });
-        } catch (e) {
-            await reportCleanupFailed({
-                dedupKey: 'cleanupNotesFromMember',
-                errorMsg: e.message,
-            });
-        }
 
         //--------------------------------
         // Act:
@@ -85,62 +130,62 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
             await page.locator('#WorkLogPrompts_Note_Yes').check();
         }
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
         // Save & Close System Options
         await page.getByRole('button', { name: 'Save and Close' }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Navigate to Home > Members
         await page.getByText('Home', { exact: true }).click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         await page.locator('#home-tabs-tab-4').getByText('Members').click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Search & open member details
         await page.getByRole('textbox', { name: 'Search...' }).fill(memberName);
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         await page.keyboard.press('Enter');
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         await page.getByRole('gridcell', { name: memberName }).dblclick();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Go to Notes via shortcut
         await page.locator('[id="shortcuts"] [data-value="notes-anchor"]').click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // + Note
         await page.getByRole('button', { name: ' \xa0Note' }).click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Verify "New Notes" modal visible
         await expect(page.getByText('New Notes')).toBeVisible();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Status
         await page.locator('input[name="note_status_id_input"]').fill(status1);
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         await page.getByRole('option', { name: status1 }).click();
 
         // Reason
         await page.locator('input[name="note_reason_id_input"]').fill(reason);
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         await page.getByRole('option', { name: reason }).click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Note Summary (iframe)
         const createFrame = page
@@ -148,27 +193,27 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
             .first();
         await createFrame.locator('#note_detail').fill(noteSummary);
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Save & Close Note (should trigger Work Log)
         await page.getByRole('button', { name: ' Save and Close' }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         //--------------------------------
         // Assert: Work Log after create
         //--------------------------------
         await expect(page.getByText('New Work Log')).toBeVisible();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // capture WL timestamp
         const workActDate = await page.locator('#work_activity_date').evaluate(e => e.value);
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Close WL
         await page.getByRole('button', { name: ' Save and Close' }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         //--------------------------------
         // Open the created Note & Edit summary
@@ -178,10 +223,10 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
             .locator('#notes-anchor')
             .getByRole('textbox', { name: 'Search...' })
             .fill(`${loginID} Qaw`);
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
         await page.keyboard.press('Enter');
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Double click the row containing noteSummary + loginID
         await page
@@ -189,11 +234,11 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
                 `[id="notes-child-grid"] table tbody tr:has-text("${noteSummary}"):has-text("${loginID}")`
             )
             .dblclick();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Edit Note
         await page.getByLabel('Note #').getByRole('button', { name: ' Edit' }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Re-acquire the edit frame (modal content may refresh)
         const editFrame = page
@@ -201,7 +246,7 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
             .first();
         await editFrame.locator('#note_detail').fill(noteSummaryEdit);
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Click anchor to enable Save button
         await page
@@ -210,46 +255,46 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
             .getByText('Next Actions')
             .click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Save & Close edit (should trigger Work Log)
         await page.getByRole('button', { name: ' Save and Close' }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         //--------------------------------
         // Assert: Work Log after edit
         //--------------------------------
         await expect(page.getByText('New Work Log')).toBeVisible();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // capture WL timestamp
         const workActDate2 = await page.locator('#work_activity_date').evaluate(e => e.value);
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Close WL
         await page.getByRole('button', { name: ' Save and Close' }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         //--------------------------------
         // Verify on Home > Work Logs
         //--------------------------------
         await page.getByText('Home', { exact: true }).click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         await page.getByRole('tab', { name: 'Work Logs' }).locator('span').click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         await page.getByRole('textbox', { name: 'Search...' }).fill(loginID);
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         await page.keyboard.press('Enter');
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Expect exactly two WLs for this user
         await expect(
@@ -269,16 +314,16 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
             )
         ).toBeVisible();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
         //--------------------------------
         // Cleanup:
         //--------------------------------
         await page.locator('#member-tab-name').click()
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         try {
-            await cleanupNotesFromMember(page, {
+            await NewCleanupNotesFromMember(page, {
                 onMemberPage: true,
                 loginID,
                 memberName,

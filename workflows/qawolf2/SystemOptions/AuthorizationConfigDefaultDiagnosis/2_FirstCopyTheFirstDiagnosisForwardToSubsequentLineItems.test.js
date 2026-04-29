@@ -243,7 +243,5 @@ test.describe('Authorization Config - Default Diagnosis = First Diagnosis', () =
             page.locator('#diagnosis-anchor div').filter({ hasText: 'Diagnosis' })
         ).toBeVisible();
 
-        // Close the Bed Day dialog (if desired)
-        await page.getByRole('button', { name: ' Close' }).click();
     });
 });

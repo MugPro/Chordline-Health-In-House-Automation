@@ -22,6 +22,93 @@ async function maybeHandleNotificationOk(
     return true;
 }
 
+
+
+
+
+
+
+
+
+async function NewCleanupTabOnMembersPage(page, options = {}) {
+    const tab = options.tab || `Compliance`;
+    const gridId = options.gridId || `[id="compliance-grid"]`; // [`[id="authorizations-grid"]`, `[id="member-coverage-grid"]` ]
+    const memberName = options.memberName || `Blackwell, Megan`;
+    const memberId = options.memberId || ``;
+    const loginID = options.loginID;
+    const onScreen = options.onScreen || false;
+
+    //await waitUntilLoaded(page);
+
+    if (!onScreen) {
+        // Navigate to Home > Members
+        await page.getByText(`Home`, { exact: true }).click();
+        await page.locator(`#home-tabs-tab-4`).getByText(`Members`).click();
+
+        // Fill search bar
+        await page.getByRole(`textbox`, { name: `Search...` }).fill(memberName);
+        await page.keyboard.press("Enter");
+
+        //await waitUntilLoaded(page);
+
+        // Double click the member name row
+        try {
+            await page.getByRole(`gridcell`, { name: memberName }).dblclick();
+            //await waitUntilLoaded(page);
+        } catch {
+            await page.getByRole(`gridcell`, { name: memberId }).dblclick();
+            //await waitUntilLoaded(page);
+        }
+
+        // Navigate to tab on members page
+        await page
+            .getByLabel(memberName)
+            .getByText(tab, { exact: true })
+            .first()
+            .click();
+    }
+
+    // Grab the count of rows visible that are created by our user
+    let count = await page
+        .locator(`${gridId} table tbody tr:visible:has-text("${loginID}")`)
+        .count();
+
+   // await waitUntilLoaded(page);
+
+    for (let i = 0; i < count; i++) {
+        // Hover the first row created by our user and click the trash icon
+        await page
+            .locator(`${gridId} table tbody tr:visible:has-text("${loginID}")`)
+            .first()
+            .hover();
+
+       // await waitUntilLoaded(page);
+
+        await page
+            .locator(
+                `${gridId} table tbody tr:visible:has-text("${loginID}") [title="Delete"]`,
+            )
+            .first()
+            .click();
+
+        //await waitUntilLoaded(page);
+
+        // Click Yes button on the warning pop up
+        await page.getByRole(`button`, { name: `Yes` }).click();
+        //await waitUntilLoaded(page);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
 test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () => {
     let browser, context, page;
 
@@ -29,13 +116,9 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
         const loginID = 'WorkLogPMedica';
         ({ browser, context, page } = await logIn({
             url: process.env.DEFAULT_URL_2,
-            loginID, // intentionally no password per your snippet
+            loginID,
+            slowMo: 1000,// intentionally no password per your snippet
         }));
-    });
-
-    test.afterEach(async () => {
-        await context?.close();
-        await browser?.close();
     });
 
     test('Work Logs appear on Medication add, edit, and reconciliation', async () => {
@@ -55,7 +138,7 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
         // Pre-cleanup (Medications + User Work Logs under Member Detail)
         //--------------------------------
         try {
-            await cleanupTabOnMembersPage(page, {
+            await NewCleanupTabOnMembersPage(page, {
                 tab: 'Medications',
                 gridId: '[id="medications-grid"]',
                 memberName,
@@ -72,7 +155,7 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
             // Open Work Logs shortcut
             await page.locator('[id="shortcuts"] [data-value="worklogs-anchor"]').click();
 
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
             // If search is visible, delete existing user worklogs for this user
             const searchVisible = await page
@@ -81,7 +164,7 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
                 .isVisible();
 
 
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
 
             if (searchVisible) {
                 await page
@@ -89,14 +172,14 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
                     .getByRole('textbox', { name: 'Search...' })
                     .fill(loginID);
                 await page.keyboard.press('Enter');
-                await waitUntilLoaded(page);
+                //await waitUntilLoaded(page);
 
                 const count = await page
                     .locator('[id="worklogs-child-grid"] table tbody tr')
                     .count();
 
 
-                await waitUntilLoaded(page);
+               // await waitUntilLoaded(page);
 
                 for (let i = 0; i < count; i++) {
                     // Delete first row matching the user each time
@@ -113,10 +196,10 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
                         .first()
                         .click();
 
-                    await waitUntilLoaded(page);
+                    //await waitUntilLoaded(page);
 
                     await page.getByRole('button', { name: 'Yes' }).click();
-                    await waitUntilLoaded(page);
+                    //await waitUntilLoaded(page);
                 }
             }
         } catch (e) {
@@ -136,7 +219,7 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
         // Click "Configuration" tab
         await page.getByText('Configuration', { exact: true }).click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Scroll "Work Log Prompts" into view
         await page.getByText('Work Log Prompts').scrollIntoViewIfNeeded();
@@ -149,63 +232,72 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
         }
 
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Save and Close System Options
         await page.getByRole('button', { name: 'Save and Close' }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Navigate to Home > Members
         await page.getByText('Home', { exact: true }).click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         await page.locator('#home-tabs-tab-4').getByText('Members').click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Search for member and open
         await page.getByRole('textbox', { name: 'Search...' }).fill(memberName);
         await page.keyboard.press('Enter');
 
-        await waitUntilLoaded(page);
+       // await waitUntilLoaded(page);
 
         await page.getByRole('gridcell', { name: memberName }).dblclick();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Go to Medications tab
         await page.locator('#medications-menu').click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         //--------------------------------
         // + Medication (Add)
         //--------------------------------
         await page.locator('#new-medication-button').click();
-        await waitUntilLoaded(page);
-
-        // Medication: Advil 200 mg/1 CAPSULE, LIQUID FILLED
-        await page.locator('input[name="pmed_medication_id_input"]').fill('Advil');
 
         await waitUntilLoaded(page);
 
-        await page.locator(':text("Advil 200 mg/1 CAPSULE, LIQUID FILLED")').last().click();
+        // Fill in a medication and select option
+        await page
+            .locator(`input[name="pmed_medication_id_input"]`)
+            .fill(`Advil`);
+        await page
+            .locator(`:text("Advil 200 mg/1 CAPSULE, LIQUID FILLED")`)
+            .last()
+            .click();
 
-        await waitUntilLoaded(page);
+
+
+
+
+
+
+        //await waitUntilLoaded(page);
 
         // Dose
         await page.locator('#pmed_dose').fill('200 mg');
 
-        await waitUntilLoaded(page);
+       // await waitUntilLoaded(page);
 
         // Frequency: BID
         await page.locator('input[name="pmed_frequency_id_input"]').fill('BID');
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         await page.getByRole('option', { name: 'BID' }).click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Status: Taking
         await page
@@ -215,84 +307,84 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
             .nth(1)
             .click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         await page.getByRole('option', { name: 'Taking', exact: true }).click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Save Medication → triggers Work Log
         await page.getByRole('button', { name: ' Save' }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Work Log visible
         await expect(page.getByText('New Work Log')).toBeVisible();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Capture WL timestamp
         const workActDate = await page.locator('#work_activity_date').evaluate(e => e.value);
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Close the Work Log
         await page.getByRole('button', { name: ' Save and Close' }).click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Capture Medication #
         const medNum = await page.getByText('Medication #').innerText();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         //--------------------------------
         // Edit Medication (Special Instructions) → new WL
         //--------------------------------
         await page.getByRole('button', { name: ' Edit' }).click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         await page.locator('#pmed_special_instructions_for_prn').fill(specialInstructions);
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         await page.getByRole('button', { name: ' Save' }).click();
 
-        await waitUntilLoaded(page);
+       // await waitUntilLoaded(page);
 
         // Work Log visible
         await expect(page.getByText('New Work Log')).toBeVisible();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Capture WL timestamp
         const workActDate2 = await page.locator('#work_activity_date').evaluate(e => e.value);
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Close the Work Log
         await page.getByRole('button', { name: ' Save and Close' }).click();
 
-        await waitUntilLoaded(page);
+       // await waitUntilLoaded(page);
 
         //--------------------------------
         // All Medications → Reconciliation
         //--------------------------------
         await page.getByRole('button', { name: ' All Medications' }).click();
 
-        await waitUntilLoaded(page);
+       // await waitUntilLoaded(page);
 
         await page.getByRole('button', { name: ' Reconciliation' }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Reconcile first item and add top-level comment
         await page.getByRole('button', { name: 'Reconcile' }).first().click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         await page.getByRole('textbox').fill(comment);
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Fill Reconciliation Summary (iframe)
         const frame = page
@@ -300,7 +392,7 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
             .first();
         await frame.locator('#pmrs_summary').fill(medRecon);
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Click anchor to enable Save button
         await page
@@ -308,46 +400,46 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
             .getByText('Reconciliation Summary')
             .click();
 
-        await waitUntilLoaded(page);
+       // await waitUntilLoaded(page);
 
         // Save → triggers Work Log
         await page.getByRole('button', { name: ' Save' }).click();
-        await waitUntilLoaded(page);
+       // await waitUntilLoaded(page);
 
         //--------------------------------
         // Assert: New Work Log after Reconciliation
         //--------------------------------
         await expect(page.getByText('New Work Log')).toBeVisible();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Capture WL timestamp
         const workActDate3 = await page.locator('#work_activity_date').evaluate(e => e.value);
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Close the Work Log
         await page.getByRole('button', { name: ' Save and Close' }).click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
         //--------------------------------
         // Verify 3 Work Logs on Home → Work Logs
         //--------------------------------
         await page.getByText('Home', { exact: true }).click();
 
-        await waitUntilLoaded(page);
+       // await waitUntilLoaded(page);
 
         await page.getByRole('tab', { name: 'Work Logs' }).locator('span').click();
 
-        await waitUntilLoaded(page);
+       // await waitUntilLoaded(page);
 
         await page.getByRole('textbox', { name: 'Search...' }).fill(loginID);
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         await page.keyboard.press('Enter');
 
-        await waitUntilLoaded(page);
+       // await waitUntilLoaded(page);
 
         // Expect three rows visible
         await expect(
@@ -374,7 +466,7 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
         ).toBeVisible();
 
 
-        await waitUntilLoaded(page);
+      //  await waitUntilLoaded(page);
 
         //--------------------------------
         // Cleanup:
@@ -382,11 +474,11 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
         // Return to the member tab (if needed)
         await page.locator('#member-tab-name').click();
 
-        await waitUntilLoaded(page);
+       // await waitUntilLoaded(page);
 
         try {
             // Cleanup Medications tab
-            await cleanupTabOnMembersPage(page, {
+            await NewCleanupTabOnMembersPage(page, {
                 tab: 'Medications',
                 gridId: '[id="medications-grid"]',
                 memberName,
@@ -401,33 +493,33 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
                 .nth(1)
                 .click();
 
-            await waitUntilLoaded(page);
+           // await waitUntilLoaded(page);
 
             await page.locator('[id="shortcuts"] [data-value="worklogs-anchor"]').click();
 
-            await waitUntilLoaded(page);
+          //  await waitUntilLoaded(page);
 
             const searchVisible2 = await page
                 .locator('#worklogs-anchor')
                 .getByRole('textbox', { name: 'Search...' })
                 .isVisible();
 
-            await waitUntilLoaded(page);
+          //  await waitUntilLoaded(page);
 
             if (searchVisible2) {
                 await page
                     .locator('#worklogs-anchor')
                     .getByRole('textbox', { name: 'Search...' })
                     .fill(loginID);
-                await waitUntilLoaded(page);
+              //  await waitUntilLoaded(page);
                 await page.keyboard.press('Enter');
-                await waitUntilLoaded(page);
+               // await waitUntilLoaded(page);
 
                 const count2 = await page
                     .locator('[id="worklogs-child-grid"] table tbody tr')
                     .count();
 
-                await waitUntilLoaded(page);
+               // await waitUntilLoaded(page);
 
                 for (let i = 0; i < count2; i++) {
                     await page
@@ -444,10 +536,10 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
                         .click();
 
 
-                    await waitUntilLoaded(page);
+                  //  await waitUntilLoaded(page);
 
                     await page.getByRole('button', { name: 'Yes' }).click();
-                    await waitUntilLoaded(page);
+                   // await waitUntilLoaded(page);
                 }
             }
         } catch (e) {

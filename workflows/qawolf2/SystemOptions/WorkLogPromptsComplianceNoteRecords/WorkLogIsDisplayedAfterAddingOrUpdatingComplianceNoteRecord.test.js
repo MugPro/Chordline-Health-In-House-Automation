@@ -36,10 +36,7 @@ test.describe('Work Log Prompt – Compliance Note Records', () => {
         }));
     });
 
-    test.afterEach(async () => {
-        await context?.close();
-        await browser?.close();
-    });
+
 
     test('Work Log appears with correct fields after creating Compliance Appeal (Note Records)', async () => {
         //--------------------------------

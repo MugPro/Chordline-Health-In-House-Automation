@@ -24,6 +24,83 @@ async function maybeHandleNotificationOk(
     return true;
 }
 
+
+
+async function NewCleanupTabOnMembersPage(page, options = {}) {
+    const tab = options.tab || `Compliance`;
+    const gridId = options.gridId || `[id="compliance-grid"]`; // [`[id="authorizations-grid"]`, `[id="member-coverage-grid"]` ]
+    const memberName = options.memberName || `Blackwell, Megan`;
+    const memberId = options.memberId || ``;
+    const loginID = options.loginID;
+    const onScreen = options.onScreen || false;
+
+    //await waitUntilLoaded(page);
+
+    if (!onScreen) {
+        // Navigate to Home > Members
+        await page.getByText(`Home`, { exact: true }).click();
+        await page.locator(`#home-tabs-tab-4`).getByText(`Members`).click();
+
+        // Fill search bar
+        await page.getByRole(`textbox`, { name: `Search...` }).fill(memberName);
+        await page.keyboard.press("Enter");
+
+        //await waitUntilLoaded(page);
+
+        // Double click the member name row
+        try {
+            await page.getByRole(`gridcell`, { name: memberName }).dblclick();
+            //await waitUntilLoaded(page);
+        } catch {
+            await page.getByRole(`gridcell`, { name: memberId }).dblclick();
+            //await waitUntilLoaded(page);
+        }
+
+        // Navigate to tab on members page
+        await page
+            .getByLabel(memberName)
+            .getByText(tab, { exact: true })
+            .first()
+            .click();
+    }
+
+    // Grab the count of rows visible that are created by our user
+    let count = await page
+        .locator(`${gridId} table tbody tr:visible:has-text("${loginID}")`)
+        .count();
+
+    //await waitUntilLoaded(page);
+
+    for (let i = 0; i < count; i++) {
+        // Hover the first row created by our user and click the trash icon
+        await page
+            .locator(`${gridId} table tbody tr:visible:has-text("${loginID}")`)
+            .first()
+            .hover();
+
+        //await waitUntilLoaded(page);
+
+        await page
+            .locator(
+                `${gridId} table tbody tr:visible:has-text("${loginID}") [title="Delete"]`,
+            )
+            .first()
+            .click();
+
+       // await waitUntilLoaded(page);
+
+        // Click Yes button on the warning pop up
+        await page.getByRole(`button`, { name: `Yes` }).click();
+        //await waitUntilLoaded(page);
+    }
+}
+
+
+
+
+
+
+
 test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
     let browser, context, page;
 
@@ -32,15 +109,12 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
         ({ browser, context, page } = await logIn({
             url: process.env.DEFAULT_URL_2,
             loginID,
+            slowMo: 1000,
             // Use password if your environment requires it; omit to follow your snippet exactly:
             // password: process.env.DEFAULT_PASS_OCT_2025,
         }));
     });
 
-    test.afterEach(async () => {
-        await context?.close();
-        await browser?.close();
-    });
 
     test('Work Log prompts after adding and editing a Medical Review', async () => {
         //--------------------------------
@@ -69,25 +143,7 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
         const tab = `Authorizations`;
         const gridId = `[id="authorizations-grid"]`;
 
-        //--------------------------------
-        // Pre-cleanup
-        //--------------------------------
 
-        await waitUntilLoaded(page);
-
-        try {
-            await cleanupTabOnMembersPage(page, {
-                tab,
-                gridId,
-                memberName: lastFirstName,
-                loginID,
-            });
-        } catch (e) {
-            await reportCleanupFailed({
-                dedupKey: 'cleanupTabOnMembersPage',
-                errorMsg: e.message,
-            });
-        }
 
         //--------------------------------
         // Act:
@@ -109,11 +165,11 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
             await page.locator(`#WorkLogPrompts_MedicalReview_Yes`).check();
         }
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Save and Close
         await page.getByRole(`button`, { name: `Save and Close` }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
 
         //--------------------------------
@@ -127,18 +183,18 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
         await page.getByRole('textbox', { name: 'Search...' }).fill(lastFirstName);
         await page.keyboard.press('Enter');
         await page.getByRole('gridcell', { name: lastFirstName }).dblclick();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // New Authorization (Inpatient)
         await page.locator('#authorizations-menu').click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         await page
             .getByRole('button')
             .filter({ hasText: 'Authorization Inpatient' })
             .hover();
         await page.getByLabel(lastFirstName).getByText(authorizationType, { exact: true }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Fill inpatient fields
         if (authorizationType === 'Inpatient' || authorizationType === 'Observation') {
@@ -155,7 +211,7 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
         // Auth Status
         await page.getByRole('button', { name: '' }).nth(2).click();
         await page.locator('input[name="aush_status_id__1_input"]').clear();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
         await page.locator('input[name="aush_status_id__1_input"]').fill(authStatus);
         await page.getByRole('option', { name: authStatus }).locator('span').click();
 
@@ -173,7 +229,7 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
         await page.getByRole('button', { name: 'Select', exact: true }).click();
 
         await maybeHandleNotificationOk(page, { timeout: 7000 });
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Provider 2 (admitting) lookup
         await page.locator('[name="auth_provider_2_site_id"] ~ button[title="Lookup"]').click();
@@ -186,7 +242,7 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
 
         // Save authorization
         await page.getByRole('button', { name: ' Save' }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Optional Work Log (close if prompted)
         try {
@@ -195,7 +251,7 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
         } catch {
             await expect(page.getByText('New Work Log')).not.toBeVisible({ timeout: 3000 });
         }
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
 
         //--------------------------------
@@ -218,9 +274,9 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
 
         // Work Log opens due to Bed Day creation → Close it
         try {
-            await expect(page.getByText(`New Work Log`)).toBeVisible({ timeout: 3000 });
+            await expect(page.getByText(`New Work Log`)).toBeVisible();
             await page.getByRole(`button`, { name: ` Save and Close` }).click();
-            await waitUntilLoaded(page);
+            //await waitUntilLoaded(page);
         } catch {
             // no-op if not visible
         }
@@ -232,7 +288,7 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
         // Add a Medical Review
         //--------------------------------
         await page.getByRole(`button`, { name: ` \xa0Medical Review` }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Verify "New Medical Reviews" is visible
         await expect(page.getByText(`New Medical Reviews`)).toBeVisible();
@@ -248,7 +304,7 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
 
         // Save & Close Medical Review → triggers Work Log
         await page.getByRole(`button`, { name: ` Save and Close` }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         //--------------------------------
         // Assert: New Work Log visible after adding Medical Review
@@ -260,7 +316,7 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
 
         // Close Work Log
         await page.getByRole(`button`, { name: ` Save and Close` }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         //--------------------------------
         // Open Medical Review to edit via shortcut
@@ -273,14 +329,14 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
                 `[id="medicalreviews-child-grid"] table tbody tr:has-text("${loginID}"):has-text("${weekDateFormat}")`
             )
             .dblclick();
-        await waitUntilLoaded(page);
+       // await waitUntilLoaded(page);
 
         // Verify "Medical Review #" is visible
         await expect(page.getByText(`Medical Review #`)).toBeVisible();
 
         // Edit Medical Review
         await page.getByLabel(`Medical Review #`).getByRole(`button`, { name: ` Edit` }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Fill "Medical Review Summary" in the iframe editor
         const frame = page
@@ -293,14 +349,14 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
 
         // Save & Close edit
         await page.getByRole(`button`, { name: ` Save and Close` }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Assert Work Log appears after updating Medical Review
         await expect(page.getByText(`New Work Log`)).toBeVisible();
 
         // Close the Work Log
         await page.getByRole(`button`, { name: ` Save and Close` }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         //--------------------------------
         // Cleanup:
@@ -308,10 +364,10 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
         // All Auths
         await page.getByRole(`button`, { name: ` All Auths` }).click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         try {
-            await cleanupTabOnMembersPage(page, {
+            await NewCleanupTabOnMembersPage(page, {
                 tab,
                 gridId,
                 memberName: lastFirstName,

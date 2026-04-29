@@ -30,13 +30,9 @@ test.describe('Work Log Prompt – Compliance Notice Records', () => {
         ({ browser, context, page } = await logIn({
             url: process.env.DEFAULT_URL_2,
             loginID,
+            slowMo: 900,
             password: process.env.DEFAULT_PASS_OCT_2025,
         }));
-    });
-
-    test.afterEach(async () => {
-        await context?.close();
-        await browser?.close();
     });
 
     test('Work Log appears with correct fields after editing a Notice', async () => {
@@ -76,10 +72,10 @@ test.describe('Work Log Prompt – Compliance Notice Records', () => {
             await page.locator('#WorkLogPrompts_Compliance_Notice_Yes').check();
         }
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
         // Save & Close
         await page.getByRole('button', { name: 'Save and Close' }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
 
 
@@ -107,7 +103,7 @@ test.describe('Work Log Prompt – Compliance Notice Records', () => {
 
         // Open the member
         await page.getByRole('gridcell', {name: lastFirstName}).dblclick();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Authorizations tab
         await page.locator('#authorizations-menu').click();
@@ -122,7 +118,7 @@ test.describe('Work Log Prompt – Compliance Notice Records', () => {
             .getByText(authorizationType, {exact: true})
             .click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Fill inpatient fields
         if (authorizationType === 'Inpatient' || authorizationType === 'Observation') {
@@ -139,7 +135,7 @@ test.describe('Work Log Prompt – Compliance Notice Records', () => {
         // Auth Status
         await page.getByRole('button', {name: ''}).nth(2).click();
         await page.locator('input[name="aush_status_id__1_input"]').clear();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
         await page.locator('input[name="aush_status_id__1_input"]').fill(authStatus);
         await page.getByRole('option', {name: authStatus}).locator('span').click();
 
@@ -163,7 +159,7 @@ test.describe('Work Log Prompt – Compliance Notice Records', () => {
         // Handle optional duplicate notification
         await maybeHandleNotificationOk(page, {timeout: 7000});
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Provider 2 (admitting) lookup
         await page.locator('[name="auth_provider_2_site_id"] ~ button[title="Lookup"]').click();
@@ -180,7 +176,7 @@ test.describe('Work Log Prompt – Compliance Notice Records', () => {
 
         // Save Authorization
         await page.getByRole('button', {name: ' Save'}).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Optional Work Log handling
         try {
@@ -191,7 +187,7 @@ test.describe('Work Log Prompt – Compliance Notice Records', () => {
         } catch {
             await expect(page.getByText('New Work Log')).not.toBeVisible({timeout: 3000});
         }
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
 
         // Grab the "Auth #"
@@ -214,7 +210,7 @@ test.describe('Work Log Prompt – Compliance Notice Records', () => {
 
 
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         //--------------------------------
         // Member Detail → Notices
@@ -224,22 +220,22 @@ test.describe('Work Log Prompt – Compliance Notice Records', () => {
         // Open Notices shortcut
         await page.locator('#compliance-notices-anchor').getByText('Notices').click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Click the first "Grievance" row
         await page.getByRole('gridcell', { name: 'Grievance' }).first().click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Edit
         await page.getByRole('button', { name: '', exact: true }).click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Click "X" to remove status (fifth close icon as per your nth(4))
         await page.getByRole('button', { name: '', exact: true }).nth(4).click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Attempt Status = Pending
         await page.locator('input[name="cpna_attempt_status_id__1_input"]').fill('Pending');
@@ -247,48 +243,48 @@ test.describe('Work Log Prompt – Compliance Notice Records', () => {
         // If your UI requires selecting from the dropdown explicitly, uncomment:
         // await page.getByRole('option', { name: 'Pending', exact: true }).click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Save & Close the Notice
         await page.getByRole('button', { name: ' Save and Close' }).click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Work Log prompt should appear — fill Time Spent
         await expect(page.getByText('New Work Log')).toBeVisible();
         await page.locator('#work_time_spent').fill(timeSpent);
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Save & Close Work Log
         await page.getByRole('button', { name: ' Save and Close' }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         //--------------------------------
         // Work Logs tab → open latest Compliance log
         //--------------------------------
         await page.locator('span[role="none"] :text("Work Logs") >> nth=0').click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Navigate next and previous page (as in your steps)
         await page.locator('#worklogs-child-grid [aria-label="Go to the next page"]').first().click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         await page.locator('#worklogs-child-grid [aria-label="Go to the previous page"]').first().click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Click latest row with "Compliance"
         await page.getByRole('gridcell', { name: 'Compliance', exact: true }).first().click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Edit (open the Work Log record)
         await page.getByRole('button', { name: '', exact: true }).click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         //--------------------------------
         // Assert:

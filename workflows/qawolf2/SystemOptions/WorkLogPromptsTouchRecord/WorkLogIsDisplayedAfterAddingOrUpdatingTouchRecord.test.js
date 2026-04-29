@@ -30,13 +30,9 @@ test.describe('Work Log Prompt – Touch Records (Phone Call)', () => {
         ({ browser, context, page } = await logIn({
             url: process.env.DEFAULT_URL_2,
             loginID,
+            slowMo: 1000,
             password: process.env.DEFAULT_PASS_OCT_2025,
         }));
-    });
-
-    test.afterEach(async () => {
-        await context?.close();
-        await browser?.close();
     });
 
     test('Touch → Phone Call prompts Work Log and fields are correct', async () => {
@@ -79,7 +75,7 @@ test.describe('Work Log Prompt – Touch Records (Phone Call)', () => {
 
         // Save and Close
         await page.getByRole('button', { name: 'Save and Close' }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
 
 
@@ -107,7 +103,7 @@ test.describe('Work Log Prompt – Touch Records (Phone Call)', () => {
 
         // Open the member
         await page.getByRole('gridcell', {name: lastFirstName}).dblclick();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Authorizations tab
         await page.locator('#authorizations-menu').click();
@@ -122,7 +118,7 @@ test.describe('Work Log Prompt – Touch Records (Phone Call)', () => {
             .getByText(authorizationType, {exact: true})
             .click();
 
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Fill inpatient fields
         if (authorizationType === 'Inpatient' || authorizationType === 'Observation') {
@@ -139,7 +135,7 @@ test.describe('Work Log Prompt – Touch Records (Phone Call)', () => {
         // Auth Status
         await page.getByRole('button', {name: ''}).nth(2).click();
         await page.locator('input[name="aush_status_id__1_input"]').clear();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
         await page.locator('input[name="aush_status_id__1_input"]').fill(authStatus);
         await page.getByRole('option', {name: authStatus}).locator('span').click();
 
@@ -163,7 +159,7 @@ test.describe('Work Log Prompt – Touch Records (Phone Call)', () => {
         // Handle optional duplicate notification
         await maybeHandleNotificationOk(page, {timeout: 7000});
 
-        await waitUntilLoaded(page);
+       // await waitUntilLoaded(page);
 
         // Provider 2 (admitting) lookup
         await page.locator('[name="auth_provider_2_site_id"] ~ button[title="Lookup"]').click();
@@ -180,7 +176,7 @@ test.describe('Work Log Prompt – Touch Records (Phone Call)', () => {
 
         // Save Authorization
         await page.getByRole('button', {name: ' Save'}).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Optional Work Log handling
         try {
@@ -191,7 +187,7 @@ test.describe('Work Log Prompt – Touch Records (Phone Call)', () => {
         } catch {
             await expect(page.getByText('New Work Log')).not.toBeVisible({timeout: 3000});
         }
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
 
         // Grab the "Auth #"
@@ -217,7 +213,7 @@ test.describe('Work Log Prompt – Touch Records (Phone Call)', () => {
 
 
 
-        await waitUntilLoaded(page);
+       // await waitUntilLoaded(page);
 
         //--------------------------------
         // Member Detail → Authorizations → Case → Save
@@ -238,7 +234,7 @@ test.describe('Work Log Prompt – Touch Records (Phone Call)', () => {
 
         // Close Case (if any modal shows, your helper flow handles wait)
         await page.getByRole('button', { name: ' Save and Close' }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         //--------------------------------
         // Touches → + Touch → Phone Call
@@ -252,11 +248,11 @@ test.describe('Work Log Prompt – Touch Records (Phone Call)', () => {
             .filter({ hasText: 'Touch Phone Call Visit CM' })
             .click();
 
-        await waitUntilLoaded(page);
+       // await waitUntilLoaded(page);
 
         // Phone Call
         await page.getByRole('menuitem', { name: 'Phone Call' }).locator('a').click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Phone number
         await page.locator('#tuch_phone_number_national_number').fill(phoneNumber);
@@ -267,11 +263,11 @@ test.describe('Work Log Prompt – Touch Records (Phone Call)', () => {
         // Fill Time Spent = 120 and close WL
         await page.locator('#work_time_spent').fill(timeSpent);
         await page.getByRole('button', { name: ' Save and Close' }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         // Close Touch record
         await page.getByRole('button', { name: ' Close' }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         //--------------------------------
         // Verify in Member Detail → Touches

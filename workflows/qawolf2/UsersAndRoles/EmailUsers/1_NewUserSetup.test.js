@@ -268,8 +268,12 @@ test('New User Setup workflow (without inbox check)', async () => {
     // Send the email (we cannot check it without an inbox)
     await page.getByRole('button', { name: 'Send' }).click();
     await expect(page.getByText('Email was sent successfully.')).toBeVisible();
+
+    /*
     await page.getByRole('button', { name: 'Okay' }).click();
     await browser.close();
+
+     */
 });
 
 

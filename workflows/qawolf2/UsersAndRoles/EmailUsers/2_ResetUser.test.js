@@ -166,6 +166,7 @@ test('Reset User — Scenario 1 (admin cannot reset own account)', async () => {
     );
     await expect(scenario1Message).toBeVisible({ timeout: 30000 });
 
+    /*
     // Click Okay if it exists
     const okButton = page.getByRole('button', { name: 'Okay' });
     if (await okButton.count() > 0) await okButton.click();
@@ -176,4 +177,6 @@ test('Reset User — Scenario 1 (admin cannot reset own account)', async () => {
     // Cleanup
     //--------------------------------
     await browser.close();
+
+     */
 });

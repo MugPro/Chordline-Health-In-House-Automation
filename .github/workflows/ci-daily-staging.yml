@@ -40,11 +40,11 @@ jobs:
           echo "DEFAULT_PASS_OCT_2025=${{ secrets.STAGING_DEFAULT_PASS_OCT_2025 }}" >> $GITHUB_ENV
           echo "QAWA_API_KEY=${{ secrets.STAGING_QAWA_API_KEY }}" >> $GITHUB_ENV
 
-      - name: Run Playwright Tests (STAGING – Shard ${{ matrix.shard }}/8)
+      - name: Run Playwright Tests (STAGING – Shard ${{ matrix.shard }}/4)
         run: |
           npx playwright test \
             --project=staging \
-            --shard=${{ matrix.shard }}/8
+            --shard=${{ matrix.shard }}/4
 
       - name: Upload test results
         if: always()

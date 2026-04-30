@@ -649,6 +649,7 @@ test('Security Roles - Edit existing role and modify privileges', async () => {
 import { test, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { waitUntilLoaded, updateCheckBoxIdFromFlatTreeData, logIn } from '../../../../helpers/Node20Helpers.js';
+import * as helpers from "../../../../helpers/Node20Helpers.js";
 
 //////////////////////////////////////////
 // Helper: grab security roles from tree
@@ -691,13 +692,15 @@ function removeRandomElements(arr, count) {
 // Test: Edit existing role
 //////////////////////////////////////////
 test('Security Roles - Edit existing role and modify privileges', async () => {
-    const loginID = 'SecRoleIntCRUD';
+    //const loginID = 'SecRoleIntCRUD';
+    const loginID = `emailUsers`;
     const securityRoleName = 'internalTestCRUD';
     const securityRoleNameEdit = 'internalTestCRUD-edit';
 
-    const { page } = await logIn({
+    const { browser, page } = await helpers.logIn({
         url: process.env.DEFAULT_URL_2,
         loginID,
+        password: process.env.DEFAULT_PASS_OCT_2025,
     });
 
     // Navigate

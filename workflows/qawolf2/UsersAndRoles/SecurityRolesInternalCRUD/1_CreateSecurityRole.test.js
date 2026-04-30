@@ -171,6 +171,7 @@ import {
     updateCheckBoxIdFromFlatTreeData,
 } from '../../../../helpers/Node20Helpers.js';
 import { logIn } from '../../../../helpers/Node20Helpers.js';
+import * as helpers from "../../../../helpers/Node20Helpers.js";
 
 test('Security Roles - CRUD with random privileges selection', async () => {
     //--------------------------------
@@ -178,13 +179,15 @@ test('Security Roles - CRUD with random privileges selection', async () => {
     //--------------------------------
 
     // NOTE: Should run on DEFAULT_URL once fixed
-    const loginID = `SecRoleIntCRUD`;
+    //const loginID = `SecRoleIntCRUD`;
+    const loginID = `emailUsers`;
     const securityRoleName = `internalTestCRUD`;
     const securityRoleNameEdit = `internalTestCRUD-edit`;
 
-    const { page } = await logIn({
+    const { browser, page } = await helpers.logIn({
         url: process.env.DEFAULT_URL_2,
         loginID,
+        password: process.env.DEFAULT_PASS_OCT_2025,
     });
 
     // Navigate to Security Roles
@@ -193,6 +196,9 @@ test('Security Roles - CRUD with random privileges selection', async () => {
     await page.getByText(`Security Roles`).click();
     await waitUntilLoaded(page);
 
+
+
+    /*
     //--------------------------------
     // Cleanup
     //--------------------------------
@@ -219,6 +225,8 @@ test('Security Roles - CRUD with random privileges selection', async () => {
             errorMsg: e.message,
         });
     }
+
+     */
 
     //--------------------------------
     // Act

@@ -1,17 +1,20 @@
 import { test, expect } from '@playwright/test';
 import { waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
 import { logIn } from '../../../../helpers/Node20Helpers.js';
+import * as helpers from "../../../../helpers/Node20Helpers.js";
 
 test('Security Roles - Delete existing role', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
-    const loginID = `SecRoleIntCRUD`;
+    //const loginID = `SecRoleIntCRUD`;
+    const loginID = `emailUsers`;
     const securityRoleNameEdit = `internalTestCRUD-edit`;
 
-    const { page } = await logIn({
+    const { browser, page } = await helpers.logIn({
         url: process.env.DEFAULT_URL_2,
         loginID,
+        password: process.env.DEFAULT_PASS_OCT_2025,
     });
 
     // Navigate to Security Roles
@@ -52,5 +55,5 @@ test('Security Roles - Delete existing role', async () => {
         page.locator(`tr:has(td:text-is("${securityRoleNameEdit}"))`)
     ).not.toBeVisible({ timeout: 10000 });
 
-    await page.close();
+    //await page.close();
 });

@@ -5,7 +5,8 @@ test('3_DeleteExternalUser', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
-    const loginID = `ServiceUserCrud`;
+    //const loginID = `ServiceUserCrud`;
+    const loginID = `emailUsers`;
     const group = `Users`;
     const tab = `Service`;
     const serviceName = `ServUserC`;
@@ -15,7 +16,9 @@ test('3_DeleteExternalUser', async () => {
     const securityRoleEdit = `Fax Integration Service`;
     const memberRole = `All Member Access`;
 
-    const password = process.env.DEFAULT_PASS_JUNE_2025;
+   // const password = process.env.DEFAULT_PASS_JUNE_2025;
+
+    const password = process.env.DEFAULT_PASS_OCT_2025
 
     //--------------------------------
     // Login
@@ -23,8 +26,8 @@ test('3_DeleteExternalUser', async () => {
     const { browser, page } = await logIn({
         url: process.env.DEFAULT_URL_2,
         loginID,
-        password,
-        //headless: true
+        slowMo: 800,
+        password: process.env.DEFAULT_PASS_OCT_2025,
     });
 
     //--------------------------------
@@ -33,7 +36,7 @@ test('3_DeleteExternalUser', async () => {
     await page.getByText('Tools').click();
     await page.getByText('Users & Roles').click();
     await page.getByRole('treeitem', { name: group }).locator('span').first().click();
-    await waitUntilLoaded(page);
+   // await waitUntilLoaded(page);
 
     //--------------------------------
     // Switch to External tab
@@ -41,14 +44,14 @@ test('3_DeleteExternalUser', async () => {
     await page.getByRole('tab', { name: tab }).click();
     const externalTabPanel = page.getByRole('tabpanel', { name: tab });
     await expect(externalTabPanel).toBeVisible({ timeout: 20000 });
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     //--------------------------------
     // Optional: search for user first (more stable)
     //--------------------------------
     await externalTabPanel.getByPlaceholder('Search...').fill(serviceNameEdit);
     await externalTabPanel.locator('#admin-search-button').click();
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     //--------------------------------
     // Act - Delete only if user exists
@@ -68,7 +71,7 @@ test('3_DeleteExternalUser', async () => {
 
         // Confirm popup
         await page.getByRole('button', { name: 'Yes' }).click();
-        await waitUntilLoaded(page);
+        //await waitUntilLoaded(page);
 
         console.log(`User "${serviceNameEdit}" deleted successfully.`);
     } else {

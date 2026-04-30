@@ -5,7 +5,8 @@ test('2_EditServiceUser', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
-    const loginID = `ServiceUserCrud`;
+    //const loginID = `ServiceUserCrud`;
+    const loginID = `emailUsers`;
     const group = `Users`;
     const tab = `Service`;
     const serviceName = `ServUserC`;
@@ -21,6 +22,7 @@ test('2_EditServiceUser', async () => {
     const { browser, page } = await logIn({
         url: process.env.DEFAULT_URL_2,
         loginID,
+        slowMo: 800,
         password: process.env.DEFAULT_PASS_OCT_2025,
     });
 
@@ -30,7 +32,7 @@ test('2_EditServiceUser', async () => {
     await page.getByText('Tools').click();
     await page.getByText('Users & Roles').click();
     await page.getByRole('treeitem', { name: group }).locator('span').first().click();
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     //--------------------------------
     // Switch to Service tab
@@ -38,14 +40,14 @@ test('2_EditServiceUser', async () => {
     await page.getByRole('tab', { name: tab }).click();
     const serviceTabPanel = page.getByRole('tabpanel', { name: tab });
     await expect(serviceTabPanel).toBeVisible({ timeout: 20000 });
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     //--------------------------------
     // Search for existing user
     //--------------------------------
     await serviceTabPanel.getByPlaceholder('Search...').fill(serviceName);
     await serviceTabPanel.locator('#admin-search-button').click();
-    await waitUntilLoaded(page);
+   // await waitUntilLoaded(page);
 
     const userExists = await page.getByRole('gridcell', { name: serviceName }).first().isVisible().catch(() => false);
 
@@ -66,7 +68,7 @@ test('2_EditServiceUser', async () => {
     //--------------------------------
     // Open user and click Edit
     //--------------------------------
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
     await page.getByRole('gridcell', { name: serviceName, exact: true }).dblclick();
 
     await page.getByRole('button', { name: ' Edit' }).click();
@@ -80,7 +82,7 @@ test('2_EditServiceUser', async () => {
     //--------------------------------
     await page.locator('#user_first_name').fill(serviceNameEdit);
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
 
     // Access Justification
@@ -92,7 +94,7 @@ test('2_EditServiceUser', async () => {
         .click();
     await page.getByRole('option', { name: accessJustificationEdit }).locator('span').click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
 
 
@@ -105,7 +107,7 @@ test('2_EditServiceUser', async () => {
 
 
     await page.getByRole('button', { name: ' Save and Close' }).click();
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
 // Check if an error popup appeared
     const errorPopup = page.locator('text=A problem occurred during save');
@@ -122,7 +124,7 @@ test('2_EditServiceUser', async () => {
 //--------------------------------
     await serviceTabPanel.getByPlaceholder('Search...').fill(serviceNameEdit);
     await serviceTabPanel.locator('#admin-search-button').click();
-    await waitUntilLoaded(page);
+   // await waitUntilLoaded(page);
 
     await expect(page.getByRole('gridcell', { name: logInId })).toBeVisible();
     await expect(page.getByRole('gridcell', { name: serviceNameEdit, exact: true })).toBeVisible();

@@ -5,7 +5,8 @@ test('1_CreateServiceUser', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
-    const loginID = `ServiceUserCrud`;
+    //const loginID = `ServiceUserCrud`;
+    const loginID = `emailUsers`;
     const group = `Users`;
     const tab = `Service`;
     const serviceName = `ServUserC`;
@@ -13,10 +14,12 @@ test('1_CreateServiceUser', async () => {
     const accessJustification = `Service Account`;
     const securityRole = `Healthwise Service`;
     const memberRole = `All Member Access`;
-    const password = process.env.DEFAULT_PASS_JUNE_2025;
+    //const password = process.env.DEFAULT_PASS_JUNE_2025;
     const serviceNameEdit = `ServUserC-edit`;
     const accessJustificationEdit = `Provider`;
     const securityRoleEdit = `Fax Integration Service`;
+
+    const password = process.env.DEFAULT_PASS_OCT_2025
 
     //--------------------------------
     // Login
@@ -24,6 +27,7 @@ test('1_CreateServiceUser', async () => {
     const { browser, page } = await logIn({
         url: process.env.DEFAULT_URL_2,
         loginID,
+        slowMo: 800,
         password: process.env.DEFAULT_PASS_OCT_2025,
     });
 
@@ -37,7 +41,7 @@ test('1_CreateServiceUser', async () => {
     //--------------------------------
     // WAIT FOR USERS PAGE TO FULLY LOAD
     //--------------------------------
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
 
 
@@ -58,11 +62,11 @@ test('1_CreateServiceUser', async () => {
         page.getByRole('tabpanel', { name: tab })
     ).toBeVisible({ timeout: 20000 });
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     const serviceTabPanel = page.getByRole('tabpanel', { name: tab });
 
-
+/*
     //--------------------------------
     // Cleanup existing user (if exists)
     //--------------------------------
@@ -87,6 +91,8 @@ test('1_CreateServiceUser', async () => {
     } catch (e) {
         await reportCleanupFailed({ errorMsg: e.message });
     }
+
+ */
 
     //--------------------------------
     // Act - Create Service User
@@ -121,14 +127,14 @@ test('1_CreateServiceUser', async () => {
 
 
     await page.getByRole('button', { name: ' Save and Close' }).click();
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     //--------------------------------
     // Assert
     //--------------------------------
     await serviceTabPanel.getByPlaceholder('Search...').fill(serviceName);
     await serviceTabPanel.locator('#admin-search-button').click();
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     await expect(page.getByRole('gridcell', { name: logInId })).toBeVisible();
     await expect(page.getByRole('gridcell', { name: serviceName, exact: true })).toBeVisible();

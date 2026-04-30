@@ -18,6 +18,7 @@ test('CreateALetter', async () => {
     // Arrange
     //--------------------------------
     const loginID = `AdvancedSearch`;
+    const password = process.env.DEFAULT_PASS_OCT_2025;
     const moduleValue = "Member Detail";
     const baseLetterName = `QA Wolf letter`; // base name for cleanup
 
@@ -28,11 +29,11 @@ test('CreateALetter', async () => {
     const url = process.env.DEFAULT_URL_2;
 
     // Sign in
-    const { page, context, browser } = await helpers.logIn({
-        url,
+    const { page, browser } = await helpers.logIn({
         loginID,
         slowMo: 700,
-        password: process.env.DEFAULT_PASS_OCT_2025,
+        password,
+        url: env.DEFAULT_URL_2,
     });
 
     await waitUntilLoaded(page);

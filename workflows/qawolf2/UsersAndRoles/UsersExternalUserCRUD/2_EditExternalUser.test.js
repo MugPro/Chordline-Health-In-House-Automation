@@ -625,12 +625,14 @@ test('2_EditExternalUser', async () => {
 import { test, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import * as helpers from "../../../../helpers/Node20Helpers.js";
 
 test('2_EditExternalUser', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
-    const loginID = `ExternalUserCrud`;
+    //const loginID = `ExternalUserCrud`;
+    const loginID = `emailUsers`;
     const group = `Users`;
     const tab = `External`;
     const logInId = `QA-ExUserC`; // original login ID
@@ -656,11 +658,10 @@ test('2_EditExternalUser', async () => {
     //--------------------------------
     // Login
     //--------------------------------
-    const { browser, page } = await logIn({
+    const { browser, page } = await helpers.logIn({
         url: process.env.DEFAULT_URL_2,
         loginID,
         password: process.env.DEFAULT_PASS_OCT_2025,
-        //headless: true
     });
 
     //--------------------------------
@@ -801,7 +802,7 @@ test('2_EditExternalUser', async () => {
 
 
 
-    await browser.close();
+    //await browser.close();
 
 });
 

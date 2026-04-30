@@ -241,12 +241,14 @@ test('1_CreateExternalUser', async () => {
 import { test, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { logIn, waitUntilLoaded, reportCleanupFailed } from '../../../../helpers/Node20Helpers.js';
+import * as helpers from "../../../../helpers/Node20Helpers.js";
 
 test('1_CreateExternalUser', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
-    const loginID = `ExternalUserCrud`;
+   // const loginID = `ExternalUserCrud`;
+    const loginID = `emailUsers`;
     const group = `Users`;
     const tab = `External`;
     const firstName = `ExUserC2`;
@@ -263,7 +265,9 @@ test('1_CreateExternalUser', async () => {
     const zipCode = faker.location.zipCode();
     const state = faker.location.state();
     const memberRole = `All Member Access`;
-    const password = process.env.DEFAULT_PASS_JUNE_2025;
+    //const password = process.env.DEFAULT_PASS_JUNE_2025;
+
+    const password = process.env.DEFAULT_PASS_OCT_2025
 
 
 
@@ -275,11 +279,11 @@ test('1_CreateExternalUser', async () => {
     //--------------------------------
     // Login
     //--------------------------------
-    const { browser, page } = await logIn({
+    const { browser, page } = await helpers.logIn({
         url: process.env.DEFAULT_URL_2,
         loginID,
+        slowMo: 1000,
         password: process.env.DEFAULT_PASS_OCT_2025,
-        //headless: true
     });
 
     //--------------------------------
@@ -292,7 +296,7 @@ test('1_CreateExternalUser', async () => {
     //--------------------------------
     // WAIT FOR USERS PAGE TO FULLY LOAD
     //--------------------------------
-    await waitUntilLoaded(page);
+   // await waitUntilLoaded(page);
 
 
 
@@ -313,10 +317,11 @@ test('1_CreateExternalUser', async () => {
         page.getByRole('tabpanel', { name: tab })
     ).toBeVisible({ timeout: 20000 });
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     const externalTabPanel = page.getByRole('tabpanel', { name: tab });
 
+    /*
     //--------------------------------
     // Cleanup existing user (if exists)
     //--------------------------------
@@ -347,12 +352,14 @@ test('1_CreateExternalUser', async () => {
         await reportCleanupFailed({ errorMsg: e.message });
     }
 
+     */
+
     //--------------------------------
     // Act - Create External User
     //--------------------------------
     await page.getByRole('button', { name: '  New' }).click();
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
     await page.locator('#user_first_name').fill(firstName);
     await page.locator('#user_last_name').fill(lastName);
@@ -360,7 +367,7 @@ test('1_CreateExternalUser', async () => {
 
 
 
-    await waitUntilLoaded(page);
+    //await waitUntilLoaded(page);
 
 
 
@@ -414,7 +421,12 @@ test('1_CreateExternalUser', async () => {
     await page.getByText(state).click();
 
     await page.locator('#user_password').fill(password);
+
+    await waitUntilLoaded(page);
+
     await page.locator('#user_password_confirm').fill(password);
+
+    await waitUntilLoaded(page);
 
     // Security Role
     await page.locator('input[name="user_security_role_id_input"]').fill(securityRole);
@@ -424,15 +436,25 @@ test('1_CreateExternalUser', async () => {
     await page.locator('input[name="user_member_role_id_input"]').fill(memberRole);
     await page.getByRole('option', { name: `​ ${memberRole}` }).click();
 
-    await page.getByRole('button', { name: ' Save and Close' }).click();
+
+
+
+
+
+    await page.locator('#user_password_confirm').fill(password);
+
     await waitUntilLoaded(page);
+
+
+    await page.getByRole('button', { name: ' Save and Close' }).click();
+    //await waitUntilLoaded(page);
 
     //--------------------------------
     // Assert
     //--------------------------------
     await externalTabPanel.getByPlaceholder('Search...').fill(emailAddress);
     await externalTabPanel.locator('#admin-search-button').click();
-    await waitUntilLoaded(page);
+   // await waitUntilLoaded(page);
 
     await expect(page.getByRole('gridcell', { name: logInId })).toBeVisible();
     await expect(page.getByRole('gridcell', { name: firstName, exact: true })).toBeVisible();
@@ -446,5 +468,5 @@ test('1_CreateExternalUser', async () => {
 
 
 
-    await browser.close();
+    //await browser.close();
 });

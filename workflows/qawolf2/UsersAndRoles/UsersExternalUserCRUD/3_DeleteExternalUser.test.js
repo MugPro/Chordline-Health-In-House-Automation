@@ -1,12 +1,14 @@
 import { test, expect } from '@playwright/test';
 import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import * as helpers from "../../../../helpers/Node20Helpers.js";
 
 test('3_DeleteExternalUser', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
-    const loginID = `ExternalUserCrud`;
-    const password = process.env.DEFAULT_PASS_OCT_2025;
+    //const loginID = `ExternalUserCrud`;
+    const loginID = `emailUsers`;
+   // const password = process.env.DEFAULT_PASS_OCT_2025;
     const group = `Users`;
     const tab = `External`;
 
@@ -16,12 +18,23 @@ test('3_DeleteExternalUser', async () => {
     //--------------------------------
     // Login
     //--------------------------------
+    /*
     const { browser, page } = await logIn({
         url: process.env.DEFAULT_URL_2,
         loginID,
         password,
         //headless: true
     });
+
+     */
+
+
+    const { browser, page } = await helpers.logIn({
+        url: process.env.DEFAULT_URL_2,
+        loginID,
+        password: process.env.DEFAULT_PASS_OCT_2025,
+    });
+
 
     //--------------------------------
     // Navigate to Users
@@ -78,6 +91,6 @@ test('3_DeleteExternalUser', async () => {
     await expect(page.getByRole('gridcell', { name: firstNameEdit })).not.toBeVisible();
 
 
-    await browser.close();
+    //await browser.close();
 
 });

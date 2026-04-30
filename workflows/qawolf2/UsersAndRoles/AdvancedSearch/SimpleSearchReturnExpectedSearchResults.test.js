@@ -842,6 +842,7 @@ test('Advanced Search - Stable Random Column Filter (Hardened)', async () => {
 import { test, expect } from '@playwright/test';
 import * as dateFns from 'date-fns';
 import { logIn, waitUntilLoaded } from "../../../../helpers/Node20Helpers.js";
+import * as helpers from "../../../../helpers/Node20Helpers.js";
 
 test('Advanced Search - Stable Random Column Filter (Hardened)', async () => {
 
@@ -882,7 +883,8 @@ test('Advanced Search - Stable Random Column Filter (Hardened)', async () => {
     //--------------------------------
     // Constants
     //--------------------------------
-    const loginID = 'AdvancedSearch';
+    //const loginID = 'AdvancedSearch';
+    const loginID = `emailUsers`;
     const excludeCol = ['Actions'];
 
     const filterMap = {
@@ -907,11 +909,24 @@ test('Advanced Search - Stable Random Column Filter (Hardened)', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
+    /*
     const { page } = await logIn({
         url: process.env.DEFAULT_URL_2,
         loginID,
         slowMo: 3000,
     });
+
+     */
+
+
+    const { browser, page } = await helpers.logIn({
+        url: process.env.DEFAULT_URL_2,
+        loginID,
+        slowMo: 3000,
+        password: process.env.DEFAULT_PASS_OCT_2025,
+    });
+
+
 
     await page.getByText('Tools').click();
     await page.getByRole('menuitem', { name: 'Users & Roles' })

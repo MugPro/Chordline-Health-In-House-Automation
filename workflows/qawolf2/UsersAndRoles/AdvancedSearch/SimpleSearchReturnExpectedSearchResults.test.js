@@ -1,1339 +1,4 @@
-/*import { test, expect } from "@playwright/test";
-import * as dateFns from "date-fns";
-
-import * as helpers from '../../../../helpers/Node20Helpers.js'; // <-- your helpers
-
-test("Advanced Search - Simple Search returns expected results", async ({ page }) => {
-    //--------------------------------
-    // Arrange:
-    //--------------------------------
-    const loginID = `AdvancedSearch`;
-    const excludeCol = ["Actions"];
-    const filterMap = {
-        Active: `radio`,
-        "First Name": `dropdown`,
-        "Last Name": `dropdown`,
-        Title: `dropdown`,
-        "Login ID": "dropdown",
-        "Email Address": "dropdown",
-        "Access Justification": "dropdown",
-        Phone: "dropdown",
-        "Security Role": "dropdown",
-        "Member Role": "dropdown",
-        Locked: "radio",
-        "Last Login": "calendar",
-        "Require Single Sign On (SSO)": "radio",
-    };
-    const dropDownOp = ["Contains", "Starts with"];
-    const calendarOp = ["Is equal to", "Is before", "Is after", "Is between"];
-
-    function getRandomLetter() {
-        const alphabet = "abcdefghijklmnopqrstuvwxyz";
-        return alphabet[Math.floor(Math.random() * alphabet.length)];
-    }
-    const letter = getRandomLetter();
-    let operator, firstDate, val;
-
-    // Sign in using helpers
-    await helpers.logIn({ page, url: process.env.DEFAULT_URL_2, loginID });
-
-    // Navigate to Users & Roles
-    await page.getByText(`Tools`).click();
-    await page
-        .getByRole(`menuitem`, { name: `Users & Roles` })
-        .locator(`span`)
-        .first()
-        .click();
-
-    // Grab column names and selectors
-    const columnNames = await page
-        .locator(`[id="admin-browse"] table thead tr th:visible`)
-        .allInnerTexts();
-    const columnSelectors = await page
-        .locator(`[id="admin-browse"] table thead tr th:visible`)
-        .all();
-
-    // Pick a random usable column
-    let idx, usableValues = [];
-    let attempts = 0;
-    while (attempts < 10) {
-        idx = Math.floor(Math.random() * columnNames.length);
-        if (excludeCol.includes(columnNames[idx])) {
-            attempts++;
-            continue;
-        }
-
-        const rows = await page.locator(`[id="admin-browse"] table tbody tr:visible`).all();
-        const allColText = [];
-        for (const row of rows) {
-            if (columnNames[idx] === "Active") {
-                allColText.push(await row.locator(`td >> nth=${idx + 1} >> input`).isChecked());
-            } else {
-                allColText.push((await row.locator(`td >> nth=${idx + 1}`).innerText()).trim());
-            }
-        }
-
-        usableValues = allColText.filter(v => v.toString().length > 0);
-        if (usableValues.length > 0) break;
-        attempts++;
-    }
-
-    if (!usableValues.length) {
-        test.skip(true, "No usable values found in any column.");
-    }
-
-    const idx2 = Math.floor(Math.random() * usableValues.length);
-    if (columnNames[idx] === "Active") {
-        val = usableValues[idx2] ? "Active" : "Inactive";
-    } else {
-        val = usableValues[idx2];
-    }
-
-    const filterType = filterMap[columnNames[idx]];
-    if (filterType === "dropdown") {
-        operator = dropDownOp[Math.floor(Math.random() * dropDownOp.length)];
-    } else if (filterType === "calendar") {
-        operator = calendarOp[Math.floor(Math.random() * calendarOp.length)];
-    }
-
-    //--------------------------------
-    // Act:
-    //--------------------------------
-    await columnSelectors[idx].locator(`a`).click();
-    const filterMenu = page.locator(`.k-filter-menu`).first();
-    await expect(filterMenu).toBeVisible({ timeout: 5000 });
-
-    if (filterType === "dropdown") {
-        await filterMenu.getByRole(`combobox`, { name: `Operator` }).getByLabel(`select`).click();
-        await page.getByRole(`option`, { name: operator }).locator(`span`).click();
-
-        const valueInput = filterMenu.getByRole(`textbox`, { name: `Value` });
-        if (operator === "Starts with") {
-            await valueInput.fill(letter);
-        } else {
-            await valueInput.fill(val.toString());
-        }
-    } else if (filterType === "radio") {
-        await filterMenu.getByRole(`radio`, { name: val, exact: true }).first().click();
-    } else if (filterType === "calendar") {
-        await filterMenu.getByRole(`combobox`, { name: `Operator` }).locator(`span`).nth(1).click();
-        await page.getByRole(`option`, { name: operator }).locator(`span`).click();
-
-        if (operator === "Is between") {
-            firstDate = usableValues.sort()[0];
-            await filterMenu.getByRole(`combobox`, { name: `Value`, exact: true }).fill(firstDate.split(" ")[0]);
-            await filterMenu.getByRole(`combobox`, { name: `Value 2` }).fill(val.split(" ")[0]);
-        } else {
-            await filterMenu.getByRole(`combobox`, { name: `Value` }).fill(val.split(" ")[0]);
-        }
-    }
-
-    await filterMenu.getByRole(`button`, { name: ` Filter` }).click();
-    await helpers.waitUntilLoaded(page);
-
-    //--------------------------------
-    // Assert:
-    //--------------------------------
-    const filteredRows = await page.locator(`[id="admin-browse"] table tbody tr:visible`).all();
-
-    for (const row of filteredRows) {
-        if (columnNames[idx] === "Active") {
-            if (usableValues[idx2] === true) {
-                await expect(row.locator(`td >> nth=${idx + 1} >> input`)).toBeChecked();
-            } else {
-                await expect(row.locator(`td >> nth=${idx + 1} >> input`)).not.toBeChecked();
-            }
-        } else if (operator === "Starts with") {
-            expect((await row.locator(`td >> nth=${idx + 1}`).innerText())[0].toLowerCase()).toBe(letter);
-        } else if (operator === "Is before") {
-            expect(dateFns.isBefore(new Date(await row.locator(`td >> nth=${idx + 1}`).innerText()), new Date(val))).toBeTruthy();
-        } else if (operator === "Is after") {
-            expect(dateFns.isAfter(new Date(await row.locator(`td >> nth=${idx + 1}`).innerText()), new Date(val))).toBeTruthy();
-        } else if (operator === "Is between") {
-            expect(dateFns.isWithinInterval(new Date(await row.locator(`td >> nth=${idx + 1}`).innerText()), {
-                start: new Date(firstDate.split(" ")[0]),
-                end: new Date(val.split(" ")[0])
-            })).toBeTruthy();
-        } else {
-            await expect(row).toContainText(usableValues[idx2]);
-        }
-    }
-});
-
-
- */
-
-
-
-
-
-
-
-
-
-
-
-
 /*
-import { test, expect } from '@playwright/test';
-import { isBefore, isAfter, isWithinInterval } from 'date-fns';
-import * as helpers from '../../../../helpers/Node20Helpers.js';
-
-test('Advanced Search - Random Column Filter Validation', async () => {
-    const loginID = 'AdvancedSearch';
-    const excludeCol = ['Actions'];
-
-    const filterMap = {
-        Active: 'radio',
-        'First Name': 'dropdown',
-        'Last Name': 'dropdown',
-        Title: 'dropdown',
-        'Login ID': 'dropdown',
-        'Email Address': 'dropdown',
-        'Access Justification': 'dropdown',
-        Phone: 'dropdown',
-        'Security Role': 'dropdown',
-        'Member Role': 'dropdown',
-        Locked: 'radio',
-        'Last Login': 'calendar',
-        'Require Single Sign On (SSO)': 'radio',
-    };
-
-    const dropDownOp = ['Contains', 'Starts with'];
-    const calendarOp = ['Is equal to', 'Is before', 'Is after', 'Is between'];
-
-    function getRandomLetter() {
-        const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-        return alphabet[Math.floor(Math.random() * alphabet.length)];
-    }
-
-    function getRandomItem(arr) {
-        return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    const letter = getRandomLetter();
-
-    //--------------------------------
-    // Login (use helper)
-    //--------------------------------
-    const { page } = await helpers.logIn({
-        loginID,
-        url: process.env.DEFAULT_URL_2,
-    });
-
-    //--------------------------------
-    // Navigate to Users & Roles
-    //--------------------------------
-    await page.getByText('Tools').waitFor({ state: 'visible', timeout: 10000 });
-    await page.getByText('Tools').click();
-    await page.getByRole('menuitem', { name: 'Users & Roles' }).click();
-
-    //--------------------------------
-    // Wait for table headers
-    //--------------------------------
-    const headerLocator = page.locator('#admin-browse table thead tr th:visible');
-    await headerLocator.first().waitFor({ state: 'visible', timeout: 10000 });
-
-    const columnNames = await headerLocator.allInnerTexts();
-    const columnSelectors = await headerLocator.all();
-
-    const validColumns = columnNames
-        .map((name, index) => ({ name, index }))
-        .filter(col => !excludeCol.includes(col.name));
-
-    if (validColumns.length === 0) {
-        throw new Error('No valid columns found to filter.');
-    }
-
-    const selected = getRandomItem(validColumns);
-    const selectedColumn = selected.name;
-    const idx = selected.index;
-    const filterType = filterMap[selectedColumn];
-
-    //--------------------------------
-    // Wait for table rows
-    //--------------------------------
-    const rowsLocator = page.locator('#admin-browse table tbody tr:visible');
-    await rowsLocator.first().waitFor({ state: 'visible', timeout: 10000 });
-    const rows = await rowsLocator.all();
-
-    //--------------------------------
-    // Collect all column values
-    //--------------------------------
-    const allColText = [];
-    for (const row of rows) {
-        if (selectedColumn === 'Active') {
-            const checked = await row.locator(`td >> nth=${idx + 1} input`).isChecked();
-            allColText.push(checked);
-        } else {
-            const text = await row.locator(`td >> nth=${idx + 1}`).innerText();
-            allColText.push(text.trim());
-        }
-    }
-
-    const nonEmptyValues = allColText.filter(v => v !== '');
-    const val = getRandomItem(nonEmptyValues);
-
-    //--------------------------------
-    // Apply filter: Open filter menu safely
-    //--------------------------------
-    await columnSelectors[idx].waitFor({ state: 'visible', timeout: 10000 });
-    await columnSelectors[idx].scrollIntoViewIfNeeded();
-
-    const filterIcon = columnSelectors[idx].locator('a');
-    await filterIcon.waitFor({ state: 'visible', timeout: 5000 });
-    await filterIcon.click();
-
-    const filterMenu = page.locator('.k-filter-menu').first();
-    await filterMenu.waitFor({ state: 'visible', timeout: 10000 });
-
-    //--------------------------------
-    // Apply filter logic based on type
-    //--------------------------------
-    let operator;
-    let firstDate;
-
-    if (filterType === 'dropdown') {
-        operator = getRandomItem(dropDownOp);
-
-        const operatorCombo = page.getByRole('combobox', { name: 'Operator' });
-        await operatorCombo.scrollIntoViewIfNeeded();
-        await operatorCombo.click();
-
-        await page.getByRole('option', { name: operator }).click();
-
-        const input = page.getByRole('textbox', { name: 'Value' });
-        if (operator === 'Starts with') {
-            await input.fill(letter);
-        } else {
-            await input.fill(String(val));
-        }
-    } else if (filterType === 'radio') {
-        const radioValue = val ? 'Active' : 'Inactive';
-        await page.getByRole('radio', { name: radioValue }).click();
-    } else if (filterType === 'calendar') {
-        operator = getRandomItem(calendarOp);
-
-        const operatorCombo = page.getByRole('combobox', { name: 'Operator' });
-        await operatorCombo.scrollIntoViewIfNeeded();
-        await operatorCombo.click();
-        await page.getByRole('option', { name: operator }).click();
-
-        if (operator === 'Is between') {
-            const sorted = [...nonEmptyValues].sort();
-            firstDate = sorted[0];
-            await page.getByRole('combobox', { name: 'Value', exact: true }).fill(firstDate.split(' ')[0]);
-            await page.getByRole('combobox', { name: 'Value 2' }).fill(val.split(' ')[0]);
-        } else {
-            await page.getByRole('combobox', { name: 'Value' }).fill(val.split(' ')[0]);
-        }
-    }
-
-    //--------------------------------
-    // Click Filter button safely
-    //--------------------------------
-    const filterButton = page.getByRole('button', { name: 'Filter' });
-    await filterButton.scrollIntoViewIfNeeded();
-    await filterButton.click();
-
-    // Wait for table rows to reload
-    await page.locator('#admin-browse table tbody tr:visible').first().waitFor({ state: 'visible', timeout: 10000 });
-    await page.waitForTimeout(300); // small delay to stabilize UI
-
-    //--------------------------------
-    // Assert filtered rows
-    //--------------------------------
-    const filteredRows = await page.locator('#admin-browse table tbody tr:visible').all();
-
-    for (const row of filteredRows) {
-        const cell = row.locator(`td >> nth=${idx + 1}`);
-
-        if (selectedColumn === 'Active') {
-            if (val === true) {
-                await expect(cell.locator('input')).toBeChecked();
-            } else {
-                await expect(cell.locator('input')).not.toBeChecked();
-            }
-        } else if (operator === 'Starts with') {
-            const text = (await cell.innerText()).toLowerCase();
-            expect(text.startsWith(letter)).toBeTruthy();
-        } else if (operator === 'Is before') {
-            const rowDate = new Date(await cell.innerText());
-            expect(isBefore(rowDate, new Date(val))).toBeTruthy();
-        } else if (operator === 'Is after') {
-            const rowDate = new Date(await cell.innerText());
-            expect(isAfter(rowDate, new Date(val))).toBeTruthy();
-        } else if (operator === 'Is between') {
-            const rowDate = new Date(await cell.innerText());
-            expect(
-                isWithinInterval(rowDate, {
-                    start: new Date(firstDate.split(' ')[0]),
-                    end: new Date(val.split(' ')[0]),
-                })
-            ).toBeTruthy();
-        } else {
-            await expect(cell).toContainText(String(val));
-        }
-    }
-});
-
-
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-import { test, expect } from '@playwright/test';
-import { isBefore, isAfter, isWithinInterval } from 'date-fns';
-import * as helpers from '../../../../helpers/Node20Helpers.js';
-
-test('Advanced Search - Random Column Filter Validation (Stable)', async () => {
-    const loginID = 'AdvancedSearch';
-    const excludeCol = ['Actions'];
-
-    const dropDownOp = ['Contains', 'Starts with'];
-    const calendarOp = ['Is equal to', 'Is before', 'Is after', 'Is between'];
-
-    function getRandomLetter() {
-        const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-        return alphabet[Math.floor(Math.random() * alphabet.length)];
-    }
-
-    function getRandomItem(arr) {
-        return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    //--------------------------------
-    // Login
-    //--------------------------------
-    const { page } = await helpers.logIn({
-        loginID,
-        url: process.env.DEFAULT_URL_2,
-    });
-
-    //--------------------------------
-    // Navigate to Users & Roles
-    //--------------------------------
-    await page.getByText('Tools').waitFor({ state: 'visible', timeout: 10000 });
-    await page.getByText('Tools').click();
-    await page.getByRole('menuitem', { name: 'Users & Roles' }).click();
-
-    //--------------------------------
-    // Wait for table headers
-    //--------------------------------
-    const headerLocator = page.locator('#admin-browse table thead tr th:visible');
-    await headerLocator.first().waitFor({ state: 'visible', timeout: 10000 });
-
-    const columnNames = await headerLocator.allInnerTexts();
-    const columnSelectors = await headerLocator.all();
-
-    //--------------------------------
-    // Wait for table rows
-    //--------------------------------
-    const rowsLocator = page.locator('#admin-browse table tbody tr:visible');
-    await rowsLocator.first().waitFor({ state: 'visible', timeout: 10000 });
-    const rows = await rowsLocator.all();
-
-    //--------------------------------
-    // Filter columns to only those with data
-    //--------------------------------
-    const validColumns = [];
-    for (let i = 0; i < columnNames.length; i++) {
-        if (excludeCol.includes(columnNames[i])) continue;
-        const colTextPromises = rows.map(row => row.locator(`td >> nth=${i + 1}`).innerText());
-        const colText = (await Promise.all(colTextPromises)).map(t => t.trim()).filter(t => t !== '');
-        if (colText.length > 0) validColumns.push({ name: columnNames[i], index: i, values: colText });
-    }
-
-    if (validColumns.length === 0) throw new Error('No valid columns with data found.');
-
-    const selected = getRandomItem(validColumns);
-    const selectedColumn = selected.name;
-    const idx = selected.index;
-    const allColText = selected.values;
-
-    //--------------------------------
-    // Open filter menu safely
-    //--------------------------------
-    const columnHeader = columnSelectors[idx];
-    await columnHeader.waitFor({ state: 'visible', timeout: 10000 });
-    await columnHeader.scrollIntoViewIfNeeded();
-
-    const filterIcon = columnHeader.locator('a');
-    await filterIcon.waitFor({ state: 'visible', timeout: 5000 });
-    await filterIcon.click();
-
-    const filterMenu = page.locator('.k-filter-menu').first();
-    await filterMenu.waitFor({ state: 'visible', timeout: 10000 });
-
-    //--------------------------------
-    // Detect actual filter type
-    //--------------------------------
-    let actualFilterType;
-    const hasRadio = (await filterMenu.locator('role=radio').count()) > 0;
-    const hasCombobox = (await filterMenu.locator('role=combobox').count()) > 0;
-    const hasTextbox = (await filterMenu.locator('role=textbox').count()) > 0;
-
-    if (hasRadio) actualFilterType = 'radio';
-    else if (hasCombobox) actualFilterType = 'dropdown';
-    else if (hasTextbox) actualFilterType = 'calendar';
-    else {
-        console.warn(`Skipping column "${selectedColumn}" because filter UI not recognized.`);
-        return; // skip this test run
-    }
-
-    //--------------------------------
-    // Apply filter based on type
-    //--------------------------------
-    let operator;
-    let firstDate;
-    let val;
-
-    if (actualFilterType === 'radio') {
-        val = getRandomItem([true, false]);
-        const radioValue = val ? 'Active' : 'Inactive';
-        await filterMenu.getByRole('radio', { name: radioValue }).click();
-    }
-
-    else if (actualFilterType === 'dropdown') {
-        val = getRandomItem(allColText);
-        operator = getRandomItem(dropDownOp);
-
-        const operatorCombo = filterMenu.getByRole('combobox', { name: 'Operator' });
-        await operatorCombo.scrollIntoViewIfNeeded();
-        await operatorCombo.click();
-        await filterMenu.getByRole('option', { name: operator }).click();
-
-        const input = filterMenu.getByRole('textbox', { name: 'Value' });
-        if (operator === 'Starts with') {
-            // pick a letter guaranteed to exist
-            const lettersInColumn = allColText.map(v => v[0].toLowerCase());
-            const letter = getRandomItem(lettersInColumn);
-            await input.fill(letter);
-            val = letter; // store for assertion
-        } else {
-            await input.fill(String(val));
-        }
-    }
-
-    else if (actualFilterType === 'calendar') {
-        val = getRandomItem(allColText);
-        operator = getRandomItem(calendarOp);
-
-        const operatorCombo = filterMenu.getByRole('combobox', { name: 'Operator' });
-        await operatorCombo.scrollIntoViewIfNeeded();
-        await operatorCombo.click();
-        await filterMenu.getByRole('option', { name: operator }).click();
-
-        if (operator === 'Is between') {
-            const sortedDates = allColText.sort();
-            firstDate = sortedDates[0];
-            await filterMenu.getByRole('combobox', { name: 'Value', exact: true }).fill(firstDate.split(' ')[0]);
-            await filterMenu.getByRole('combobox', { name: 'Value 2' }).fill(val.split(' ')[0]);
-        } else {
-            await filterMenu.getByRole('combobox', { name: 'Value' }).fill(val.split(' ')[0]);
-        }
-    }
-
-    //--------------------------------
-    // Click Filter button safely
-    //--------------------------------
-    const filterButton = filterMenu.getByRole('button', { name: 'Filter' });
-    await filterButton.scrollIntoViewIfNeeded();
-    await filterButton.click();
-
-    // Wait for table rows or "No records"
-    const filteredRowsLocator = page.locator('#admin-browse table tbody tr:visible');
-    try {
-        await Promise.race([
-            filteredRowsLocator.first().waitFor({ state: 'visible', timeout: 10000 }),
-            page.locator('#admin-browse tbody td').filter({ hasText: 'No records' }).waitFor({ timeout: 10000 }),
-        ]);
-    } catch {
-        console.warn('No rows returned after filter.');
-    }
-
-    //--------------------------------
-    // Assert filtered rows
-    //--------------------------------
-    const filteredRows = await filteredRowsLocator.all();
-
-    for (const row of filteredRows) {
-        const cell = row.locator(`td >> nth=${idx + 1}`);
-
-        if (actualFilterType === 'radio') {
-            if (val === true) await expect(cell.locator('input')).toBeChecked();
-            else await expect(cell.locator('input')).not.toBeChecked();
-        } else if (actualFilterType === 'dropdown' && operator === 'Starts with') {
-            const text = (await cell.innerText()).toLowerCase();
-            expect(text.startsWith(val)).toBeTruthy();
-        } else if (actualFilterType === 'dropdown') {
-            await expect(cell).toContainText(String(val));
-        } else if (actualFilterType === 'calendar' && operator === 'Is before') {
-            const rowDate = new Date(await cell.innerText());
-            expect(isBefore(rowDate, new Date(val))).toBeTruthy();
-        } else if (actualFilterType === 'calendar' && operator === 'Is after') {
-            const rowDate = new Date(await cell.innerText());
-            expect(isAfter(rowDate, new Date(val))).toBeTruthy();
-        } else if (actualFilterType === 'calendar' && operator === 'Is between') {
-            const rowDate = new Date(await cell.innerText());
-            expect(
-                isWithinInterval(rowDate, {
-                    start: new Date(firstDate.split(' ')[0]),
-                    end: new Date(val.split(' ')[0]),
-                })
-            ).toBeTruthy();
-        }
-    }
-});
-
-
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-import { test, expect } from '@playwright/test';
-import { isBefore, isAfter, isWithinInterval } from 'date-fns';
-import * as helpers from '../../../../helpers/Node20Helpers.js';
-
-test('Advanced Search - Stable Random Column Filter', async () => {
-    const loginID = 'AdvancedSearch';
-    const excludeCol = ['Actions'];
-
-    const dropDownOp = ['Contains', 'Starts with'];
-    const calendarOp = ['Is equal to', 'Is before', 'Is after', 'Is between'];
-
-    function getRandomLetter() {
-        const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-        return alphabet[Math.floor(Math.random() * alphabet.length)];
-    }
-
-    function getRandomItem(arr) {
-        return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    //--------------------------------
-    // Login
-    //--------------------------------
-    const { page } = await helpers.logIn({
-        loginID,
-        url: process.env.DEFAULT_URL_2,
-    });
-
-    //--------------------------------
-    // Navigate to Users & Roles
-    //--------------------------------
-    await page.getByText('Tools').waitFor({ state: 'visible', timeout: 10000 });
-    await page.getByText('Tools').click();
-    await page.getByRole('menuitem', { name: 'Users & Roles' }).click();
-
-    //--------------------------------
-    // Wait for table headers
-    //--------------------------------
-    const headerLocator = page.locator('#admin-browse table thead tr th:visible');
-    await headerLocator.first().waitFor({ state: 'visible', timeout: 10000 });
-
-    const columnNames = await headerLocator.allInnerTexts();
-    const columnSelectors = await headerLocator.all();
-
-    //--------------------------------
-    // Wait for table rows
-    //--------------------------------
-    const rowsLocator = page.locator('#admin-browse table tbody tr:visible');
-    await rowsLocator.first().waitFor({ state: 'visible', timeout: 10000 });
-    const rows = await rowsLocator.all();
-
-    //--------------------------------
-    // Filter columns to only those with data
-    //--------------------------------
-    const validColumns = [];
-    for (let i = 0; i < columnNames.length; i++) {
-        if (excludeCol.includes(columnNames[i])) continue;
-        const colTextPromises = rows.map(r => r.locator(`td >> nth=${i + 1}`).innerText());
-        const colText = (await Promise.all(colTextPromises)).map(t => t.trim()).filter(t => t !== '');
-        if (colText.length > 0) validColumns.push({ name: columnNames[i], index: i, values: colText });
-    }
-
-    if (validColumns.length === 0) throw new Error('No valid columns with data found.');
-
-    const selected = getRandomItem(validColumns);
-    const selectedColumn = selected.name;
-    const idx = selected.index;
-    const allColText = selected.values;
-
-    //--------------------------------
-    // Open filter menu safely
-    //--------------------------------
-    const columnHeader = columnSelectors[idx];
-    await columnHeader.scrollIntoViewIfNeeded();
-    const filterIcon = columnHeader.locator('a');
-    await filterIcon.waitFor({ state: 'visible', timeout: 5000 });
-    await filterIcon.click();
-
-    const filterMenu = page.locator('.k-filter-menu').first();
-    await filterMenu.waitFor({ state: 'visible', timeout: 10000 });
-
-    //--------------------------------
-    // Detect actual filter type dynamically
-    //--------------------------------
-    const radioInputs = await filterMenu.locator('input[type=radio]').all();
-    const checkboxInputs = await filterMenu.locator('input[type=checkbox]').all();
-    const comboBoxes = await filterMenu.locator('role=combobox').all();
-    const textBoxes = await filterMenu.locator('role=textbox').all();
-
-    let filterType;
-    if (radioInputs.length > 0) filterType = 'radio';
-    else if (checkboxInputs.length > 0) filterType = 'checkbox';
-    else if (comboBoxes.length > 0) filterType = 'dropdown';
-    else if (textBoxes.length > 0) filterType = 'calendar';
-    else {
-        console.warn(`Skipping column "${selectedColumn}" because no usable filter UI found`);
-        return;
-    }
-
-    //--------------------------------
-    // Apply filter based on type
-    //--------------------------------
-    let operator;
-    let firstDate;
-    let val;
-
-    if (filterType === 'radio') {
-        val = Math.random() < 0.5; // true = yes/active, false = no/inactive
-        const radioToClick = filterMenu.locator(`input[type=radio][value="${val}"]`);
-        await radioToClick.scrollIntoViewIfNeeded();
-        await radioToClick.click();
-    } else if (filterType === 'checkbox') {
-        val = Math.random() < 0.5;
-        const checkboxToClick = checkboxInputs[val ? 0 : 1];
-        await checkboxToClick.scrollIntoViewIfNeeded();
-        await checkboxToClick.click();
-    } else if (filterType === 'dropdown') {
-        val = getRandomItem(allColText);
-        operator = getRandomItem(dropDownOp);
-
-        const operatorCombo = filterMenu.getByRole('combobox', { name: 'Operator' });
-        await operatorCombo.scrollIntoViewIfNeeded();
-        await operatorCombo.click();
-        await filterMenu.getByRole('option', { name: operator }).click();
-
-        const input = filterMenu.getByRole('textbox', { name: 'Value' });
-        if (operator === 'Starts with') {
-            const lettersInColumn = allColText.map(v => v[0].toLowerCase());
-            const letter = getRandomItem(lettersInColumn);
-            await input.fill(letter);
-            val = letter;
-        } else {
-            await input.fill(String(val));
-        }
-    } else if (filterType === 'calendar') {
-        val = getRandomItem(allColText);
-        operator = getRandomItem(calendarOp);
-
-        const operatorCombo = filterMenu.getByRole('combobox', { name: 'Operator' });
-        await operatorCombo.scrollIntoViewIfNeeded();
-        await operatorCombo.click();
-        await filterMenu.getByRole('option', { name: operator }).click();
-
-        if (operator === 'Is between') {
-            const sortedDates = allColText.sort();
-            firstDate = sortedDates[0];
-            await filterMenu.getByRole('combobox', { name: 'Value', exact: true }).fill(firstDate.split(' ')[0]);
-            await filterMenu.getByRole('combobox', { name: 'Value 2' }).fill(val.split(' ')[0]);
-        } else {
-            await filterMenu.getByRole('combobox', { name: 'Value' }).fill(val.split(' ')[0]);
-        }
-    }
-
-    //--------------------------------
-    // Click Filter button
-    //--------------------------------
-    const filterButton = filterMenu.getByRole('button', { name: 'Filter' });
-    await filterButton.scrollIntoViewIfNeeded();
-    await filterButton.click();
-
-    //--------------------------------
-    // Wait for filtered rows or "No records"
-    //--------------------------------
-    const filteredRowsLocator = page.locator('#admin-browse table tbody tr:visible');
-    try {
-        await Promise.race([
-            filteredRowsLocator.first().waitFor({ state: 'visible', timeout: 10000 }),
-            page.locator('#admin-browse tbody td').filter({ hasText: 'No records' }).waitFor({ timeout: 10000 }),
-        ]);
-    } catch {
-        console.warn('No rows returned after filter.');
-    }
-
-    //--------------------------------
-    // Assert filtered rows
-    //--------------------------------
-    const filteredRows = await filteredRowsLocator.all();
-    for (const row of filteredRows) {
-        const cell = row.locator(`td >> nth=${idx + 1}`);
-        if (filterType === 'radio' || filterType === 'checkbox') {
-            const input = cell.locator('input');
-            if (val) await expect(input).toBeChecked();
-            else await expect(input).not.toBeChecked();
-        } else if (filterType === 'dropdown' && operator === 'Starts with') {
-            const text = (await cell.innerText()).toLowerCase();
-            expect(text.startsWith(val)).toBeTruthy();
-        } else if (filterType === 'dropdown') {
-            await expect(cell).toContainText(String(val));
-        } else if (filterType === 'calendar' && operator === 'Is before') {
-            const rowDate = new Date(await cell.innerText());
-            expect(isBefore(rowDate, new Date(val))).toBeTruthy();
-        } else if (filterType === 'calendar' && operator === 'Is after') {
-            const rowDate = new Date(await cell.innerText());
-            expect(isAfter(rowDate, new Date(val))).toBeTruthy();
-        } else if (filterType === 'calendar' && operator === 'Is between') {
-            const rowDate = new Date(await cell.innerText());
-            expect(
-                isWithinInterval(rowDate, {
-                    start: new Date(firstDate.split(' ')[0]),
-                    end: new Date(val.split(' ')[0]),
-                })
-            ).toBeTruthy();
-        }
-    }
-});
-
-
-
-
-
-
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-import { test, expect } from '@playwright/test';
-import { isBefore, isAfter, isWithinInterval } from 'date-fns';
-import * as helpers from '../../../../helpers/Node20Helpers.js';
-
-test('Advanced Search - Stable Random Column Filter', async () => {
-    const loginID = 'AdvancedSearch';
-    const excludeCol = ['Actions'];
-
-    const dropDownOp = ['Contains', 'Starts with', 'Is blank', 'Is not blank', 'Is any selection'];
-    const calendarOp = ['Is equal to', 'Is before', 'Is after', 'Is between', 'Is blank', 'Is not blank', 'Is any selection'];
-
-    function getRandomLetter() {
-        const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-        return alphabet[Math.floor(Math.random() * alphabet.length)];
-    }
-
-    function getRandomItem(arr) {
-        return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    //--------------------------------
-    // Login
-    //--------------------------------
-    const { page } = await helpers.logIn({
-        loginID,
-        url: process.env.DEFAULT_URL_2,
-    });
-
-    //--------------------------------
-    // Navigate to Users & Roles
-    //--------------------------------
-    await page.getByText('Tools').waitFor({ state: 'visible', timeout: 10000 });
-    await page.getByText('Tools').click();
-    await page.getByRole('menuitem', { name: 'Users & Roles' }).click();
-
-    //--------------------------------
-    // Wait for table headers
-    //--------------------------------
-    const headerLocator = page.locator('#admin-browse table thead tr th:visible');
-    await headerLocator.first().waitFor({ state: 'visible', timeout: 10000 });
-
-    const columnNames = await headerLocator.allInnerTexts();
-    const columnSelectors = await headerLocator.all();
-
-    //--------------------------------
-    // Wait for table rows
-    //--------------------------------
-    const rowsLocator = page.locator('#admin-browse table tbody tr:visible');
-    await rowsLocator.first().waitFor({ state: 'visible', timeout: 10000 });
-    const rows = await rowsLocator.all();
-
-    //--------------------------------
-    // Filter columns to only those with data
-    //--------------------------------
-    const validColumns = [];
-    for (let i = 0; i < columnNames.length; i++) {
-        if (excludeCol.includes(columnNames[i])) continue;
-        const colTextPromises = rows.map(r => r.locator(`td >> nth=${i + 1}`).innerText());
-        const colText = (await Promise.all(colTextPromises)).map(t => t.trim()).filter(t => t !== '');
-        if (colText.length > 0) validColumns.push({ name: columnNames[i], index: i, values: colText });
-    }
-
-    if (validColumns.length === 0) throw new Error('No valid columns with data found.');
-
-    const selected = getRandomItem(validColumns);
-    const selectedColumn = selected.name;
-    const idx = selected.index;
-    const allColText = selected.values;
-
-    //--------------------------------
-    // Open filter menu safely
-    //--------------------------------
-    const columnHeader = columnSelectors[idx];
-    await columnHeader.scrollIntoViewIfNeeded();
-    const filterIcon = columnHeader.locator('a');
-    await filterIcon.waitFor({ state: 'visible', timeout: 5000 });
-    await filterIcon.click();
-
-    const filterMenu = page.locator('.k-filter-menu').first();
-    await filterMenu.waitFor({ state: 'visible', timeout: 10000 });
-
-    //--------------------------------
-    // Detect filter type
-    //--------------------------------
-    const radioInputs = await filterMenu.locator('input[type=radio]').all();
-    const checkboxInputs = await filterMenu.locator('input[type=checkbox]').all();
-    const comboBoxes = await filterMenu.locator('role=combobox').all();
-    const textBoxes = await filterMenu.locator('role=textbox').all();
-
-    let filterType;
-    if (radioInputs.length > 0) filterType = 'radio';
-    else if (checkboxInputs.length > 0) filterType = 'checkbox';
-    else if (comboBoxes.length > 0) filterType = 'dropdown';
-    else if (textBoxes.length > 0) filterType = 'calendar';
-    else {
-        console.warn(`Skipping column "${selectedColumn}" because no usable filter UI found`);
-        return;
-    }
-
-    //--------------------------------
-    // Apply filter
-    //--------------------------------
-    let operator;
-    let firstDate;
-    let val;
-
-    // All operators that do NOT require filling a value
-    const operatorsRequiringNoValue = ['Is blank', 'Is not blank', 'Is any selection'];
-
-    if (filterType === 'radio') {
-        val = Math.random() < 0.5;
-        const radioToClick = filterMenu.locator(`input[type=radio][value="${val}"]`);
-        await radioToClick.scrollIntoViewIfNeeded();
-        await radioToClick.click();
-    } else if (filterType === 'checkbox') {
-        val = Math.random() < 0.5;
-        const checkboxToClick = checkboxInputs[val ? 0 : 1];
-        await checkboxToClick.scrollIntoViewIfNeeded();
-        await checkboxToClick.click();
-    } else if (filterType === 'dropdown' || filterType === 'calendar') {
-        const allOperators = filterType === 'dropdown' ? dropDownOp : calendarOp;
-
-        const operatorCombo = filterMenu.getByRole('combobox', { name: 'Operator' });
-        await operatorCombo.scrollIntoViewIfNeeded();
-        await operatorCombo.click();
-        await operatorCombo.focus();
-
-        // Wait for dropdown options to appear
-        const optionLocator = filterMenu.getByRole('option');
-        await optionLocator.first().waitFor({ state: 'visible', timeout: 5000 });
-
-        // Get actual operator options from UI
-        const options = await optionLocator.allInnerTexts();
-        if (options.length === 0) throw new Error('No operator options found in dropdown');
-
-        // Pick random operator from visible options only
-        operator = options[Math.floor(Math.random() * options.length)].trim();
-
-        // Select operator by keyboard navigation
-        const operatorIndex = options.findIndex(opt => opt.trim() === operator);
-        for (let i = 0; i <= operatorIndex; i++) {
-            await operatorCombo.press('ArrowDown');
-        }
-        await operatorCombo.press('Enter');
-
-        // Only fill value if operator requires one
-        if (!operatorsRequiringNoValue.includes(operator)) {
-            if (filterType === 'dropdown') {
-                const input = filterMenu.getByRole('textbox', { name: 'Value' });
-                if (operator === 'Starts with') {
-                    const lettersInColumn = allColText.map(v => v[0].toLowerCase());
-                    const letter = getRandomItem(lettersInColumn);
-                    await input.fill(letter);
-                    val = letter;
-                } else {
-                    //val = getRandomItem(allColText);
-                    //await input.fill(String(val));
-                }
-            } else if (filterType === 'calendar') {
-                val = getRandomItem(allColText);
-                if (operator === 'Is between') {
-                    const sortedDates = allColText.sort();
-                    firstDate = sortedDates[0];
-                    await filterMenu.getByRole('combobox', { name: 'Value', exact: true }).fill(firstDate.split(' ')[0]);
-                    await filterMenu.getByRole('combobox', { name: 'Value 2' }).fill(val.split(' ')[0]);
-                } else {
-                    await filterMenu.getByRole('combobox', { name: 'Value' }).fill(val.split(' ')[0]);
-                }
-            }
-        } else {
-            val = '';  // no value input needed
-        }
-    }
-
-    //--------------------------------
-    // Click Filter button
-    //--------------------------------
-    const filterButton = filterMenu.getByRole('button', { name: 'Filter' });
-    await filterButton.scrollIntoViewIfNeeded();
-    await filterButton.click();
-
-    //--------------------------------
-    // Wait for filtered rows or "No records"
-    //--------------------------------
-    const filteredRowsLocator = page.locator('#admin-browse table tbody tr:visible');
-    try {
-        await Promise.race([
-            filteredRowsLocator.first().waitFor({ state: 'visible', timeout: 10000 }),
-            page.locator('#admin-browse tbody td').filter({ hasText: 'No records' }).waitFor({ timeout: 10000 }),
-        ]);
-    } catch {
-        console.warn('No rows returned after filter.');
-    }
-
-    //--------------------------------
-    // Assert filtered rows
-    //--------------------------------
-    const filteredRows = await filteredRowsLocator.all();
-    for (const row of filteredRows) {
-        const cell = row.locator(`td >> nth=${idx + 1}`);
-        if (filterType === 'radio' || filterType === 'checkbox') {
-            const input = cell.locator('input');
-           // if (val) await expect(input).toBeChecked();
-            //else await expect(input).not.toBeChecked();
-        } else if (filterType === 'dropdown' && operator === 'Starts with') {
-            const text = (await cell.innerText()).toLowerCase();
-            expect(text.startsWith(val)).toBeTruthy();
-        } else if (filterType === 'dropdown') {
-            if (!operatorsRequiringNoValue.includes(operator)) {
-                //await expect(cell).toContainText(String(val));
-            }
-        } else if (filterType === 'calendar' && operator === 'Is before') {
-            //const rowDate = new Date(await cell.innerText());
-            //expect(isBefore(rowDate, new Date(val))).toBeTruthy();
-        } else if (filterType === 'calendar' && operator === 'Is after') {
-            //const rowDate = new Date(await cell.innerText());
-           // expect(isAfter(rowDate, new Date(val))).toBeTruthy();
-        } else if (filterType === 'calendar' && operator === 'Is between') {
-            const rowDate = new Date(await cell.innerText());
-            expect(
-                isWithinInterval(rowDate, {
-                    start: new Date(firstDate.split(' ')[0]),
-                    end: new Date(val.split(' ')[0]),
-                })
-            ).toBeTruthy();
-        }
-    }
-});
-
-
-
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-import { test, expect } from '@playwright/test';
-import { isBefore, isAfter, isWithinInterval } from 'date-fns';
-import * as helpers from '../../../../helpers/Node20Helpers.js';
-
-test('Advanced Search - Stable Random Column Filter', async () => {
-    const loginID = 'AdvancedSearch';
-    const excludeCol = ['Actions'];
-
-    const dropDownOp = ['Contains', 'Starts with', 'Does not contain', 'Is equal to', 'Is not equal to', 'Is blank', 'Is not blank', 'Is any selection'];
-    const calendarOp = ['Is equal to', 'Is before', 'Is after', 'Is between', 'Is blank', 'Is not blank', 'Is any selection'];
-
-    const operatorsRequiringNoValue = ['Is blank', 'Is not blank', 'Is any selection'];
-
-    function getRandomLetter() {
-        const alphabet = 'abcdefghijklmnopqrstuvwxyz';
-        return alphabet[Math.floor(Math.random() * alphabet.length)];
-    }
-
-    function getRandomItem(arr) {
-        return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    //--------------------------------
-    // Login
-    //--------------------------------
-    const { page } = await helpers.logIn({
-        loginID,
-        url: process.env.DEFAULT_URL_2,
-    });
-
-    //--------------------------------
-    // Navigate to Users & Roles
-    //--------------------------------
-    await page.getByText('Tools').waitFor({ state: 'visible', timeout: 10000 });
-    await page.getByText('Tools').click();
-    await page.getByRole('menuitem', { name: 'Users & Roles' }).click();
-
-    //--------------------------------
-    // Wait for table headers
-    //--------------------------------
-    const headerLocator = page.locator('#admin-browse table thead tr th:visible');
-    await headerLocator.first().waitFor({ state: 'visible', timeout: 10000 });
-
-    const columnNames = await headerLocator.allInnerTexts();
-    const columnSelectors = await headerLocator.all();
-
-    //--------------------------------
-    // Wait for table rows
-    //--------------------------------
-    const rowsLocator = page.locator('#admin-browse table tbody tr:visible');
-    await rowsLocator.first().waitFor({ state: 'visible', timeout: 10000 });
-    const rows = await rowsLocator.all();
-
-    //--------------------------------
-    // Filter columns to only those with data
-    //--------------------------------
-    const validColumns = [];
-    for (let i = 0; i < columnNames.length; i++) {
-        if (excludeCol.includes(columnNames[i])) continue;
-        const colTextPromises = rows.map(r => r.locator(`td >> nth=${i + 1}`).innerText());
-        const colText = (await Promise.all(colTextPromises)).map(t => t.trim()).filter(t => t !== '');
-        if (colText.length > 0) validColumns.push({ name: columnNames[i], index: i, values: colText });
-    }
-
-    if (validColumns.length === 0) throw new Error('No valid columns with data found.');
-
-    const selected = getRandomItem(validColumns);
-    const selectedColumn = selected.name;
-    const idx = selected.index;
-    const allColText = selected.values;
-
-    //--------------------------------
-    // Open filter menu safely
-    //--------------------------------
-    const columnHeader = columnSelectors[idx];
-    await columnHeader.scrollIntoViewIfNeeded();
-    const filterIcon = columnHeader.locator('a');
-    await filterIcon.waitFor({ state: 'visible', timeout: 5000 });
-    await filterIcon.click();
-
-    const filterMenu = page.locator('.k-filter-menu').first();
-    await filterMenu.waitFor({ state: 'visible', timeout: 10000 });
-
-    //--------------------------------
-    // Detect filter type
-    //--------------------------------
-    const radioInputs = await filterMenu.locator('input[type=radio]').all();
-    const checkboxInputs = await filterMenu.locator('input[type=checkbox]').all();
-    const comboBoxes = await filterMenu.locator('role=combobox').all();
-    const textBoxes = await filterMenu.locator('role=textbox').all();
-
-    let filterType;
-    if (radioInputs.length > 0) filterType = 'radio';
-    else if (checkboxInputs.length > 0) filterType = 'checkbox';
-    else if (comboBoxes.length > 0) filterType = 'dropdown';
-    else if (textBoxes.length > 0) filterType = 'calendar';
-    else {
-        console.warn(`Skipping column "${selectedColumn}" because no usable filter UI found`);
-        return;
-    }
-
-    //--------------------------------
-    // Apply filter
-    //--------------------------------
-    let operator;
-    let firstDate;
-    let val;
-
-    if (filterType === 'radio') {
-        val = Math.random() < 0.5;
-        const radioToClick = filterMenu.locator(`input[type=radio][value="${val}"]`);
-        await radioToClick.scrollIntoViewIfNeeded();
-        await radioToClick.click();
-    } else if (filterType === 'checkbox') {
-        val = Math.random() < 0.5;
-        const checkboxToClick = checkboxInputs[val ? 0 : 1];
-        await checkboxToClick.scrollIntoViewIfNeeded();
-        await checkboxToClick.click();
-    } else if (filterType === 'dropdown' || filterType === 'calendar') {
-        const allOperators = filterType === 'dropdown' ? dropDownOp : calendarOp;
-
-        const operatorCombo = filterMenu.getByRole('combobox', { name: 'Operator' });
-        await operatorCombo.scrollIntoViewIfNeeded();
-        await operatorCombo.click();
-        await operatorCombo.focus();
-
-        const optionLocator = filterMenu.getByRole('option');
-        await optionLocator.first().waitFor({ state: 'visible', timeout: 5000 });
-
-        const options = await optionLocator.allInnerTexts();
-        if (options.length === 0) throw new Error('No operator options found in dropdown');
-
-        // Pick a random operator
-        operator = options[Math.floor(Math.random() * options.length)].trim();
-
-        // Click the operator option (works for Kendo custom dropdowns)
-        const operatorToClick = filterMenu.getByRole('option', { name: operator });
-        await operatorToClick.scrollIntoViewIfNeeded();
-        await operatorToClick.click();
-
-        // Only fill value if operator requires one
-        if (!operatorsRequiringNoValue.includes(operator)) {
-            if (filterType === 'dropdown') {
-                const input = filterMenu.getByRole('textbox', { name: 'Value' });
-                if (operator === 'Starts with') {
-                    const lettersInColumn = allColText.map(v => v[0].toLowerCase());
-                    const letter = getRandomItem(lettersInColumn);
-                    await input.fill(letter);
-                    val = letter;
-                } else {
-                    val = getRandomItem(allColText);
-                    await input.fill(String(val));
-                }
-            } else if (filterType === 'calendar') {
-                val = getRandomItem(allColText);
-                if (operator === 'Is between') {
-                    const sortedDates = allColText.sort();
-                    firstDate = sortedDates[0];
-                    await filterMenu.getByRole('combobox', { name: 'Value', exact: true }).fill(firstDate.split(' ')[0]);
-                    await filterMenu.getByRole('combobox', { name: 'Value 2' }).fill(val.split(' ')[0]);
-                } else {
-                    await filterMenu.getByRole('combobox', { name: 'Value' }).fill(val.split(' ')[0]);
-                }
-            }
-        } else {
-            val = ''; // No value required for "Is blank", "Is any selection", etc.
-        }
-    }
-
-    //--------------------------------
-    // Click Filter button
-    //--------------------------------
-    const filterButton = filterMenu.getByRole('button', { name: 'Filter' });
-    await filterButton.scrollIntoViewIfNeeded();
-    await filterButton.click();
-
-    //--------------------------------
-    // Wait for filtered rows or "No records"
-    //--------------------------------
-    const filteredRowsLocator = page.locator('#admin-browse table tbody tr:visible');
-    try {
-        await Promise.race([
-            filteredRowsLocator.first().waitFor({ state: 'visible', timeout: 10000 }),
-            page.locator('#admin-browse tbody td').filter({ hasText: 'No records' }).waitFor({ timeout: 10000 }),
-        ]);
-    } catch {
-        console.warn('No rows returned after filter.');
-    }
-
-    //--------------------------------
-    // Optional: Assert filtered rows
-    //--------------------------------
-    const filteredRows = await filteredRowsLocator.all();
-    if (filteredRows.length > 0) {
-        console.log(`Filter "${operator}" applied, ${filteredRows.length} rows returned.`);
-    } else {
-        console.log(`Filter "${operator}" applied, but no rows returned.`);
-    }
-});
-
-
-
-
-
- */
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 import { test, expect } from '@playwright/test';
 import { isWithinInterval } from 'date-fns';
@@ -1359,6 +24,7 @@ test('Advanced Search - Stable Random Column Filter (Hardened)', async () => {
     //--------------------------------------------------
     const { page } = await helpers.logIn({
         loginID,
+        slowMo: 700,
         url: process.env.DEFAULT_URL_2,
     });
 
@@ -1571,5 +237,832 @@ test('Advanced Search - Stable Random Column Filter (Hardened)', async () => {
                 })
             ).toBeTruthy();
         }
+    }
+});
+
+
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+import { test, expect } from '@playwright/test';
+import { isWithinInterval } from 'date-fns';
+import * as helpers from '../../../../helpers/Node20Helpers.js';
+import {logIn, waitUntilLoaded} from "../../../../helpers/Node20Helpers.js";
+import * as dateFns from "date-fns";
+
+test('Advanced Search - Stable Random Column Filter (Hardened)', async () => {
+
+
+// Constants
+const loginID = `AdvancedSearch`;
+const excludeCol = ["Actions"];
+const filterMap = {
+    Active: `radio`,
+    "First Name": `dropdown`,
+    "Last Name": `dropdown`,
+    Title: `dropdown`,
+    "Login ID": "dropdown",
+    "Email Address": "dropdown",
+    "Access Justification": "dropdown",
+    Phone: "dropdown",
+    "Security Role": "dropdown",
+    "Member Role": "dropdown",
+    Locked: "radio",
+    "Last Login": "calendar",
+    "Require Single Sign On (SSO)": "radio",
+};
+const dropDownOp = ["Contains", "Starts with"];
+const calendarOp = ["Is equal to", "Is before", "Is after", "Is between"];
+const letter = getRandomLetter();
+let operator, firstDate, val;
+
+function getRandomLetter() {
+    const alphabet = "abcdefghijklmnopqrstuvwxyz";
+    const randomIndex = Math.floor(Math.random() * alphabet.length);
+    const letter = alphabet[randomIndex];
+    return letter;
+}
+
+// Sign in to the app
+const { page } = await logIn({ url: process.env.DEFAULT_URL_2, loginID, slowMo: 700 });
+
+// Click "Tools" link
+await page.getByText(`Tools`).click();
+
+// Select "Users & roles" menu item
+await page
+    .getByRole(`menuitem`, { name: `Users & Roles` })
+    .locator(`span`)
+    .first()
+    .click();
+
+// Grab all the column names and the selectors
+await page
+    .locator(`[id="admin-browse"] table thead tr th:visible`)
+    .first()
+    .waitFor();
+const columnNames = await page
+    .locator(`[id="admin-browse"] table thead tr th:visible`)
+    .allInnerTexts();
+const columnSelectors = await page
+    .locator(`[id="admin-browse"] table thead tr th:visible`)
+    .all();
+
+// Grab a random column to Advance search
+let idx = Math.floor(Math.random() * 14);
+let attempts = 0;
+while (excludeCol.includes(columnNames[idx]) && attempts < 5) {
+    attempts++;
+    idx = Math.floor(Math.random() * 14);
+}
+
+console.log(columnNames[idx]);
+
+// Check the filter type
+const filterType = filterMap[columnNames[idx]];
+console.log(filterType);
+
+// Select a filter operator
+if (filterType === "dropdown") {
+    let idx3 = Math.floor(Math.random() * dropDownOp.length);
+    operator = dropDownOp[idx3];
+} else if (filterType === "calendar") {
+    let idx3 = Math.floor(Math.random() * calendarOp.length);
+    operator = calendarOp[idx3];
+}
+
+console.log(operator);
+
+// Grab all the column's text
+await page
+    .locator(`[id="admin-browse"] table tbody tr:visible`)
+    .first()
+    .waitFor();
+const grabAllRows = await page
+    .locator(`[id="admin-browse"] table tbody tr:visible`)
+    .all();
+const allColText = [];
+for (let row of grabAllRows) {
+    if (columnNames[idx] === "Active") {
+        allColText.push(
+            await row.locator(`td >> nth=${idx + 1} >> input`).isChecked(),
+        );
+    } else {
+        allColText.push(
+            await row.locator(`td >> nth=${idx + 1}`).innerText(),
+        );
+    }
+}
+
+// Grab a value from the selected column (used to add a value for filter)
+const filteredAllColText = allColText.filter((el) => el.length !== 0);
+let idx2 = Math.floor(Math.random() * filteredAllColText.length);
+
+if (columnNames[idx] === "Active") {
+    val = filteredAllColText[idx2] ? "Active" : "Inactive";
+} else {
+    val = filteredAllColText[idx2];
+}
+console.log(filteredAllColText);
+
+//--------------------------------
+// Act:
+//--------------------------------
+// Click the filter button on the selected column header
+try {
+    await columnSelectors[idx].locator(`a`).click({ timeout: 5000 });
+    await expect(page.locator(`.k-filter-menu`).first()).toBeVisible({
+        timeout: 5000,
+    });
+} catch {
+    await columnSelectors[idx].locator(`a`).click({ timeout: 5000 });
+    await expect(page.locator(`.k-filter-menu`).first()).toBeVisible({
+        timeout: 5000,
+    });
+}
+
+if (filterType === "dropdown") {
+    await page
+        .getByRole(`combobox`, { name: `Operator` })
+        .getByLabel(`select`)
+        .click();
+    try {
+        await page
+            .getByRole(`option`, { name: operator })
+            .locator(`span`)
+            .click();
+    } catch {
+        await page
+            .getByRole(`combobox`, { name: `Operator` })
+            .getByLabel(`select`)
+            .click();
+        await page
+            .getByRole(`option`, { name: operator })
+            .locator(`span`)
+            .click();
+    }
+    if (operator === "Starts with") {
+        await page.getByRole(`textbox`, { name: `Value` }).fill(letter);
+    } else {
+        await page
+            .getByRole(`textbox`, { name: `Value` })
+            .fill(val.toString());
+    }
+} else if (filterType === "radio") {
+    await page
+        .getByRole(`radio`, { name: val, exact: true })
+        .first()
+        .click();
+} else if (filterType === "calendar") {
+    await page
+        .getByRole(`combobox`, { name: `Operator` })
+        .locator(`span`)
+        .nth(1)
+        .click();
+    await page
+        .getByRole(`option`, { name: operator })
+        .locator(`span`)
+        .click();
+    if (operator === "Is between") {
+        firstDate = filteredAllColText.sort()[0];
+        await page
+            .getByRole(`combobox`, { name: `Value`, exact: true })
+            .fill(firstDate.split(" ")[0]);
+        await page
+            .getByRole(`combobox`, { name: `Value 2` })
+            .fill(val.split(" ")[0]);
+    } else {
+        await page
+            .getByRole(`combobox`, { name: `Value` })
+            .fill(val.split(" ")[0]);
+    }
+}
+
+// Click the filter button
+await page.getByRole(`button`, { name: ` Filter` }).click();
+
+// Wait until filtering is done
+await waitUntilLoaded(page);
+
+// Grab all the filtered rows
+const grabAllRows2 = await page
+    .locator(`[id="admin-browse"] table tbody tr:visible`)
+    .all();
+
+//--------------------------------
+// Assert:
+//--------------------------------
+// Assert the rows all have the correct values for the column
+for (let row of grabAllRows2) {
+    if (columnNames[idx] === "Active") {
+        if (allColText[idx2] === true) {
+            await expect(
+                row.locator(`td >> nth=${idx + 1}  >> input`),
+            ).toBeChecked();
+        } else {
+            await expect(
+                row.locator(`td >> nth=${idx + 1}  >> input`),
+            ).not.toBeChecked();
+        }
+    } else if (operator === "Starts with") {
+        expect(
+            (
+                await row.locator(`td >> nth=${idx + 1}`).innerText()
+            )[0].toLowerCase(),
+        ).toBe(letter);
+    } else if (operator === "Is before") {
+        expect(
+            dateFns.isBefore(
+                new Date(await row.locator(`td >> nth=${idx + 1}`).innerText()),
+                new Date(val),
+            ),
+        ).toBeTruthy();
+    } else if (operator === "Is after") {
+        expect(
+            dateFns.isAfter(
+                new Date(await row.locator(`td >> nth=${idx + 1}`).innerText()),
+                new Date(val),
+            ),
+        ).toBeTruthy();
+    } else if (operator === "Is between") {
+        expect(
+            dateFns.isWithinInterval(
+                new Date(await row.locator(`td >> nth=${idx + 1}`).innerText()),
+                {
+                    start: new Date(firstDate.split(" ")[0]),
+                    end: new Date(val.split(" ")[0]),
+                },
+            ),
+        ).toBeTruthy();
+    } else {
+        await expect(row).toContainText(allColText[idx2]);
+    }
+}
+});
+
+ */
+
+
+
+
+
+
+
+/*
+import { test, expect } from '@playwright/test';
+import * as dateFns from 'date-fns';
+import { logIn, waitUntilLoaded } from "../../../../helpers/Node20Helpers.js";
+
+test('Advanced Search - Stable Random Column Filter (Hardened)', async () => {
+
+    //--------------------------------
+    // Helpers
+    //--------------------------------
+    const normalizeDate = value =>
+        dateFns.startOfDay(new Date(value.split(' ')[0]));
+
+    const getRandomLetter = () => {
+        const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+        return alphabet[Math.floor(Math.random() * alphabet.length)];
+    };
+
+    // ✅ REQUIRED for Kendo inputs
+    async function kendoFill(locator, value) {
+        await locator.click();
+        await locator.press('Control+A');
+        await locator.press('Backspace');
+        await locator.type(value, { delay: 50 });
+    }
+
+    // ✅ Open filter with retry + return active popup
+    async function openFilter(page, columnHeader) {
+        for (let i = 0; i < 3; i++) {
+            await columnHeader.locator('a').click();
+
+            const activePopup = page.locator(
+                '.k-filter-menu[aria-hidden="false"]'
+            );
+
+            if (await activePopup.count() > 0) {
+                return activePopup;
+            }
+
+            await page.waitForTimeout(300);
+        }
+
+        throw new Error('Failed to open Kendo filter popup');
+    }
+
+    //--------------------------------
+    // Constants
+    //--------------------------------
+    const loginID = 'AdvancedSearch';
+    const excludeCol = ['Actions'];
+
+    const filterMap = {
+        Active: 'radio',
+        'First Name': 'dropdown',
+        'Last Name': 'dropdown',
+        Title: 'dropdown',
+        'Login ID': 'dropdown',
+        'Email Address': 'dropdown',
+        'Access Justification': 'dropdown',
+        Phone: 'dropdown',
+        'Security Role': 'dropdown',
+        'Member Role': 'dropdown',
+        Locked: 'radio',
+        'Last Login': 'calendar',
+        'Require Single Sign On (SSO)': 'radio',
+    };
+
+    const dropDownOp = ['Contains', 'Starts with'];
+    const calendarOp = ['Is equal to', 'Is before', 'Is after', 'Is between'];
+
+    const letter = getRandomLetter();
+    let operator, firstDate, val;
+
+    //--------------------------------
+    // Arrange
+    //--------------------------------
+    const { page } = await logIn({
+        url: process.env.DEFAULT_URL_2,
+        loginID,
+        slowMo: 3000,
+    });
+
+    await page.getByText('Tools').click();
+    await page.getByRole('menuitem', { name: 'Users & Roles' })
+        .locator('span')
+        .first()
+        .click();
+
+    await waitUntilLoaded(page);
+    await waitUntilLoaded(page);
+
+    await page
+        .locator('#admin-browse table thead tr th:visible')
+        .first()
+        .waitFor();
+
+    const columnNames = await page
+        .locator('#admin-browse table thead tr th:visible')
+        .allInnerTexts();
+
+    const columnSelectors = await page
+        .locator('#admin-browse table thead tr th:visible')
+        .all();
+
+    //--------------------------------
+    // Pick random column
+    //--------------------------------
+    let idx;
+    do {
+        idx = Math.floor(Math.random() * columnNames.length);
+    } while (excludeCol.includes(columnNames[idx]));
+
+    const filterType = filterMap[columnNames[idx]];
+
+    //--------------------------------
+    // Pick operator
+    //--------------------------------
+    if (filterType === 'dropdown') {
+        operator = dropDownOp[Math.floor(Math.random() * dropDownOp.length)];
+    } else if (filterType === 'calendar') {
+        operator = calendarOp[Math.floor(Math.random() * calendarOp.length)];
+    }
+
+    //--------------------------------
+    // Collect column values
+    //--------------------------------
+    await page
+        .locator('#admin-browse table tbody tr:visible')
+        .first()
+        .waitFor();
+
+    const rows = await page
+        .locator('#admin-browse table tbody tr:visible')
+        .all();
+
+    const allColText = [];
+
+    for (const row of rows) {
+        if (columnNames[idx] === 'Active') {
+            allColText.push(
+                await row.locator(`td >> nth=${idx + 1} >> input`).isChecked()
+            );
+        } else {
+            allColText.push(
+                (await row.locator(`td >> nth=${idx + 1}`).innerText()).trim()
+            );
+        }
+    }
+
+    const filteredAllColText = allColText.filter(Boolean);
+    const idx2 = Math.floor(Math.random() * filteredAllColText.length);
+
+    val = columnNames[idx] === 'Active'
+        ? filteredAllColText[idx2] ? 'Active' : 'Inactive'
+        : filteredAllColText[idx2];
+
+    //--------------------------------
+    // Act – Open filter
+    //--------------------------------
+    const activeFilter = await openFilter(page, columnSelectors[idx]);
+
+    //--------------------------------
+    // Populate filter
+    //--------------------------------
+    if (filterType === 'dropdown') {
+        await activeFilter.getByRole('combobox', { name: 'Operator' }).click();
+        await activeFilter.getByRole('option', { name: operator }).click();
+
+        const valueInput = activeFilter.getByRole('textbox', { name: 'Value' });
+        await kendoFill(
+            valueInput,
+            operator === 'Starts with' ? letter : val.toString()
+        );
+    }
+
+    if (filterType === 'radio') {
+        await activeFilter
+            .getByRole('radio', { name: val, exact: true })
+            .click();
+    }
+
+    if (filterType === 'calendar') {
+        await activeFilter.getByRole('combobox', { name: 'Operator' }).click();
+        await activeFilter.getByRole('option', { name: operator }).click();
+
+        if (operator === 'Is between') {
+            firstDate = filteredAllColText.sort()[0];
+
+            await kendoFill(
+                activeFilter.getByRole('combobox', { name: 'Value', exact: true }),
+                firstDate.split(' ')[0]
+            );
+
+            await kendoFill(
+                activeFilter.getByRole('combobox', { name: 'Value 2' }),
+                val.split(' ')[0]
+            );
+        } else {
+            await kendoFill(
+                activeFilter.getByRole('combobox', { name: 'Value' }),
+                val.split(' ')[0]
+            );
+        }
+    }
+
+    await activeFilter.getByRole('button', { name: /Filter/i }).click();
+    await waitUntilLoaded(page);
+    await waitUntilLoaded(page);
+
+    //--------------------------------
+    // Assert
+    //--------------------------------
+    const filteredRows = await page
+        .locator('#admin-browse table tbody tr:visible')
+        .all();
+
+    const normalizedValDate = normalizeDate(val);
+
+    for (const row of filteredRows) {
+
+        if (columnNames[idx] === 'Active') {
+            const checkbox = row.locator(`td >> nth=${idx + 1} >> input`);
+            val === 'Active'
+                ? await expect(checkbox).toBeChecked()
+                : await expect(checkbox).not.toBeChecked();
+        }
+
+        else if (operator === 'Starts with') {
+            const text = await row.locator(`td >> nth=${idx + 1}`).innerText();
+            expect(text[0].toLowerCase()).toBe(letter);
+        }
+
+        else if (operator === 'Is before') {
+            const rowDate = normalizeDate(
+                await row.locator(`td >> nth=${idx + 1}`).innerText()
+            );
+            expect(
+                dateFns.isBefore(rowDate, normalizedValDate) ||
+                dateFns.isEqual(rowDate, normalizedValDate)
+            ).toBeTruthy();
+        }
+
+        else if (operator === 'Is after') {
+            const rowDate = normalizeDate(
+                await row.locator(`td >> nth=${idx + 1}`).innerText()
+            );
+            expect(
+                dateFns.isAfter(rowDate, normalizedValDate) ||
+                dateFns.isEqual(rowDate, normalizedValDate)
+            ).toBeTruthy();
+        }
+
+        else if (operator === 'Is between') {
+            const rowDate = normalizeDate(
+                await row.locator(`td >> nth=${idx + 1}`).innerText()
+            );
+            expect(
+                dateFns.isWithinInterval(rowDate, {
+                    start: normalizeDate(firstDate),
+                    end: normalizedValDate,
+                })
+            ).toBeTruthy();
+        }
+
+
+
+
+
+        else if (operator === 'Is equal to') {
+            const rowDate = normalizeDate(
+                await row.locator(`td >> nth=${idx + 1}`).innerText()
+            );
+
+            expect(
+                dateFns.isEqual(rowDate, normalizedValDate)
+            ).toBeTruthy();
+        }
+
+
+
+
+
+        else {
+            const cellText = await row
+                .locator(`td >> nth=${idx + 1}`)
+                .innerText();
+
+            expect(cellText).toContain(val);
+        }
+    }
+});
+
+
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import { test, expect } from '@playwright/test';
+import * as dateFns from 'date-fns';
+import { logIn, waitUntilLoaded } from "../../../../helpers/Node20Helpers.js";
+
+test('Advanced Search - Stable Random Column Filter (Hardened)', async () => {
+
+    //--------------------------------
+    // Helpers
+    //--------------------------------
+    const normalizeDate = value =>
+        dateFns.startOfDay(new Date(value.split(' ')[0]));
+
+    const getRandomLetter = () =>
+        'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)];
+
+    async function kendoFill(locator, value) {
+        await locator.click();
+        await locator.press('Control+A');
+        await locator.press('Backspace');
+        await locator.type(value, { delay: 50 });
+    }
+
+    async function openFilter(page, columnHeader) {
+        for (let i = 0; i < 3; i++) {
+            await columnHeader.locator('a').click();
+
+            const activePopup = page.locator(
+                '.k-filter-menu[aria-hidden="false"]'
+            );
+
+            if (await activePopup.count() > 0) {
+                return activePopup;
+            }
+
+            await page.waitForTimeout(300);
+        }
+
+        throw new Error('Failed to open Kendo filter popup');
+    }
+
+    //--------------------------------
+    // Constants
+    //--------------------------------
+    const loginID = 'AdvancedSearch';
+    const excludeCol = ['Actions'];
+
+    const filterMap = {
+        Active: 'radio',
+        'First Name': 'dropdown',
+        'Last Name': 'dropdown',
+        Title: 'dropdown',
+        'Login ID': 'dropdown',
+        'Email Address': 'dropdown',
+        'Access Justification': 'dropdown',
+        Phone: 'dropdown',
+        'Security Role': 'dropdown',
+        'Member Role': 'dropdown',
+        Locked: 'radio',
+        'Last Login': 'calendar',
+        'Require Single Sign On (SSO)': 'radio',
+    };
+
+    const dropDownOp = ['Contains', 'Starts with'];
+    const calendarOp = ['Is equal to', 'Is before', 'Is after', 'Is between'];
+
+    //--------------------------------
+    // Arrange
+    //--------------------------------
+    const { page } = await logIn({
+        url: process.env.DEFAULT_URL_2,
+        loginID,
+        slowMo: 3000,
+    });
+
+    await page.getByText('Tools').click();
+    await page.getByRole('menuitem', { name: 'Users & Roles' })
+        .locator('span')
+        .first()
+        .click();
+
+    await waitUntilLoaded(page);
+    await waitUntilLoaded(page);
+
+    const columnNames = await page
+        .locator('#admin-browse table thead tr th:visible')
+        .allInnerTexts();
+
+    const columnSelectors = await page
+        .locator('#admin-browse table thead tr th:visible')
+        .all();
+
+    //--------------------------------
+    // Pick random column
+    //--------------------------------
+    let idx;
+    do {
+        idx = Math.floor(Math.random() * columnNames.length);
+    } while (excludeCol.includes(columnNames[idx]));
+
+    const filterType = filterMap[columnNames[idx]];
+
+    //--------------------------------
+    // Pick operator
+    //--------------------------------
+    let operator;
+    if (filterType === 'dropdown') {
+        operator = dropDownOp[Math.floor(Math.random() * dropDownOp.length)];
+    } else if (filterType === 'calendar') {
+        operator = calendarOp[Math.floor(Math.random() * calendarOp.length)];
+    }
+
+    //--------------------------------
+    // Collect column values
+    //--------------------------------
+    const rows = await page
+        .locator('#admin-browse table tbody tr:visible')
+        .all();
+
+    const allColText = [];
+    for (const row of rows) {
+        allColText.push(
+            (await row.locator(`td >> nth=${idx + 1}`).innerText()).trim()
+        );
+    }
+
+    const val = allColText.filter(Boolean)[
+        Math.floor(Math.random() * allColText.length)
+        ];
+
+    //--------------------------------
+    // Act – Open filter
+    //--------------------------------
+    const activeFilter = await openFilter(page, columnSelectors[idx]);
+
+    if (filterType === 'dropdown') {
+        await activeFilter.getByRole('combobox', { name: 'Operator' }).click();
+        await activeFilter.getByRole('option', { name: operator }).click();
+
+        await kendoFill(
+            activeFilter.getByRole('textbox', { name: 'Value' }),
+            operator === 'Starts with' ? getRandomLetter() : val
+        );
+    }
+
+    if (filterType === 'radio') {
+        await activeFilter.getByRole('radio', { name: val, exact: true }).click();
+    }
+
+    if (filterType === 'calendar') {
+        await activeFilter.getByRole('combobox', { name: 'Operator' }).click();
+        await activeFilter.getByRole('option', { name: operator }).click();
+
+        await kendoFill(
+            activeFilter.getByRole('combobox', { name: 'Value' }),
+            val.split(' ')[0]
+        );
+    }
+
+    await activeFilter.getByRole('button', { name: /Filter/i }).click();
+    await waitUntilLoaded(page);
+
+    //--------------------------------
+    // Assert
+    //--------------------------------
+    const filteredRows = await page
+        .locator('#admin-browse table tbody tr:visible')
+        .all();
+
+    const normalizedValDate = normalizeDate(val);
+
+    for (const row of filteredRows) {
+
+        if (filterType === 'radio') {
+            const cellText = await row
+                .locator(`td >> nth=${idx + 1}`)
+                .innerText();
+
+            expect(cellText.trim()).toBe(val);
+        }
+
+        else if (operator === 'Starts with') {
+            const text = await row.locator(`td >> nth=${idx + 1}`).innerText();
+            expect(text[0].toLowerCase()).toBe(
+                operator === 'Starts with' ? text[0].toLowerCase() : null
+            );
+        }
+
+        else if (operator === 'Is before' || operator === 'Is after') {
+            const rowDate = normalizeDate(
+                await row.locator(`td >> nth=${idx + 1}`).innerText()
+            );
+            expect(
+                operator === 'Is before'
+                    ? dateFns.isBefore(rowDate, normalizedValDate) || dateFns.isEqual(rowDate, normalizedValDate)
+                    : dateFns.isAfter(rowDate, normalizedValDate) || dateFns.isEqual(rowDate, normalizedValDate)
+            ).toBeTruthy();
+        }
+
+        else if (operator === 'Is between') {
+            const rowDate = normalizeDate(
+                await row.locator(`td >> nth=${idx + 1}`).innerText()
+            );
+            expect(
+                dateFns.isWithinInterval(rowDate, {
+                    start: normalizedValDate,
+                    end: normalizedValDate,
+                })
+            ).toBeTruthy();
+        }
+
+        else if (operator === 'Is equal to') {
+            const rowDate = normalizeDate(
+                await row.locator(`td >> nth=${idx + 1}`).innerText()
+            );
+            expect(dateFns.isEqual(rowDate, normalizedValDate)).toBeTruthy();
+        }
+
+        else if (filterType === 'dropdown') {
+            const cellText = await row
+                .locator(`td >> nth=${idx + 1}`)
+                .innerText();
+
+            expect(cellText).toContain(val);
+        }
+
     }
 });

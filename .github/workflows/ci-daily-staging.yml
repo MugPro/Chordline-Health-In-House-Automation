@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        shard: [1, 2]
 
     steps:
       - uses: actions/checkout@v4
@@ -40,11 +40,11 @@ jobs:
           echo "DEFAULT_PASS_OCT_2025=${{ secrets.STAGING_DEFAULT_PASS_OCT_2025 }}" >> $GITHUB_ENV
           echo "QAWA_API_KEY=${{ secrets.STAGING_QAWA_API_KEY }}" >> $GITHUB_ENV
 
-      - name: Run Playwright Tests (STAGING – Shard ${{ matrix.shard }}/4)
+      - name: Run Playwright Tests (STAGING – Shard ${{ matrix.shard }}/2)
         run: |
           npx playwright test \
             --project=staging \
-            --shard=${{ matrix.shard }}/4
+            --shard=${{ matrix.shard }}/2
 
       - name: Upload test results
         if: always()

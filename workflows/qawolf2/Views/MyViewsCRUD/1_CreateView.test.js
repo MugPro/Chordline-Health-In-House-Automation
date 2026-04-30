@@ -1,28 +1,66 @@
 import { test, expect } from '@playwright/test';
 import * as helpers from '../../../../helpers/Node20Helpers.js';
 import { env } from '../../../../environments/qawolf2.env.js';
+import {logIn, waitUntilLoaded} from "../../../../helpers/Node20Helpers.js";
 
 test('Create view', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
-    const loginID = 'ViewCRUD';
+    //const loginID = 'ViewCRUD';
+    //const loginID = `emailUsers`;
     const viewName = 'QAW View';
     const viewNameEdited = `${viewName} - edited`;
 
-    // Sign in to the app (your helper launches the browser)
-    const { page, browser } = await helpers.logIn({
-        url: env.DEFAULT_URL_2,
-        loginID,
-        password: env.DEFAULT_PASS_OCT_2025,
+
+
+    const { page, browser } = await logIn({
+        loginID: 'SystemViewCRUD',
+        password: 'fasdfafs123A@',
+        slowMo: 800,
+        url: 'https://qawolf2.tcshealthcare.com/login.jsp'
     });
+
+
+    // Sign in to the app (your helper launches the browser)
+    // Sign in to the app
+    /*
+    const { browser, page } = await helpers.logIn({
+        url: process.env.DEFAULT_URL_2,
+        loginID,
+        slowMo: 2000,
+        password: process.env.DEFAULT_PASS_OCT_2025,
+    });
+
+     */
+
 
     // Clean up any existing view with the same name
     await helpers.cleanUpMyView(page, { viewName });
 
+
+
     //--------------------------------
     // Act
     //--------------------------------
+
+
+    /*
+    // Hover `Select view` button
+    await page.locator('#view-menu [role="button"]').first().hover();
+
+    // Click `My Views`
+    await page.getByText('My Views').first().click();
+
+    // Click `Add view`
+    await page.getByText('Add view').nth(1).click();
+
+     */
+
+
+//await waitUntilLoaded(page);
+
+
 
     // Hover `Select view` button
     await page.locator('#view-menu [role="button"]').first().hover();
@@ -32,6 +70,10 @@ test('Create view', async () => {
 
     // Click `Add view`
     await page.getByText('Add view').nth(1).click();
+
+
+
+
 
     // Fill in View Name
     await page.locator('#view_name').fill(viewName);

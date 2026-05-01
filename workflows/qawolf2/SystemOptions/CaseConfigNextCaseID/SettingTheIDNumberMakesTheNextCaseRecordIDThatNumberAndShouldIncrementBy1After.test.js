@@ -8,8 +8,9 @@ import {
     logIn,
     waitUntilLoaded,
     cleanupTabOnMembersPage,
-    reportCleanupFailed,
+    reportCleanupFailed, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/qawolf2.env.js";
 
 test.describe(
     'Setting Next Case ID sets the next Case # and increments by 1 thereafter',
@@ -18,11 +19,17 @@ test.describe(
 
         test.beforeEach(async () => {
             const loginID = 'CaseConfigNCID';
-            ({ browser, context, page } = await logIn({
-                url: process.env.DEFAULT_URL_2,
+
+            const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+            const url = env.DEFAULT_URL_2;
+
+            // Act
+            const { page, browser } = await logIn3({
                 loginID,
-                password: process.env.DEFAULT_PASS_OCT_2025,
-            }));
+                password,
+                url
+            });
+
         });
 
         test.afterEach(async () => {

@@ -11,8 +11,9 @@ import {
     logIn,
     waitUntilLoaded,
     cleanupTabOnMembersPage,
-    reportCleanupFailed,
+    reportCleanupFailed, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/qawolf2.env.js";
 
 // Optional transient dialog handler
 async function maybeHandleNotificationOk(
@@ -40,11 +41,18 @@ test.describe(
 
         test.beforeEach(async () => {
             const loginID = 'AuthReqServBuff';
-            ({ browser, context, page } = await logIn({
-                url: process.env.DEFAULT_URL_2,
+
+
+            const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+            const url = env.DEFAULT_URL_2;
+
+            // Act
+            const { page, browser } = await logIn3({
                 loginID,
-                password: process.env.DEFAULT_PASS_OCT_2025,
-            }));
+                password,
+                url
+            });
+
         });
 
         test.afterEach(async () => {

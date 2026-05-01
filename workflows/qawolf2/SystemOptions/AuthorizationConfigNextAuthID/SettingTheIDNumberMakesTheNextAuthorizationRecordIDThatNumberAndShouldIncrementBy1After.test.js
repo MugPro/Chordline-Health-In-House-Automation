@@ -556,7 +556,8 @@ test.describe(
 
 import { test, expect } from '@playwright/test';
 import { format } from 'date-fns';
-import { logIn } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3} from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/qawolf2.env.js";
 
 /**
  * Background watcher that clicks "Okay" on Notification dialogs
@@ -600,12 +601,18 @@ test.describe(
         let browser, context, page;
 
         test.beforeEach(async () => {
-            ({ browser, context, page } = await logIn({
-                url: process.env.DEFAULT_URL_2,
-                loginID: 'NextReview',
+            const loginID = 'NextReview';
+            const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+            const url = env.DEFAULT_URL_2;
+
+            // Act
+            const { page, browser } = await logIn3({
+                loginID,
+                password,
+                url,
                 slowMo: 1000,
-                password: process.env.DEFAULT_PASS_OCT_2025,
-            }));
+            });
+
         });
 
         test(

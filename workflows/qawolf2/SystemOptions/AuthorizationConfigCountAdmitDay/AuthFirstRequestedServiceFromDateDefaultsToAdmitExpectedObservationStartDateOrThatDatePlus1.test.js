@@ -2,9 +2,17 @@
 
 // tests/authorization.test.js
 import { test, expect } from '@playwright/test';
-import { logIn, createAuthorizationForMember, waitUntilLoaded, cleanupTabOnMembersPage, reportCleanupFailed } from '../../../../helpers/Node20Helpers.js';
+import {
+    logIn,
+    createAuthorizationForMember,
+    waitUntilLoaded,
+    cleanupTabOnMembersPage,
+    reportCleanupFailed,
+    logIn3
+} from '../../../../helpers/Node20Helpers.js';
 import * as dateFns from "date-fns";
 import { format } from 'date-fns';
+import {env} from "../../../../environments/qawolf2.env.js";
 
 
 
@@ -42,11 +50,14 @@ test('Auth first requested service from date defaults to the AdmitExpectedObserv
 
 
 
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL_2;
 
-    // Sign in
-    const { page, browser } = await logIn({
-        url: process.env.DEFAULT_URL_2,
+    // Act
+    const { page, browser } = await logIn3({
         loginID,
+        password,
+        url,
         slowMo: 800,
     });
 

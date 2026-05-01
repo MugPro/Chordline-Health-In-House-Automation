@@ -2,8 +2,9 @@ import { test, expect } from '@playwright/test';
 import { format } from 'date-fns';
 
 // Adjust paths to match your repo structure:
-import { logIn } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3} from '../../../../helpers/Node20Helpers.js';
 import { waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/qawolf2.env.js";
 // (We keep manual steps consistent with your Test 1; not using createAuthorizationForMember here.)
 
 // Reusable helper: handle a dialog *if* it appears, otherwise skip
@@ -34,11 +35,19 @@ test.describe('Authorization Config - Default Diagnosis = First Diagnosis', () =
 
     test.beforeEach(async () => {
         const loginID = 'AuthConfigDefDiagNoD';
-        ({ browser, context, page } = await logIn({
-            url: process.env.DEFAULT_URL_2,
+
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL_2;
+
+        // Act
+        const { page, browser } = await logIn3({
             loginID,
-            password: process.env.DEFAULT_PASS_OCT_2025,
-        }));
+            password,
+            url
+        });
+
     });
 
     test.afterEach(async () => {

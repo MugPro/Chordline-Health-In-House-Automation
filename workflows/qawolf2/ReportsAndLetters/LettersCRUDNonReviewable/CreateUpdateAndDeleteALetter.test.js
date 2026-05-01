@@ -29,7 +29,7 @@ test('CreateALetter', async () => {
     const url = process.env.DEFAULT_URL_2;
 
     // Sign in
-    const { page, browser } = await helpers.logIn({
+    const { page, browser } = await helpers.logIn3({
         loginID,
         slowMo: 700,
         password,

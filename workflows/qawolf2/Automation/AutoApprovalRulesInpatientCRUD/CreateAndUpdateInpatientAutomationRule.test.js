@@ -19,7 +19,7 @@ test('Create Inpatient Automation Rule', async () => {
     const password = process.env.DEFAULT_PASS_OCT_2025;
     const url = env.DEFAULT_URL_2;
 
-    const { page } = await helpers.logIn({
+    const { page } = await helpers.logIn3({
         loginID,
         slowMo: 700,
         password,

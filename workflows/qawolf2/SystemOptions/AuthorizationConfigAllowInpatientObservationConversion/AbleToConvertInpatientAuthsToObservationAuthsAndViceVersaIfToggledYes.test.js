@@ -1,8 +1,16 @@
 import { test, expect } from '@playwright/test';
-import { logIn, waitUntilLoaded, cleanupTabOnMembersPage, reportCleanupFailed, createAuthorizationForMember } from '../../../../helpers/Node20Helpers.js';
+import {
+    logIn,
+    waitUntilLoaded,
+    cleanupTabOnMembersPage,
+    reportCleanupFailed,
+    createAuthorizationForMember,
+    logIn3
+} from '../../../../helpers/Node20Helpers.js';
 
 import * as dateFns from "date-fns";
 import { format } from 'date-fns';
+import {env} from "../../../../environments/qawolf2.env.js";
 
 
 
@@ -229,7 +237,7 @@ test('AbleToConvertObservationAuthsIntoInpatientAuthsAndViceVera', async () => {
     // Arrange
     //--------------------------------
     const today = Date.now();
-    const loginID = `AuthConATCIATOA`;
+    const loginID = `AuthConfigAANACom`;
     const lastFirstName = `Ace, Clancy`;
     const authorizationType = `Inpatient`;
     const patientStatus = `Admitted`;
@@ -241,11 +249,25 @@ test('AbleToConvertObservationAuthsIntoInpatientAuthsAndViceVera', async () => {
     //--------------------------------
     // Login
     //--------------------------------
-    const { page, browser } = await logIn({
-        url: process.env.DEFAULT_URL_2,
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL_2;
+
+
+    // Act
+    const { page, browser } = await logIn3({
         loginID,
+        password,
+        url,
         slowMo: 1000,
     });
+
+
+
+
+
+    //const { page } = await logIn({ url: process.env.DEFAULT_URL_2, loginID });
+
 
     //--------------------------------
     // Cleanup (pre-test)

@@ -2,7 +2,7 @@
 // workflow.test.js
 //--------------------------------
 
-import { logIn } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3} from '../../../../helpers/Node20Helpers.js';
 import { waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
 import {
     cleanupTabOnMembersPage,
@@ -12,6 +12,7 @@ import {
 import * as dateFns from "date-fns";
 import { format } from 'date-fns';
 import { test, expect } from '@playwright/test';
+import {env} from "../../../../environments/qawolf2.env.js";
 
 test('Next Action is auto created on the first Bed Day Service of each Authorization that is auto approved', async () => {
     //--------------------------------
@@ -30,10 +31,15 @@ test('Next Action is auto created on the first Bed Day Service of each Authoriza
     const reviewer = `${loginID} Qaw`;
     const bedLevel = `NICU`;
 
-    // Sign in
-    const { page, browser } = await logIn({
-        url: process.env.DEFAULT_URL_2,
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL_2;
+
+
+    // Act
+    const { page, browser } = await logIn3({
         loginID,
+        password,
+        url,
         slowMo: 800,
     });
 

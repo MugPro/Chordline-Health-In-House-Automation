@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as helpers from '../../../../helpers/Node20Helpers.js';
 import { env } from '../../../../environments/qawolf2.env.js';
+import {logIn3} from "../../../../helpers/Node20Helpers.js";
 
 test('RulesAlwaysMandatory', async () => {
 
@@ -12,13 +13,18 @@ test('RulesAlwaysMandatory', async () => {
     const defaultTemplate = `${screenTemplateGroup} - Default`;
     const screenName = `${defaultTemplate} - Copy`;
     const mandatoryRadioButton = `Radio Button:`;
-    const url = process.env.DEFAULT_URL_2;
 
-    const { page } = await helpers.logIn({
-        url,
+
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL_2;
+
+    // Act
+    const { page, browser } = await logIn3({
         loginID,
+        password,
+        url,
         slowMo: 400,
-        password: process.env.DEFAULT_PASS_OCT_2025,
     });
 
     // Clean up existing copy

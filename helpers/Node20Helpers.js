@@ -281,6 +281,90 @@ export async function logIn2(options = {}) {
 
 
 
+
+
+
+
+
+
+
+
+export async function logIn3(options = {}) {
+    const loginID = options.loginID ?? process.env.DEFAULT_LOGIN;
+    const password = String(
+        options.password ?? process.env.DEFAULT_PASS_OCT_2025
+    ).trim();
+    const url = options.url ?? process.env.DEFAULT_URL;
+
+    // Allow explicit override via CLI --headed
+    if (options.headless === undefined && process.argv.includes('--headed')) {
+        options.headless = false;
+    }
+
+    const { browser } = await launch(options);
+    const context = await browser.newContext({
+        viewport: { width: 1366, height: 768 },
+    });
+    const page = await context.newPage();
+
+    await page.goto(url);
+
+    // ---------- Login ----------
+    await page.getByRole('textbox', { name: 'Enter your Login ID' }).fill(loginID);
+    await page.getByRole('textbox', { name: 'Enter your Password' }).fill(password);
+    await page.getByRole('button', { name: 'SIGN IN' }).click();
+
+    // Wait and check for login error (NO exception-based flow)
+    const loginError = await page
+        .getByText('Error Logging In')
+        .isVisible()
+        .catch(() => false);
+
+    if (loginError) {
+        // Retry exactly once with SAME password
+        await page.getByText('Return To Login Screen').click();
+        await page.getByRole('textbox', { name: 'Enter your Login ID' }).fill(loginID);
+        await page.getByRole('textbox', { name: 'Enter your Password' }).fill(password);
+        await page.getByRole('button', { name: 'SIGN IN' }).click();
+
+        await expect(page.getByText('Error Logging In')).not.toBeVisible();
+    }
+
+    // ---------- Handle Change Password ----------
+    const changePasswordVisible = await page
+        .getByText('Change Your Password', { exact: true })
+        .isVisible()
+        .catch(() => false);
+
+    if (changePasswordVisible) {
+        await page.getByRole('textbox', { name: 'Enter your New Password', exact: true })
+            .fill(password);
+        await page.getByRole('textbox', { name: 'Re-Enter your New Password' })
+            .fill(password);
+        await page.getByText('Reset password').click();
+    }
+
+    return { page, context, browser };
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
 export async function cleanupScreenTemplateCopy(page, options = {}) {
     const { screenTemplateGroup, screenName, defaultTemplate } = options;

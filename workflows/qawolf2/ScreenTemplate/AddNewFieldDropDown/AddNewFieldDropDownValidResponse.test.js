@@ -631,6 +631,7 @@ test('AddNewFieldDropDownValidResponse', async () => {
 import { test, expect } from '@playwright/test';
 import * as helpers from '../../../../helpers/Node20Helpers.js';
 import { env } from '../../../../environments/qawolf2.env.js';
+import {logIn3} from "../../../../helpers/Node20Helpers.js";
 
 
 
@@ -665,10 +666,15 @@ test('AddNewFieldDropDownValidResponse', async () => {
     const validResponses = ["Option 1", "Option 2", "Option 3"];
     const randomResponse = validResponses[Math.floor(Math.random() * validResponses.length)];
 
-    const { page } = await helpers.logIn({
-        url: process.env.DEFAULT_URL_2,
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL_2;
+
+    // Act
+    const { page, browser } = await logIn3({
         loginID,
-        password: process.env.DEFAULT_PASS_OCT_2025,
+        password,
+        url
     });
 
     // Clean up before test

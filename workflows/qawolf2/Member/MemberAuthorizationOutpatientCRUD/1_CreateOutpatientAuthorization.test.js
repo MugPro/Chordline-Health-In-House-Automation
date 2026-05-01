@@ -560,7 +560,7 @@ test('Create Outpatient Authorization', async () => {
     //--------------------------------
     // Login
     //--------------------------------
-    const { page, browser } = await helpers.logIn({
+    const { page, browser } = await helpers.logIn3({
         loginID,
         password,
         url: env.DEFAULT_URL_2,

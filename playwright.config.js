@@ -1,23 +1,19 @@
 import { defineConfig } from '@playwright/test';
-import { env as stagingEnv } from './environments/staging.env.js';
-import { env as qawolf2Env } from './environments/qawolf2.env.js';
 
 export default defineConfig({
-    //3.7 minutes
     timeout: 222000,
     retries: 1,
-    workers: 1, // ← run tests one at a time
-   // workers: 2,
+    workers: 1,
     reporter: [['list'], ['html', { outputFolder: 'playwright-report' }]],
+
     projects: [
         {
             name: 'staging',
             testDir: './workflows/staging',
             testMatch: '**/*.test.js',
+            globalSetup: new URL('./environments/staging.env.js', import.meta.url).pathname,
             use: {
-                baseURL: stagingEnv.DEFAULT_URL,
-                //headless: true,
-
+                baseURL: process.env.DEFAULT_URL,
                 viewport: { width: 1280, height: 720 },
                 ignoreHTTPSErrors: true,
                 video: 'retain-on-failure',
@@ -28,9 +24,9 @@ export default defineConfig({
             name: 'qawolf2',
             testDir: './workflows/qawolf2',
             testMatch: '**/*.test.js',
+            globalSetup: new URL('./environments/qawolf2.env.js', import.meta.url).pathname,
             use: {
-                baseURL: qawolf2Env.DEFAULT_URL,
-                //headless: true,
+                baseURL: process.env.DEFAULT_URL,
                 viewport: { width: 1280, height: 720 },
                 ignoreHTTPSErrors: true,
                 video: 'retain-on-failure',

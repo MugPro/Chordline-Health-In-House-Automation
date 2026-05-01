@@ -116,7 +116,7 @@ test('Update Outpatient Authorization', async () => {
         year: 'numeric',
     });
 
-    const { page } = await helpers.logIn({
+    const { page } = await helpers.logIn3({
         loginID,
         password,
         url: env.DEFAULT_URL_2,

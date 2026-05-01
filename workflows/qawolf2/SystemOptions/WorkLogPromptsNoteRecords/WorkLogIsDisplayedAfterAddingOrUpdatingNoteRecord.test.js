@@ -4,8 +4,9 @@ import {
     logIn,
     waitUntilLoaded,
     reportCleanupFailed,
-    cleanupNotesFromMember,
+    cleanupNotesFromMember, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/qawolf2.env.js";
 
 // Optional transient dialog handler (kept for parity across tests)
 async function maybeHandleNotificationOk(
@@ -88,6 +89,8 @@ async function NewCleanupNotesFromMember(page, options = {}) {
 test.describe('Work Log Prompt – Member Detail: Note Records', () => {
     let browser, context, page;
 
+
+    /*
     test.beforeEach(async () => {
         const loginID = 'WorkLogPNoteRec';
         ({ browser, context, page } = await logIn({
@@ -97,6 +100,8 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
             password: process.env.DEFAULT_PASS_OCT_2025,
         }));
     });
+
+     */
 
 
     test('Work Logs appear on Note create and edit', async () => {
@@ -109,6 +114,22 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
         const reason = `Member Activity`; // ["Member Activity", "Member Question", "Provider Question"]
         const noteSummary = `Note Record Created ${Date.now()}`;
         const noteSummaryEdit = `Note Record Edited ${Date.now()}`;
+
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL_2;
+
+
+        // Act
+        const { page, browser } = await logIn3({
+            loginID,
+            password,
+            url,
+            slowMo: 600,
+        });
+
+
 
         //--------------------------------
         // Act:

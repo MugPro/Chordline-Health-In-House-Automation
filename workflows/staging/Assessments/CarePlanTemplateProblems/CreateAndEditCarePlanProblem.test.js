@@ -1,6 +1,7 @@
 
 import { test, expect } from '@playwright/test';
-import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3, waitUntilLoaded} from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 test.describe('Care Plan Template - Create and Edit Problem', () => {
     test('Create a new problem and edit it verifying description, tag, and Active state', async () => {
@@ -18,7 +19,21 @@ test.describe('Care Plan Template - Create and Edit Problem', () => {
         //CREATE A NEW PROBLEM:
 
         // Log in
-        const { page, context, browser } = await logIn({ loginID, slowMo: 700 });
+        //const { page, context, browser } = await logIn({ loginID, slowMo: 700 });
+
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL;
+
+
+
+
+
+        // Sign in to the app
+        const { page, context, browser } = await logIn3({ loginID, password,
+            url, slowMo: 700 });
+
 
         await waitUntilLoaded(page);
 

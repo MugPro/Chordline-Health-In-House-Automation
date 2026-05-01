@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as helpers from '../../../../helpers/Node20Helpers.js';
 import { env } from '../../../../environments/staging.env.js';
+import {logIn3} from "../../../../helpers/Node20Helpers.js";
 
 test('Help → About modal works', async () => {
     // --------------------------------
@@ -9,7 +10,22 @@ test('Help → About modal works', async () => {
     const loginID = 'HelpAbout';
     const linkToUse = 'About';
 
-    const { page } = await helpers.logIn({ loginID });
+    //const { page } = await helpers.logIn({ loginID });
+
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
+
 
     // --------------------------------
     // Act

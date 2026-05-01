@@ -5,8 +5,9 @@ import {
     waitUntilLoaded,
     cleanupTabOnMembersPage,
     reportCleanupFailed,
-    createACaseForMember,
+    createACaseForMember, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/qawolf2.env.js";
 
 // Optional transient dialog handler (kept for parity across tests)
 async function maybeHandleNotificationOk(
@@ -26,6 +27,7 @@ async function maybeHandleNotificationOk(
 test.describe('Work Log Prompt – Member Plan (Care Plan & Plan Components)', () => {
     let browser, context, page;
 
+    /*
     test.beforeEach(async () => {
         const loginID = 'WorkLogMedPlan';
         ({ browser, context, page } = await logIn({
@@ -35,6 +37,9 @@ test.describe('Work Log Prompt – Member Plan (Care Plan & Plan Components)', (
             password: process.env.DEFAULT_PASS_OCT_2025,
         }));
     });
+
+
+     */
 
 
 
@@ -64,7 +69,16 @@ test.describe('Work Log Prompt – Member Plan (Care Plan & Plan Components)', (
         const memDesc = `${loginID}${Date.now()}`;
 
 
+            const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+            const url = env.DEFAULT_URL_2;
 
+            // Act
+            const { page, browser } = await logIn3({
+                loginID,
+                password,
+                url,
+                slowMo: 1000
+            });
 
 
 

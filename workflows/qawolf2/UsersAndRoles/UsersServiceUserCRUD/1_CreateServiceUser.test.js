@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { logIn, waitUntilLoaded, reportCleanupFailed } from '../../../../helpers/Node20Helpers.js';
+import {logIn, waitUntilLoaded, reportCleanupFailed, logIn3} from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/qawolf2.env.js";
 
 test('1_CreateServiceUser', async () => {
     //--------------------------------
@@ -19,16 +20,17 @@ test('1_CreateServiceUser', async () => {
     const accessJustificationEdit = `Provider`;
     const securityRoleEdit = `Fax Integration Service`;
 
-    const password = process.env.DEFAULT_PASS_OCT_2025
 
-    //--------------------------------
-    // Login
-    //--------------------------------
-    const { browser, page } = await logIn({
-        url: process.env.DEFAULT_URL_2,
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL_2;
+
+
+    // Act
+    const { page, browser } = await logIn3({
         loginID,
-        slowMo: 800,
-        password: process.env.DEFAULT_PASS_OCT_2025,
+        password,
+        url,
+        slowMo: 800
     });
 
     //--------------------------------

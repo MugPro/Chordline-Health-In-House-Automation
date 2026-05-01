@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as helpers from '../../../../helpers/Node20Helpers.js';
 import { env } from '../../../../environments/qawolf2.env.js';
-import {logIn, waitUntilLoaded} from "../../../../helpers/Node20Helpers.js";
+import {logIn, logIn3, waitUntilLoaded} from "../../../../helpers/Node20Helpers.js";
 
 test('Create view', async () => {
     //--------------------------------
@@ -14,12 +14,31 @@ test('Create view', async () => {
 
 
 
-    const { page, browser } = await logIn({
+
+    const loginID = 'SystemViewCRUD';
+
+    const password = env.DEFAULT_PASS_JUNE_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL_2;
+
+
+    // Act
+    const { page, browser } = await logIn3({
+        loginID,
+        password,
+        url,
+        slowMo: 800
+    });
+
+
+/*
+    const { page, browser } = await logIn3({
         loginID: 'SystemViewCRUD',
         password: 'fasdfafs123A@',
         slowMo: 800,
         url: 'https://qawolf2.tcshealthcare.com/login.jsp'
     });
+
+ */
 
 
     // Sign in to the app (your helper launches the browser)

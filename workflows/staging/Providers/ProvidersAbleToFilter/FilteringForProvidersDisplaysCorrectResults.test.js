@@ -404,7 +404,8 @@ test('Filtering for Providers displays correct results (by Specialty, Group, and
 // FilteringForProvidersDisplaysCorrectResults.test.js
 import { test, expect } from '@playwright/test';
 // 🔧 Match your helpers location used in prior tests (and expose grabAllProviders)
-import { logIn, waitUntilLoaded, grabAllProviders } from '../../../../helpers/Node20Helpers.js';
+import {logIn, waitUntilLoaded, grabAllProviders, logIn3} from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 /* -------------------------------------------
    Small helpers to pause after fills/clicks
@@ -473,7 +474,20 @@ test('Filtering for Providers displays correct results (by Specialty, Group, and
     const networkSelected = networks[Math.floor(Math.random() * networks.length)];
 
     // Log in
-    const { page } = await logIn({ loginID });
+    //const { page } = await logIn({ loginID });
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
 
     // Navigate to Tools > Providers
     await clickAndWait(page, page.getByText(`Tools`));

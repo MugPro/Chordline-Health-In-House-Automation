@@ -626,9 +626,10 @@ import { test, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 
 import {
-    logIn,
+    logIn, logIn3,
     waitUntilLoaded,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 /* -------------------------------------------
    Pause helpers
@@ -831,7 +832,23 @@ test('Able to edit, add, and delete new member name section (with retry)', async
     };
 
     /* Login & Navigate */
-    const { page } = await logIn({ loginID, slowMo: 2000 });
+    //const { page } = await logIn({ loginID, slowMo: 2000 });
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url, slowMo: 2000 });
+
+
+
+
+
     await waitUntilLoaded(page);
 
     await clickAndWait(page, page.locator('#home-tabs-tab-4').getByText('Members'));

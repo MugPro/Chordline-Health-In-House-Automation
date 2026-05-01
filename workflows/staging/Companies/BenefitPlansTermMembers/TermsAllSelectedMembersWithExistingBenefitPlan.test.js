@@ -1,11 +1,12 @@
 // Filename: TermsAllSelectedMembersWithExistingBenefitPlan.test.js
 
 import { test, expect } from '@playwright/test';
-import { logIn, waitUntilLoaded, addMember } from '../../../../helpers/Node20Helpers.js';
+import {logIn, waitUntilLoaded, addMember, logIn3} from '../../../../helpers/Node20Helpers.js';
 
 // ---- Provide npmImports for helpers that expect it (no config needed) ----
 import { faker as rawFaker } from '@faker-js/faker';
 import * as dateFns from 'date-fns';
+import {env} from "../../../../environments/staging.env.js";
 
 // Optional: Shim Faker v8+ to old API your helper uses (faker.name.*, faker.address.*)
 const faker = {
@@ -50,7 +51,23 @@ test.describe('Term Members — All selected members with existing benefit plan'
         const calendarTitleShort = `${weekday}, ${monthName} ${day},`;
 
         // Login
-        const { page, context, browser } = await logIn({ loginID, slowMo: 10 });
+        //const { page, context, browser } = await logIn({ loginID, slowMo: 10 });
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL;
+
+
+
+
+
+        // Sign in to the app
+        const { page, context, browser } = await logIn3({ loginID, password,
+            url, slowMo: 10 });
+
+
+
+
 
         try {
             //--------------------------------

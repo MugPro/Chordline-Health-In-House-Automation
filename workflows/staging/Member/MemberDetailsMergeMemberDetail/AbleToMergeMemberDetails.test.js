@@ -20,8 +20,9 @@ globalThis.npmImports = {
 import {
     logIn,
     waitUntilLoaded,
-    addMember,
+    addMember, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 //import { addMember } from '../../../../helpers/MemberHelpers.js';
 
@@ -77,7 +78,22 @@ test(
         //--------------------------------
         // Sign in & setup members
         //--------------------------------
-        const { page } = await logIn({ loginID, slowMo: 400 });
+        //const { page } = await logIn({ loginID, slowMo: 400 });
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL;
+
+
+
+
+
+        // Sign in to the app
+        const { page, context, browser } = await logIn3({ loginID, password,
+            url, slowMo: 400 });
+
+
+
+
         await waitUntilLoaded(page);
 
         // NOTE:

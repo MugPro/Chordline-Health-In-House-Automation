@@ -126,7 +126,7 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
             loginID,
             password,
             url,
-            slowMo: 600,
+            slowMo: 600
         });
 
 

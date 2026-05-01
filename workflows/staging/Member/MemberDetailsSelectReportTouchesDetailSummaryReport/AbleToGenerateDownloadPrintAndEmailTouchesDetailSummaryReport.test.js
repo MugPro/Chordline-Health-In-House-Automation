@@ -7,9 +7,10 @@ import { rm, mkdir, access } from 'fs/promises';
 import * as dateFns from 'date-fns';
 
 import {
-    logIn,
+    logIn, logIn3,
     waitUntilLoaded,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 /* -------------------------------------------
    Small helpers to pause after fills/clicks
@@ -102,10 +103,31 @@ test.describe(
             //--------------------------------
             // Log in & navigate (IDENTICAL FLOW)
             //--------------------------------
+            /*
             const { page } = await logIn({
                 loginID,
                 args: ['--kiosk-printing'],
             });
+
+             */
+
+            const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+            const url = env.DEFAULT_URL;
+
+
+
+
+
+            // Sign in to the app
+            const { page, context, browser } = await logIn3({ loginID, password,
+                url, args: ['--kiosk-printing'] });
+
+
+
+
+
+
+
 
             await waitUntilLoaded(page);
 

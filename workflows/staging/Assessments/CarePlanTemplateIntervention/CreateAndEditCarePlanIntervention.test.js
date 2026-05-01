@@ -127,7 +127,8 @@ test.describe('Care Plan Template - Create and Edit Intervention', () => {
 
 
 import { test, expect } from '@playwright/test';
-import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3, waitUntilLoaded} from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 test.describe('Care Plan Template - Create and Edit Intervention', () => {
     test('Create a new intervention and edit it verifying description, tag, and Active state', async () => {
@@ -142,7 +143,21 @@ test.describe('Care Plan Template - Create and Edit Intervention', () => {
         //CREATE A NEW INTERVENTION:
 
         // Log in
-        const { page, context, browser } = await logIn({ loginID });
+        //const { page, context, browser } = await logIn({ loginID });
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL;
+
+
+
+
+
+        // Sign in to the app
+        const { page, context, browser } = await logIn3({ loginID, password,
+            url });
+
+
 
         try {
             //--------------------------------

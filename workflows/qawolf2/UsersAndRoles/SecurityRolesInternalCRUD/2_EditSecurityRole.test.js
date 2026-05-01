@@ -648,8 +648,9 @@ test('Security Roles - Edit existing role and modify privileges', async () => {
 
 import { test, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import { waitUntilLoaded, updateCheckBoxIdFromFlatTreeData, logIn } from '../../../../helpers/Node20Helpers.js';
+import {waitUntilLoaded, updateCheckBoxIdFromFlatTreeData, logIn, logIn3} from '../../../../helpers/Node20Helpers.js';
 import * as helpers from "../../../../helpers/Node20Helpers.js";
+import {env} from "../../../../environments/qawolf2.env.js";
 
 //////////////////////////////////////////
 // Helper: grab security roles from tree
@@ -697,11 +698,27 @@ test('Security Roles - Edit existing role and modify privileges', async () => {
     const securityRoleName = 'internalTestCRUD';
     const securityRoleNameEdit = 'internalTestCRUD-edit';
 
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL_2;
+
+
+    // Act
+    const { page, browser } = await logIn3({
+        loginID,
+        password,
+        url
+    });
+
+
+    /*
     const { browser, page } = await helpers.logIn({
         url: process.env.DEFAULT_URL_2,
         loginID,
         password: process.env.DEFAULT_PASS_OCT_2025,
     });
+
+     */
 
     // Navigate
     await page.getByText('Tools').hover();
@@ -775,4 +792,8 @@ test('Security Roles - Edit existing role and modify privileges', async () => {
         const checkbox = page.locator(`tr:has(td:text-is("${role.label}")) input[type="checkbox"]`);
         await expect(checkbox).not.toBeChecked({ timeout: 5000 });
     }
+
+
+    await browser.close();
+
 });

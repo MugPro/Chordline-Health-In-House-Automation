@@ -4,7 +4,8 @@ import { test, expect } from '@playwright/test';
 
 
 // 🔧 Update this path if your helpers live elsewhere
-import { logIn, deactivateAllRateAuthorizations, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, deactivateAllRateAuthorizations, waitUntilLoaded, logIn3} from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 
 /**
@@ -33,9 +34,30 @@ test('Create and update new Procedure Code Authorization Rate', async () => {
     const updatedItemDesc = `0001U - RBC DNA HEA 35 AG 11`;
 
     // Login
+    /*
     const { page } = await logIn({
         loginID, slowMo: 450
     });
+
+     */
+
+
+
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url, slowMo: 450 });
+
+
+
+
 
     await waitUntilLoaded(page);
 

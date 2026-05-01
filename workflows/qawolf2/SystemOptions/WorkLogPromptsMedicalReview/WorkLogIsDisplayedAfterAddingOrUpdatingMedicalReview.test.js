@@ -6,8 +6,9 @@ import {
     waitUntilLoaded,
     cleanupTabOnMembersPage,
     reportCleanupFailed,
-    createAuthorizationForMember,
+    createAuthorizationForMember, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/qawolf2.env.js";
 
 // Optional transient dialog handler (kept for parity across tests)
 async function maybeHandleNotificationOk(
@@ -104,6 +105,7 @@ async function NewCleanupTabOnMembersPage(page, options = {}) {
 test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
     let browser, context, page;
 
+    /*
     test.beforeEach(async () => {
         const loginID = 'WorkLogPDAUMedRev';
         ({ browser, context, page } = await logIn({
@@ -114,6 +116,8 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
             // password: process.env.DEFAULT_PASS_OCT_2025,
         }));
     });
+
+     */
 
 
     test('Work Log prompts after adding and editing a Medical Review', async () => {
@@ -142,6 +146,20 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
 
         const tab = `Authorizations`;
         const gridId = `[id="authorizations-grid"]`;
+
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL_2;
+
+        // Act
+        const { page, browser } = await logIn3({
+            loginID,
+            password,
+            url,
+            slowMo: 1000
+        });
+
 
 
 

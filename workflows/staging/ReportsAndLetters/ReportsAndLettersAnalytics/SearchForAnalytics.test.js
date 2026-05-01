@@ -1,7 +1,8 @@
 // SearchForAnalytics.test.js
 import { test, expect } from '@playwright/test';
 // 🔧 Match your helpers location used in prior tests
-import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3, waitUntilLoaded} from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 test('Search for an analytics and verify details', async () => {
     //--------------------------------
@@ -11,7 +12,21 @@ test('Search for an analytics and verify details', async () => {
     const analysis = `Readmissions`;
 
     // Login
-    const { page } = await logIn({ loginID });
+    //const { page } = await logIn({ loginID });
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
+
 
     //--------------------------------
     // Act:

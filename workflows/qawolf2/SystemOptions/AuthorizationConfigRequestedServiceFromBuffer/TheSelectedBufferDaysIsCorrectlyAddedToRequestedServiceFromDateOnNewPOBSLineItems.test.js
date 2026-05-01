@@ -39,6 +39,7 @@ test.describe(
     () => {
         let browser, context, page;
 
+        /*
         test.beforeEach(async () => {
             const loginID = 'AuthReqServBuff';
 
@@ -54,6 +55,8 @@ test.describe(
             });
 
         });
+
+         */
 
         test.afterEach(async () => {
             await context?.close();
@@ -80,6 +83,20 @@ test.describe(
 
             let firstBedDaysRequestedServiceToDate = '';
             let secondBedDaysRequestedServiceFrom = '';
+
+
+            const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+            const url = env.DEFAULT_URL_2;
+
+
+            // Act
+            const { page, browser } = await logIn3({
+                loginID,
+                password,
+                url
+            });
+
+
 
             try {
                 //--------------------------------

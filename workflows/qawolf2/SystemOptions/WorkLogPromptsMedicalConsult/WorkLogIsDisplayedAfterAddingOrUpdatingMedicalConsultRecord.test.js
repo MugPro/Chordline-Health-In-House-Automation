@@ -332,8 +332,9 @@ import {
     logIn,
     waitUntilLoaded,
     cleanupTabOnMembersPage,
-    reportCleanupFailed,
+    reportCleanupFailed, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/qawolf2.env.js";
 
 // Optional transient dialog handler (kept for parity across tests)
 async function maybeHandleNotificationOk(
@@ -442,6 +443,7 @@ async function NewCleanupTabOnMembersPage(page, options = {}) {
 test.describe('Work Log Prompt – Medical Consult via Bed Day & Medical Review', () => {
     let browser, context, page;
 
+    /*
     test.beforeEach(async () => {
         const loginID = 'MedicallConsult';
         ({ browser, context, page } = await logIn({
@@ -451,6 +453,8 @@ test.describe('Work Log Prompt – Medical Consult via Bed Day & Medical Review'
             password: process.env.DEFAULT_PASS_OCT_2025,
         }));
     });
+
+     */
 
 
 
@@ -471,6 +475,21 @@ test.describe('Work Log Prompt – Medical Consult via Bed Day & Medical Review'
         const formattedDate = dateFormat(today, 'MM/dd/yyyy hh:mm:ss a');
         const tab = 'Authorizations';
         const gridId = '[id="authorizations-grid"]';
+
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL_2;
+
+        // Act
+        const { page, browser } = await logIn3({
+            loginID,
+            password,
+            url,
+            slowMo: 1000
+        });
+
+
 
 
         await waitUntilLoaded(page);

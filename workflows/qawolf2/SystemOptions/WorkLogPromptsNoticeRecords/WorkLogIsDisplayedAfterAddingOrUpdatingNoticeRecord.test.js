@@ -4,8 +4,9 @@ import { format as dateFormat } from 'date-fns';
 import {
     logIn,
     waitUntilLoaded,
-    createAuthorizationForMember,
+    createAuthorizationForMember, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/qawolf2.env.js";
 
 // Optional transient dialog handler (kept for parity across tests)
 async function maybeHandleNotificationOk(
@@ -25,6 +26,8 @@ async function maybeHandleNotificationOk(
 test.describe('Work Log Prompt – Compliance Notice Records', () => {
     let browser, context, page;
 
+    /*
+
     test.beforeEach(async () => {
         const loginID = 'NoticeRecord';
         ({ browser, context, page } = await logIn({
@@ -34,6 +37,8 @@ test.describe('Work Log Prompt – Compliance Notice Records', () => {
             password: process.env.DEFAULT_PASS_OCT_2025,
         }));
     });
+
+     */
 
     test('Work Log appears with correct fields after editing a Notice', async () => {
         //--------------------------------
@@ -51,6 +56,21 @@ test.describe('Work Log Prompt – Compliance Notice Records', () => {
         const reviewer = `${loginID} Qaw`;
         const timeSpent = `60`;
         const formattedDate = dateFormat(new Date(), 'MM/dd/yyyy');
+
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL_2;
+
+
+        // Act
+        const { page, browser } = await logIn3({
+            loginID,
+            password,
+            url,
+            slowMo: 900
+        });
+
 
         //--------------------------------
         // Act:

@@ -7,8 +7,9 @@ import {
     waitUntilLoaded,
     cleanupTabOnMembersPage,
     reportCleanupFailed,
-    createAuthorizationForMember,
+    createAuthorizationForMember, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/qawolf2.env.js";
 
 // Optional transient dialog handler (kept for parity across tests)
 async function maybeHandleNotificationOk(
@@ -28,6 +29,8 @@ async function maybeHandleNotificationOk(
 test.describe('Work Log Prompt – Contact Records', () => {
     let browser, context, page;
 
+
+    /*
     test.beforeEach(async () => {
         const loginID = 'WorkLogPrompts';
         ({ browser, context, page } = await logIn({
@@ -36,6 +39,8 @@ test.describe('Work Log Prompt – Contact Records', () => {
             password: process.env.DEFAULT_PASS_OCT_2025,
         }));
     });
+
+     */
 
     test.afterEach(async () => {
         await context?.close();
@@ -62,6 +67,22 @@ test.describe('Work Log Prompt – Contact Records', () => {
 
         // Using faker for US phone number format; if your faker version supports phoneNumber(), switch accordingly
         const phoneNumber = faker.phone.number('(###) ###-####');
+
+
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL_2;
+
+        // Act
+        const { page, browser } = await logIn3({
+            loginID,
+            password,
+            url
+        });
+
+
+
 
         //--------------------------------
         // Act:

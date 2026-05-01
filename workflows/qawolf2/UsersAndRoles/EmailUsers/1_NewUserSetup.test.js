@@ -226,6 +226,8 @@ test('New User Setup workflow (without inbox check)', async () => {
 // NewUserSetup.test.js
 import { test, expect } from '@playwright/test';
 import * as helpers from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/qawolf2.env.js";
+import {logIn3} from "../../../../helpers/Node20Helpers.js";
 
 test('New User Setup workflow (without inbox check)', async () => {
     //--------------------------------
@@ -236,15 +238,37 @@ test('New User Setup workflow (without inbox check)', async () => {
     const firstName = `NewUserReset`;
     const lastName = `Qaw`;
     const email = `chordline+NewUserReset@qawolf.email`;
-    const password = `GhJkML#${Date.now()}`;
+    const password2 = `GhJkML#${Date.now()}`;
     const subject = `Welcome to ACUITYnxt!`;
 
     // Sign in to the app
+    /*
     const { browser, page } = await helpers.logIn({
         url: process.env.DEFAULT_URL_2,
         loginID,
         password: process.env.DEFAULT_PASS_OCT_2025,
     });
+
+     */
+
+
+
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL_2;
+
+
+    // Act
+    const { page, browser } = await logIn3({
+        loginID,
+        password,
+        url
+    });
+
+
+
+
+
 
     //--------------------------------
     // Act
@@ -269,11 +293,11 @@ test('New User Setup workflow (without inbox check)', async () => {
     await page.getByRole('button', { name: 'Send' }).click();
     await expect(page.getByText('Email was sent successfully.')).toBeVisible();
 
-    /*
-    await page.getByRole('button', { name: 'Okay' }).click();
+
+    //await page.getByRole('button', { name: 'Okay' }).click();
     await browser.close();
 
-     */
+
 });
 
 

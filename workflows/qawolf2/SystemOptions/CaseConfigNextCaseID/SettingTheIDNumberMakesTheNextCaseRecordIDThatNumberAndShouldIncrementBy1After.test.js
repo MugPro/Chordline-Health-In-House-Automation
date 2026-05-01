@@ -17,6 +17,7 @@ test.describe(
     () => {
         let browser, context, page;
 
+        /*
         test.beforeEach(async () => {
             const loginID = 'CaseConfigNCID';
 
@@ -32,6 +33,8 @@ test.describe(
 
         });
 
+         */
+
         test.afterEach(async () => {
             await context?.close();
             await browser?.close();
@@ -46,6 +49,23 @@ test.describe(
 
             let highestCaseNumber; // numeric
             let sysOpCaseNum;      // numeric
+
+
+
+
+            const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+            const url = env.DEFAULT_URL_2;
+
+
+            // Act
+            const { page, browser } = await logIn3({
+                loginID,
+                password,
+                url
+            });
+
+
+
 
             try {
                 //--------------------------------

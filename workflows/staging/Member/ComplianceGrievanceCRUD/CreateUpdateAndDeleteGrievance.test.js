@@ -5,8 +5,9 @@ import * as dateFns from 'date-fns';
 import {
     logIn,
     waitUntilLoaded,
-    cleanupTabOnMembersPage,
+    cleanupTabOnMembersPage, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 /* -------------------------------------------
    Small helpers to pause after fills/clicks
@@ -78,10 +79,19 @@ test('Create, Update, and Delete Grievance', async () => {
     //--------------------------------
     // Login & Cleanup
     //--------------------------------
-    const { page } = await logIn({ loginID });
+    //const { page } = await logIn({ loginID });
+
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
 
 
 
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
 
 
 

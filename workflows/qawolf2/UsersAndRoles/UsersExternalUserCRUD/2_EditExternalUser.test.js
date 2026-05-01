@@ -624,8 +624,9 @@ test('2_EditExternalUser', async () => {
 
 import { test, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3, waitUntilLoaded} from '../../../../helpers/Node20Helpers.js';
 import * as helpers from "../../../../helpers/Node20Helpers.js";
+import {env} from "../../../../environments/qawolf2.env.js";
 
 test('2_EditExternalUser', async () => {
     //--------------------------------
@@ -658,10 +659,16 @@ test('2_EditExternalUser', async () => {
     //--------------------------------
     // Login
     //--------------------------------
-    const { browser, page } = await helpers.logIn({
-        url: process.env.DEFAULT_URL_2,
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL_2;
+
+
+    // Act
+    const { page, browser } = await logIn3({
         loginID,
-        password: process.env.DEFAULT_PASS_OCT_2025,
+        password,
+        url
     });
 
     //--------------------------------
@@ -802,7 +809,7 @@ test('2_EditExternalUser', async () => {
 
 
 
-    //await browser.close();
+    await browser.close();
 
 });
 

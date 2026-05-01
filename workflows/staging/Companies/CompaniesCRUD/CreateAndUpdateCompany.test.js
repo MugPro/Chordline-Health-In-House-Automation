@@ -1,6 +1,7 @@
 
 import { test, expect } from '@playwright/test';
-import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3, waitUntilLoaded} from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 
 
@@ -61,7 +62,24 @@ test.describe('Companies CRUD - Create and Update Company', () => {
         const companyComment = 'company comment';
 
         // Login
-        const { page, context, browser } = await logIn({ loginID, slowMo: 300 });
+        //const { page, context, browser } = await logIn({ loginID, slowMo: 300 });
+
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL;
+
+
+
+
+
+        // Sign in to the app
+        const { page, context, browser } = await logIn3({ loginID, password,
+            url, slowMo: 300 });
+
+
+
+
 
         //--------------------------------
         // Act: Create

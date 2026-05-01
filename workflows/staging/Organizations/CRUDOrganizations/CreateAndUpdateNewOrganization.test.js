@@ -1,9 +1,10 @@
 // CreateAndUpdateNewOrganization.test.js
 import { test, expect } from '@playwright/test';
 // 🔧 Match your helpers location used in prior tests
-import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3, waitUntilLoaded} from '../../../../helpers/Node20Helpers.js';
 // Faker v8 API
 import { faker } from '@faker-js/faker';
+import {env} from "../../../../environments/staging.env.js";
 
 /* -------------------------------------------
    Small helpers to pause after fills/clicks
@@ -91,11 +92,25 @@ test('Create a new Organization and then update it, verifying grid and detail va
     const email = faker.internet.email();
     const phone1 = faker.phone.number('2##-###-####');   // Preferred
     const fax = faker.phone.number('3##-###-####');
-    const url = faker.internet.url();
+    const url2 = faker.internet.url();
     const comments = faker.lorem.sentence();
 
     // Log in
-    const { page } = await logIn({ loginID });
+    //const { page } = await logIn({ loginID });
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
+
 
     // Navigate to Tools > Organizations
     await page.getByText(`Tools`).hover();
@@ -150,7 +165,7 @@ test('Create a new Organization and then update it, verifying grid and detail va
     await fillAndWait(page, page.locator(`#orgn_email_address`), email);
     await fillAndWait(page, page.locator(`#orgn_preferred_phone_national_number`), phone1);
     await fillAndWait(page, page.locator(`#orgn_fax_number_national_number`), fax);
-    await fillAndWait(page, page.locator(`#orgn_url`), url);
+    await fillAndWait(page, page.locator(`#orgn_url`), url2);
 
     // Comments (iframe)
     const frame = page.frameLocator(
@@ -208,7 +223,7 @@ test('Create a new Organization and then update it, verifying grid and detail va
     await expect(page.getByText(country)).toBeVisible();
 
     await expect(page.getByLabel(`Organization #`).getByText(email)).toBeVisible();
-    await expect(page.getByText(url)).toBeVisible();
+    await expect(page.getByText(url2)).toBeVisible();
     await expect(page.getByText(comments)).toBeVisible();
 
     //--------------------------------

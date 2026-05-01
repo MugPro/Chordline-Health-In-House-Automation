@@ -214,8 +214,9 @@ import {
     waitUntilLoaded,
     cleanupTabOnMembersPage,
     reportCleanupFailed,
-    createComplianceForMember,
+    createComplianceForMember, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/qawolf2.env.js";
 
 // Optional transient dialog handler (kept for parity with other tests)
 async function maybeHandleNotificationOk(
@@ -447,16 +448,24 @@ async function NewCreateComplianceForMember(page, options = {}) {
 test.describe('Work Log Prompt – Compliance Appeal', () => {
     let browser, context, page;
 
+    /*
     test.beforeEach(async () => {
         const loginID = `WorkLogPCDAA`;
 
-        // Intentionally logging in without password to follow the provided data pattern
-        ({ browser, context, page } = await logIn({
-            url: process.env.DEFAULT_URL_2,
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL_2;
+
+        // Act
+        const { page, browser } = await logIn3({
             loginID,
+            password,
+            url,
             slowMo: 700,
-        }));
+        });
+
     });
+
+     */
 
 
 
@@ -476,6 +485,23 @@ test.describe('Work Log Prompt – Compliance Appeal', () => {
         const appealReason = `Edit for worklog to appear ${Date.now()}`;
         const tab = `Compliance`;
         const gridId = `[id="compliance-grid"]`;
+
+
+
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL_2;
+
+        // Act
+        const { page, browser } = await logIn3({
+            loginID,
+            password,
+            url,
+            slowMo: 700
+        });
+
+
 
 
         //--------------------------------

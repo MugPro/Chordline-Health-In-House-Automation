@@ -1,8 +1,9 @@
 // Filename: CreateAndUpdateNewBenefitPlan.test.js
 
 import { test, expect } from '@playwright/test';
-import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3, waitUntilLoaded} from '../../../../helpers/Node20Helpers.js';
 import { faker } from '@faker-js/faker';
+import {env} from "../../../../environments/staging.env.js";
 
 test.describe('Benefit Plans — Create & Update', () => {
     test('Create a new Benefit Plan, verify, edit fields, and re-verify', async () => {
@@ -16,7 +17,22 @@ test.describe('Benefit Plans — Create & Update', () => {
         const companyComment = `benefits comment`;
 
         // Login
-        const { page, context, browser } = await logIn({ loginID, slowMo: 300 });
+        //const { page, context, browser } = await logIn({ loginID, slowMo: 300 });
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL;
+
+
+
+
+
+        // Sign in to the app
+        const { page, context, browser } = await logIn3({ loginID, password,
+            url, slowMo: 300 });
+
+
+
 
         try {
             //--------------------------------

@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3, waitUntilLoaded} from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/qawolf2.env.js";
 
 test('2_EditServiceUser', async () => {
     //--------------------------------
@@ -19,11 +20,17 @@ test('2_EditServiceUser', async () => {
     //--------------------------------
     // Login
     //--------------------------------
-    const { browser, page } = await logIn({
-        url: process.env.DEFAULT_URL_2,
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL_2;
+
+
+    // Act
+    const { page, browser } = await logIn3({
         loginID,
-        slowMo: 800,
-        password: process.env.DEFAULT_PASS_OCT_2025,
+        password,
+        url,
+        slowMo: 800
     });
 
     //--------------------------------

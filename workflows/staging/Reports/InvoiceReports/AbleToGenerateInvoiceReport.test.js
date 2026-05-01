@@ -65,6 +65,7 @@ import { test, expect } from '@playwright/test';
 import * as helpers from '../../../../helpers/Node20Helpers.js';
 import { env } from '../../../../environments/staging.env.js';
 import { format } from 'date-fns';
+import {logIn3} from "../../../../helpers/Node20Helpers.js";
 
 test('Able to generate an Invoice Report', async () => {
     //--------------------------------
@@ -84,7 +85,21 @@ test('Able to generate an Invoice Report', async () => {
     const startDigits = format(date1, 'MMddyyyy');
     const endDigits = format(date2, 'MMddyyyy');
 
-    const { page } = await helpers.logIn({ loginID, slowMo: 400 });
+    //const { page } = await helpers.logIn({ loginID, slowMo: 400 });
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url, slowMo: 400 });
+
+
+
 
     await helpers.waitUntilLoaded(page);
 

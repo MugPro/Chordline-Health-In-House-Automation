@@ -33,6 +33,7 @@ async function maybeHandleNotificationOk(page, {
 test.describe('Authorization Config - Default Diagnosis = First Diagnosis', () => {
     let browser, context, page;
 
+    /*
     test.beforeEach(async () => {
         const loginID = 'AuthConfigDefDiagNoD';
 
@@ -49,6 +50,8 @@ test.describe('Authorization Config - Default Diagnosis = First Diagnosis', () =
         });
 
     });
+
+     */
 
     test.afterEach(async () => {
         await context?.close();
@@ -71,6 +74,18 @@ test.describe('Authorization Config - Default Diagnosis = First Diagnosis', () =
         const diag1 = 'A00 - Cholera';
         const diag2 = 'A01.0 - Typhoid fever';
         const bedLevel = 'Medical';
+
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL_2;
+
+        // Act
+        const { page, browser } = await logIn3({
+            loginID,
+            password,
+            url
+        });
 
         //--------------------------------
         // Act:

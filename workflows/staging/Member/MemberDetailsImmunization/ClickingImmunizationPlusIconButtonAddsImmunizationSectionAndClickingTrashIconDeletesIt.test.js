@@ -2,9 +2,10 @@ import { test, expect } from '@playwright/test';
 import { format, subDays } from 'date-fns';
 
 import {
-    logIn,
+    logIn, logIn3,
     waitUntilLoaded,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 test(
     'Clicking Immunization plus icon button adds immunization section and clicking trash icon deletes it',
@@ -32,7 +33,22 @@ test(
         };
 
         // Sign in
-        const { page } = await logIn({ loginID, slowMo: 800 });
+        //const { page } = await logIn({ loginID, slowMo: 800 });
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL;
+
+
+
+
+
+        // Sign in to the app
+        const { page, context, browser } = await logIn3({ loginID, password,
+            url, slowMo: 800 });
+
+
+
 
         await waitUntilLoaded(page);
 

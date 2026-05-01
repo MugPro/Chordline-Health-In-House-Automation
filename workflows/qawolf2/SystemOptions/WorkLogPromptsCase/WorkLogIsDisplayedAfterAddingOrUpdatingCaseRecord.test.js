@@ -4,8 +4,9 @@ import {
     logIn,
     waitUntilLoaded,
     cleanupTabOnMembersPage,
-    reportCleanupFailed,
+    reportCleanupFailed, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/qawolf2.env.js";
 
 // Optional transient dialog handler
 async function maybeHandleNotificationOk(
@@ -25,15 +26,23 @@ async function maybeHandleNotificationOk(
 test.describe('Work Log Prompt – Case Record', () => {
     let browser, context, page;
 
+    /*
     test.beforeEach(async () => {
         const loginID = `WorkLogPCase`;
 
-        ({ browser, context, page } = await logIn({
-            url: process.env.DEFAULT_URL_2,
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL_2;
+
+        // Act
+        const { page, browser } = await logIn3({
             loginID,
-            password: process.env.DEFAULT_PASS_OCT_2025,
-        }));
+            password,
+            url
+        });
+
     });
+
+     */
 
     test.afterEach(async () => {
         await context?.close();
@@ -51,6 +60,17 @@ test.describe('Work Log Prompt – Case Record', () => {
         const tab = `Case`;
         const gridId = `[id="member-case-grid"]`;
 
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL_2;
+
+
+        // Act
+        const { page, browser } = await logIn3({
+            loginID,
+            password,
+            url
+        });
 
 
         //--------------------------------

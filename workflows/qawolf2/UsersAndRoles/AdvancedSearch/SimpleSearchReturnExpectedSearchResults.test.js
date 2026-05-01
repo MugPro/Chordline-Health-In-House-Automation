@@ -841,8 +841,9 @@ test('Advanced Search - Stable Random Column Filter (Hardened)', async () => {
 
 import { test, expect } from '@playwright/test';
 import * as dateFns from 'date-fns';
-import { logIn, waitUntilLoaded } from "../../../../helpers/Node20Helpers.js";
+import {logIn, logIn3, waitUntilLoaded} from "../../../../helpers/Node20Helpers.js";
 import * as helpers from "../../../../helpers/Node20Helpers.js";
+import {env} from "../../../../environments/qawolf2.env.js";
 
 test('Advanced Search - Stable Random Column Filter (Hardened)', async () => {
 
@@ -906,6 +907,23 @@ test('Advanced Search - Stable Random Column Filter (Hardened)', async () => {
     const dropDownOp = ['Contains', 'Starts with'];
     const calendarOp = ['Is equal to', 'Is before', 'Is after', 'Is between'];
 
+
+
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL_2;
+
+
+    // Act
+    const { page, browser } = await logIn3({
+        loginID,
+        password,
+        url,
+        slowMo: 3000
+    });
+
+
+
     //--------------------------------
     // Arrange
     //--------------------------------
@@ -918,13 +936,15 @@ test('Advanced Search - Stable Random Column Filter (Hardened)', async () => {
 
      */
 
-
+/*
     const { browser, page } = await helpers.logIn({
         url: process.env.DEFAULT_URL_2,
         loginID,
         slowMo: 3000,
         password: process.env.DEFAULT_PASS_OCT_2025,
     });
+
+ */
 
 
 

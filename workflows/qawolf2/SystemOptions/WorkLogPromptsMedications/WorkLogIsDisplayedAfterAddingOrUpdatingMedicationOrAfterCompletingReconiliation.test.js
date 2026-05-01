@@ -4,8 +4,9 @@ import {
     logIn,
     waitUntilLoaded,
     cleanupTabOnMembersPage,
-    reportCleanupFailed,
+    reportCleanupFailed, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/qawolf2.env.js";
 
 // Optional transient dialog handler (kept for parity across tests)
 async function maybeHandleNotificationOk(
@@ -112,6 +113,7 @@ async function NewCleanupTabOnMembersPage(page, options = {}) {
 test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () => {
     let browser, context, page;
 
+    /*
     test.beforeEach(async () => {
         const loginID = 'WorkLogPMedica';
         ({ browser, context, page } = await logIn({
@@ -120,6 +122,8 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
             slowMo: 1000,// intentionally no password per your snippet
         }));
     });
+
+     */
 
     test('Work Logs appear on Medication add, edit, and reconciliation', async () => {
         //--------------------------------
@@ -131,6 +135,18 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
         const medRecon = `Created medRecon ${Date.now()}`;
         const comment = `${Date.now()}`;
 
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL_2;
+
+        // Act
+        const { page, browser } = await logIn3({
+            loginID,
+            password,
+            url,
+            slowMo: 1000
+        });
 
 
         await waitUntilLoaded(page);

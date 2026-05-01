@@ -2,11 +2,12 @@
 import { test, expect } from '@playwright/test';
 
 // 🔧 Update this path to match your helpers location
-import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3, waitUntilLoaded} from '../../../../helpers/Node20Helpers.js';
 
 // Node FS utilities for cleanup and assertions on the downloaded file
 import { rm, mkdir, stat } from 'fs/promises';
 import path from 'path';
+import {env} from "../../../../environments/staging.env.js";
 
 /**
  * This test:
@@ -29,7 +30,21 @@ test('Able to download a form', async () => {
     const downloadPath = path.join(downloadDir, 'formDownload');
 
     // Log in
-    const { page } = await logIn({ loginID, slowMo: 10 });
+    //const { page } = await logIn({ loginID, slowMo: 10 });
+
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url, slowMo: 10 });
+
+
 
     //--------------------------------
     // Cleanup (downloads)

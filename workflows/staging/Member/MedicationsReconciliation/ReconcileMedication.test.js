@@ -3,8 +3,9 @@ import { test, expect } from '@playwright/test';
 import {
     logIn,
     waitUntilLoaded,
-    cleanUpMedications,
+    cleanUpMedications, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 /* -------------------------------------------
    Pause helpers
@@ -45,10 +46,33 @@ test('Reconcile a Medication', async () => {
     //--------------------------------
     // Login & Cleanup
     //--------------------------------
+
+    /*
     const { page } = await logIn({
         loginID,
         password: process.env.DEFAULT_PASS_OCT_2025,
     });
+
+     */
+
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
+
+
+
+
+
 
     await cleanUpMedications(page, userFirstAndLastName, memberIdentifier);
 

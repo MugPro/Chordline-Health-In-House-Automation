@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 // 🔧 Match your helpers location used in prior tests
-import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3, waitUntilLoaded} from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 /* -------------------------------------------
    Small helpers to pause after fills/clicks
@@ -74,7 +75,21 @@ test('Create and Update Facility persists all entered data', async () => {
     const providerId = `${loginID}${Date.now()}`;
 
     // Log in
-    const { page } = await logIn({ loginID });
+    //const { page } = await logIn({ loginID });
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
+
 
     // Navigate to Tools > Providers
     await clickAndWait(page, page.getByText(`Tools`));

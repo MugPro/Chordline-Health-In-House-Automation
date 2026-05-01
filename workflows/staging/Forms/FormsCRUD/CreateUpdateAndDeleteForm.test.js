@@ -10,11 +10,12 @@ import { test, expect } from '@playwright/test';
 import {
     logIn,
     waitUntilLoaded,
-    reportCleanupFailed,
+    reportCleanupFailed, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
 
 // Random data generator
 import { faker } from '@faker-js/faker';
+import {env} from "../../../../environments/staging.env.js";
 
 /**
  * This test:
@@ -48,7 +49,22 @@ test('Create, update, and delete a Form', async () => {
     };
 
     // Log in
-    const { page } = await logIn({ loginID });
+   // const { page } = await logIn({ loginID });
+
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
+
 
     // Navigate to Tools > Forms
     await page.getByText(`Tools`).click();

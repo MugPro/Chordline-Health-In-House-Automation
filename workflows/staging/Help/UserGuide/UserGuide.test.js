@@ -149,6 +149,8 @@ test('User Guide PDF downloads successfully', async () => {
 import { test, expect } from '@playwright/test';
 import * as helpers from '../../../../helpers/Node20Helpers.js';
 import fs from 'fs/promises';
+import {env} from "../../../../environments/staging.env.js";
+import {logIn3} from "../../../../helpers/Node20Helpers.js";
 
 //--------------------------------
 // Helpers
@@ -174,7 +176,24 @@ test('User Guide PDF downloads and is a valid PDF', async () => {
     const loginID = 'HelpUserGuide';
     const linkToUse = 'User Guide';
 
-    const { page } = await helpers.logIn({ loginID });
+    //const { page } = await helpers.logIn({ loginID });
+
+
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
+
+
 
     //--------------------------------
     // Act – download PDF

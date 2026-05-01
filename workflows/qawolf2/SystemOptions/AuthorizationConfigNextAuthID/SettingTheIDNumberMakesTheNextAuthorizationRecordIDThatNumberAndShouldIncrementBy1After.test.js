@@ -600,6 +600,7 @@ test.describe(
     () => {
         let browser, context, page;
 
+        /*
         test.beforeEach(async () => {
             const loginID = 'NextReview';
             const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
@@ -615,9 +616,31 @@ test.describe(
 
         });
 
+         */
+
         test(
             'Next Auth ID should be used for the next authorization and increment sequentially',
             async () => {
+
+
+
+                const loginID = 'NextReview';
+
+
+
+                const password = env.DEFAULT_PASS_JUNE_2025;   // ✅ use env wrapper
+                const url = env.DEFAULT_URL_2;
+
+
+                // Act
+                const { page, browser } = await logIn3({
+                    loginID,
+                    password,
+                    url,
+                    slowMo: 1000
+                });
+
+
 
                 //--------------------------------
                 // ✅ START NOTIFICATION WATCHER

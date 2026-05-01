@@ -282,9 +282,10 @@ import { fileURLToPath } from 'url';
 import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.mjs';
 
 import {
-    logIn,
+    logIn, logIn3,
     waitUntilLoaded,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 // --------------------------------
 // ESM __dirname
@@ -326,6 +327,9 @@ test.describe('Medication Summary – Generate, Download, Email, Print and Fax',
             addressSnippet: 'South Ari',
         };
 
+
+
+
         const emailAddress = `chordline+${loginIdUser}@qawolf.email`;
         const subjectField = `${loginIdUser}-${Date.now()}`;
         const bodyText = `Medication Report test ${Date.now()}`;
@@ -335,12 +339,35 @@ test.describe('Medication Summary – Generate, Download, Email, Print and Fax',
             fs.rmSync(path.join(downloadsDir, f));
         }
 
+        /*
         const { page } = await logIn({
             loginID: loginIdUser,
             password: 'QAWolfPass1#',
             slowMo: 400,
             args: ['--kiosk-printing'],
         });
+
+         */
+
+
+
+
+        //const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL;
+
+
+
+
+
+        // Sign in to the app
+        const { page, context, browser } = await logIn3({ loginID: loginIdUser, password: 'QAWolfPass1#',
+            url, slowMo: 400, args: ['--kiosk-printing'], });
+
+
+
+
+
+
 
         await waitUntilLoaded(page);
 

@@ -1,8 +1,9 @@
 // Filename: CreateAndUpdateWorkflowRule.test.js
 
 import { test, expect } from '@playwright/test';
-import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3, waitUntilLoaded} from '../../../../helpers/Node20Helpers.js';
 import { faker } from '@faker-js/faker';
+import {env} from "../../../../environments/staging.env.js";
 
 test.describe('Workflow Rules — Create & Update', () => {
     test('Create a Workflow Rule, verify, update name & triggers, and re-verify', async () => {
@@ -14,7 +15,21 @@ test.describe('Workflow Rules — Create & Update', () => {
         const loginID = `WorkflowRules`;
 
         // Sign in to the app
-        const { page, context, browser } = await logIn({ loginID });
+        //const { page, context, browser } = await logIn({ loginID });
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL;
+
+
+
+
+
+        // Sign in to the app
+        const { page, context, browser } = await logIn3({ loginID, password,
+            url });
+
+
 
         try {
             //--------------------------------

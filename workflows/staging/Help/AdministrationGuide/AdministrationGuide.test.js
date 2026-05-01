@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import * as helpers from '../../../../helpers/Node20Helpers.js';
 import { env } from '../../../../environments/staging.env.js';
 import fs from 'node:fs/promises';
+import {logIn3} from "../../../../helpers/Node20Helpers.js";
 
 // Utility: get file size
 async function getPdfFileSize(filePath) {
@@ -17,10 +18,30 @@ test('Help → Administration Guide PDF downloads', async () => {
     const loginID = 'HelpAdministrationGuide';
     const linkToUse = 'Administration Guide';
 
+
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
+
+
+
     // Sign in using Wolf2 URL
+    /*
     const { page } = await helpers.logIn({
         loginID,
     });
+
+     */
 
     //--------------------------------
     // Act

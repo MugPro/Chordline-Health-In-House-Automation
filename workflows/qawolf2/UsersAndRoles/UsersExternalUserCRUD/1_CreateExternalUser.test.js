@@ -240,8 +240,9 @@ test('1_CreateExternalUser', async () => {
 
 import { test, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import { logIn, waitUntilLoaded, reportCleanupFailed } from '../../../../helpers/Node20Helpers.js';
+import {logIn, waitUntilLoaded, reportCleanupFailed, logIn3} from '../../../../helpers/Node20Helpers.js';
 import * as helpers from "../../../../helpers/Node20Helpers.js";
+import {env} from "../../../../environments/qawolf2.env.js";
 
 test('1_CreateExternalUser', async () => {
     //--------------------------------
@@ -265,25 +266,19 @@ test('1_CreateExternalUser', async () => {
     const zipCode = faker.location.zipCode();
     const state = faker.location.state();
     const memberRole = `All Member Access`;
-    //const password = process.env.DEFAULT_PASS_JUNE_2025;
-
-    const password = process.env.DEFAULT_PASS_OCT_2025
 
 
 
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL_2;
 
 
-
-
-
-    //--------------------------------
-    // Login
-    //--------------------------------
-    const { browser, page } = await helpers.logIn({
-        url: process.env.DEFAULT_URL_2,
+    // Act
+    const { page, browser } = await logIn3({
         loginID,
-        slowMo: 1000,
-        password: process.env.DEFAULT_PASS_OCT_2025,
+        password,
+        url,
+        slowMo: 1000
     });
 
     //--------------------------------
@@ -468,5 +463,5 @@ test('1_CreateExternalUser', async () => {
 
 
 
-    //await browser.close();
+    await browser.close();
 });

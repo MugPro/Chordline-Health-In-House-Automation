@@ -134,17 +134,37 @@ test('New User Setup fully automated with MailSlurp', async () => {
 
 import { test, expect } from '@playwright/test';
 import * as helpers from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/qawolf2.env.js";
+import {logIn3} from "../../../../helpers/Node20Helpers.js";
 
 test('Reset User — Scenario 1 (admin cannot reset own account)', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
     const loginID = `emailUsers`;
+
+    /*
     const { browser, page } = await helpers.logIn({
         url: process.env.DEFAULT_URL_2,
         loginID,
         password: process.env.DEFAULT_PASS_OCT_2025,
     });
+
+     */
+
+
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL_2;
+
+
+    // Act
+    const { page, browser } = await logIn3({
+        loginID,
+        password,
+        url
+    });
+
 
     //--------------------------------
     // Act: Open Users & Roles > Reset User
@@ -173,10 +193,12 @@ test('Reset User — Scenario 1 (admin cannot reset own account)', async () => {
 
     console.log('Scenario 1 verified — test ends here.');
 
+     */
+
     //--------------------------------
     // Cleanup
     //--------------------------------
     await browser.close();
 
-     */
+
 });

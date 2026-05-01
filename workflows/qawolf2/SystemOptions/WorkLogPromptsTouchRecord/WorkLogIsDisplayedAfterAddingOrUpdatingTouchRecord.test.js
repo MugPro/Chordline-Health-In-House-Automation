@@ -4,8 +4,9 @@ import { format as dateFormat } from 'date-fns';
 import {
     logIn,
     waitUntilLoaded,
-    createAuthorizationForMember,
+    createAuthorizationForMember, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/qawolf2.env.js";
 
 // Optional transient dialog handler (kept for parity across tests)
 async function maybeHandleNotificationOk(
@@ -25,6 +26,7 @@ async function maybeHandleNotificationOk(
 test.describe('Work Log Prompt – Touch Records (Phone Call)', () => {
     let browser, context, page;
 
+    /*
     test.beforeEach(async () => {
         const loginID = 'TouchRecord';
         ({ browser, context, page } = await logIn({
@@ -34,6 +36,8 @@ test.describe('Work Log Prompt – Touch Records (Phone Call)', () => {
             password: process.env.DEFAULT_PASS_OCT_2025,
         }));
     });
+
+     */
 
     test('Touch → Phone Call prompts Work Log and fields are correct', async () => {
         //--------------------------------
@@ -52,6 +56,21 @@ test.describe('Work Log Prompt – Touch Records (Phone Call)', () => {
         const formattedDate = dateFormat(new Date(), 'MM/dd/yyyy');
         const phoneNumber = `9165551000`;
         const timeSpent = `120`;
+
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL_2;
+
+
+        // Act
+        const { page, browser } = await logIn3({
+            loginID,
+            password,
+            url,
+            slowMo: 1000
+        });
+
 
         //--------------------------------
         // Act:

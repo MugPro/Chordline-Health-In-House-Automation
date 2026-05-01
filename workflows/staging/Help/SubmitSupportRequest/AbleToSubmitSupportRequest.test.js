@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as helpers from '../../../../helpers/Node20Helpers.js';
 import { env } from '../../../../environments/staging.env.js';
+import {logIn3} from "../../../../helpers/Node20Helpers.js";
 
 test('Help → Able to Submit a Support Request modal works', async () => {
     //--------------------------------
@@ -10,7 +11,22 @@ test('Help → Able to Submit a Support Request modal works', async () => {
     const linkToUse = 'Submit a Support Request';
 
     // Sign in to the app
-    const { page } = await helpers.logIn({ loginID });
+   // const { page } = await helpers.logIn({ loginID });
+
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
+
 
     //--------------------------------
     // Act

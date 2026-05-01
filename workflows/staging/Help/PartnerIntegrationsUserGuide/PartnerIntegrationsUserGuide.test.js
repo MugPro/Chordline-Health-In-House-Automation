@@ -2,6 +2,7 @@ import { test, expect, chromium } from '@playwright/test';
 import * as helpers from '../../../../helpers/Node20Helpers.js';
 import fs from 'fs/promises';
 import { env } from '../../../../environments/staging.env.js';
+import {logIn3} from "../../../../helpers/Node20Helpers.js";
 
 //--------------------------------
 // Helpers
@@ -22,7 +23,22 @@ test('Partner Integrations User Guide downloads and is valid', async () => {
     const linkToUse = 'Partner Integrations User Guide';
     const docHeader = ['Partner', 'Integrations', 'Guide'];
 
-    const { page } = await helpers.logIn({ loginID, url: process.env.DEFAULT_URL });
+    //const { page } = await helpers.logIn({ loginID, url: process.env.DEFAULT_URL });
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
+
+
 
     //--------------------------------
     // Act – download PDF

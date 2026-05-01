@@ -5,9 +5,10 @@ import { fileURLToPath } from 'url';
 import { readFile, mkdir, rm } from 'fs/promises';
 
 import {
-    logIn,
-    waitUntilLoaded,
+        logIn, logIn3,
+        waitUntilLoaded,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 /* --------------------------------
    ESM __dirname
@@ -44,7 +45,23 @@ test(
         const stats = fs.statSync(medicationPdfPath);
         expect(stats.size).toBeGreaterThan(1000);
 
-        const { page } = await logIn({ loginID });
+        //const { page } = await logIn({ loginID });
+
+            const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+            const url = env.DEFAULT_URL;
+
+
+
+
+
+            // Sign in to the app
+            const { page, context, browser } = await logIn3({ loginID, password,
+                    url });
+
+
+
+
+
         await waitUntilLoaded(page);
 
         //--------------------------------

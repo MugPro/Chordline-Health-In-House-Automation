@@ -1,9 +1,10 @@
 import { test, expect } from '@playwright/test';
 // 🔧 Match your helpers location used in prior tests
-import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3, waitUntilLoaded} from '../../../../helpers/Node20Helpers.js';
 
 // Optional faker (supports both modern and legacy APIs)
 import { faker as fakerLib } from '@faker-js/faker';
+import {env} from "../../../../environments/staging.env.js";
 
 /* -------------------------------------------
    Small helpers to pause after fills/clicks
@@ -92,7 +93,20 @@ test('Create and Update Individual Provider persists all entered data', async ()
     const credentials = ["AGNP", "DO", "FNP", "MD"][Math.floor(Math.random() * 4)];
 
     // Log in
-    const { page } = await logIn({ loginID });
+    //const { page } = await logIn({ loginID });
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
 
     // Navigate to Tools > Providers
     await clickAndWait(page, page.getByText(`Tools`));

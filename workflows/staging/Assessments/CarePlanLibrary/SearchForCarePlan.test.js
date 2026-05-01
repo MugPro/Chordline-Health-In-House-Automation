@@ -3,7 +3,8 @@
 //          open it, and verify expected UI elements/values are present.
 
 import { test, expect } from '@playwright/test';
-import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3, waitUntilLoaded} from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 test.describe('Care Plan Library - Search & Verify Care Plan', () => {
     test('Search for "QA Wolf assessment" and validate details', async () => {
@@ -18,7 +19,19 @@ test.describe('Care Plan Library - Search & Verify Care Plan', () => {
         const loginID = 'SearchCare';
 
         // Sign in
-        const { page, context, browser } = await logIn({ loginID });
+        //const { page, context, browser } = await logIn({ loginID });
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL;
+
+
+
+
+
+        // Sign in to the app
+        const { page, context, browser } = await logIn3({ loginID, password,
+            url });
 
         //--------------------------------
         // Act:

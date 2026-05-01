@@ -94,6 +94,7 @@ import { test, expect, chromium } from '@playwright/test';
 import * as helpers from '../../../../helpers/Node20Helpers.js';
 import fs from 'fs/promises';
 import { env } from '../../../../environments/staging.env.js';
+import {logIn3} from "../../../../helpers/Node20Helpers.js";
 
 //--------------------------------
 // Helpers
@@ -120,10 +121,29 @@ test('Able to download "Data Loads and Extracts Guide" PDF and verify download',
     const linkToUse = 'Data Loads and Extracts Guide';
     const docHeader = ['Data Loads', 'and Extracts', 'Guide'];
 
+    /*
     const { page } = await helpers.logIn({
         loginID,
         //url: process.env.DEFAULT_URL_2
     });
+
+     */
+
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
+
+
 
     //--------------------------------
     // Act – download PDF

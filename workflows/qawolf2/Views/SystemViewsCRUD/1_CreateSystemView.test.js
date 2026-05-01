@@ -11,15 +11,17 @@ test('Create a System View', async () => {
     const viewName = `QAWolf view name`;
     const viewNameEdited = `${viewName} - edited`;
 
-    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+
+    const password = env.DEFAULT_PASS_JUNE_2025;   // ✅ use env wrapper
     const url = env.DEFAULT_URL_2;
+
 
     // Act
     const { page, browser } = await logIn3({
         loginID,
         password,
         url,
-        slowMo: 800,
+        slowMo: 800
     });
 
 

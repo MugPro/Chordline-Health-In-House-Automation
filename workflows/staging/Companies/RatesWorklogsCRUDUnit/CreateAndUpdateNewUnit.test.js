@@ -3,10 +3,11 @@
 import { test, expect } from '@playwright/test';
 
 // 🔧 Update this path to match your helpers location
-import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3, waitUntilLoaded} from '../../../../helpers/Node20Helpers.js';
 
 // Random data generator
 import { faker } from '@faker-js/faker';
+import {env} from "../../../../environments/staging.env.js";
 
 /**
  * This test:
@@ -39,7 +40,22 @@ test('Create and update new Unit rate', async () => {
     const units = String(faker.number.int({ min: 1, max: 999 }));
 
     // Log in
-    const { page } = await logIn({ loginID });
+    //const { page } = await logIn({ loginID });
+
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
+
 
     // Navigate to Tools > Companies > Rates
     await page.getByText(`Tools`).hover();

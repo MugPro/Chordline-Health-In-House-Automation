@@ -1,8 +1,9 @@
 // Filename: CreateAndUpdateBHObservationAutomationRule.test.js
 
 import { test, expect } from '@playwright/test';
-import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3, waitUntilLoaded} from '../../../../helpers/Node20Helpers.js';
 import { faker } from '@faker-js/faker';
+import {env} from "../../../../environments/staging.env.js";
 
 // Helper for booleans (avoids faker.datatype.boolean changes across versions)
 const randomBool = () => Math.random() < 0.5;
@@ -18,7 +19,20 @@ test.describe('BH Observation Automation Rules — Create & Update', () => {
         const ruleType = 'BH Observation';
 
         // Sign in to the app
-        const { page, context, browser } = await logIn({ loginID, slowMo: 500 });
+        //const { page, context, browser } = await logIn({ loginID, slowMo: 500 });
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL;
+
+
+
+
+
+        // Sign in to the app
+        const { page, context, browser } = await logIn3({ loginID, password,
+            url, slowMo: 500 });
+
 
         try {
             //--------------------------------

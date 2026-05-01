@@ -2,9 +2,10 @@ import { test, expect } from '@playwright/test';
 import * as dateFns from 'date-fns';
 
 import {
-    logIn,
+    logIn, logIn3,
     waitUntilLoaded,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 /* -------------------------------------------
    Small helpers to pause after fills/clicks
@@ -50,7 +51,21 @@ test(
 
         const todaysDate = dateFns.format(new Date(), 'MM/dd/yyyy');
 
-        const { page } = await logIn({ loginID });
+       // const { page } = await logIn({ loginID });
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL;
+
+
+
+
+
+        // Sign in to the app
+        const { page, context, browser } = await logIn3({ loginID, password,
+            url });
+
+
+
         await waitUntilLoaded(page);
 
         //--------------------------------

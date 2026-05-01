@@ -153,7 +153,8 @@ test.describe('Care Plan Template - Create Goal', () => {
 
 
 import { test, expect } from '@playwright/test';
-import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3, waitUntilLoaded} from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 test.describe('Care Plan Template - Create Goal', () => {
     test('Create a new goal and verify it appears with the correct tag', async () => {
@@ -168,7 +169,19 @@ test.describe('Care Plan Template - Create Goal', () => {
         const loginID = `CreatePlanGoal`;
 
         // Log in
-        const { page, context, browser } = await logIn({ loginID });
+        //const { page, context, browser } = await logIn({ loginID });
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL;
+
+
+
+
+
+        // Sign in to the app
+        const { page, context, browser } = await logIn3({ loginID, password,
+            url });
 
         //--------------------------------
         // Act:

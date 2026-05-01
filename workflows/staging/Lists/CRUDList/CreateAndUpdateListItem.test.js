@@ -3,7 +3,8 @@
 import { test, expect } from '@playwright/test';
 
 // 🔧 Match your helpers location (consistent with prior tests)
-import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3, waitUntilLoaded} from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 /**
  * This test:
@@ -54,7 +55,22 @@ test('Create and update a List item', async () => {
     };
 
     // Log in
-    const { page } = await logIn({ loginID });
+    //const { page } = await logIn({ loginID });
+
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
+
 
     // Navigate to Tools > Lists
     await page.getByText(`Tools`).click();

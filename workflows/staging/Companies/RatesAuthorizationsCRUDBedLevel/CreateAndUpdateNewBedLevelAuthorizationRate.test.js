@@ -3,7 +3,8 @@
 import { test, expect } from '@playwright/test';
 
 // ⛳️ Adjust this import path to wherever your helpers live.
-import { logIn, deactivateAllRateAuthorizations, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, deactivateAllRateAuthorizations, waitUntilLoaded, logIn3} from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 /**
  * This test:
@@ -31,7 +32,24 @@ test('Create and update new Bed Level Authorization Rate', async () => {
     const updatedItemDesc = `ICU`;
 
     // Login
-    const { page } = await logIn({ loginID, slowMo: 450 });
+    //const { page } = await logIn({ loginID, slowMo: 450 });
+
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url, slowMo: 450 });
+
+
+
+
+
     await waitUntilLoaded(page);
 
     // Clean-up baseline: deactivate all authorizations in rates tab

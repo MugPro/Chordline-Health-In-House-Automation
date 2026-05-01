@@ -329,8 +329,9 @@ import {
     logIn,
     waitUntilLoaded,
     cleanupTabOnMembersPage,
-    reportCleanupFailed,
+    reportCleanupFailed, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 
 
@@ -351,8 +352,20 @@ test('Create, Update, and Delete a Case', async () => {
     const statusDateFormat = dateFns.format(today, 'MM/dd/yyyy hh:mm:ss aa');
 
     // Log in
-    const { page } = await logIn({ loginID });
+   // const { page } = await logIn({ loginID });
 
+
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
 
 
 

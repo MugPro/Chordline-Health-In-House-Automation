@@ -2,8 +2,9 @@ import { test, expect } from '@playwright/test';
 import {
     logIn,
     waitUntilLoaded,
-    cleanupTabOnMembersPage2,
+    cleanupTabOnMembersPage2, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 /* -------------------------------------------
    Small helper pauses (use sparingly)
@@ -88,7 +89,20 @@ test('Create, Update, and Delete an Outpatient Authorization', async () => {
     const workLogTitle = `New Work Log`;
 
     // Sign in
-    const { page } = await logIn({ loginID });
+    //const { page } = await logIn({ loginID });
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
 
     // Idempotent cleanup
     await cleanupTabOnMembersPage2(page, {

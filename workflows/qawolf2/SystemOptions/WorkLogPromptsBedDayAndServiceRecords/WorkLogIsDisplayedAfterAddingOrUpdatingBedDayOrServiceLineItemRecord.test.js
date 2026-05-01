@@ -7,8 +7,9 @@ import {
     logIn,
     waitUntilLoaded,
     cleanupTabOnMembersPage,
-    reportCleanupFailed,
+    reportCleanupFailed, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/qawolf2.env.js";
 
 // Optional transient dialog handler (e.g., duplicate provider warning)
 async function maybeHandleNotificationOk(
@@ -30,14 +31,23 @@ test.describe(
     () => {
         let browser, context, page;
 
+        /*
         test.beforeEach(async () => {
             const loginID = 'TouchRecord';
-            ({ browser, context, page } = await logIn({
-                url: process.env.DEFAULT_URL_2,
+
+            const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+            const url = env.DEFAULT_URL_2;
+
+            // Act
+            const { page, browser } = await logIn3({
                 loginID,
-                password: process.env.DEFAULT_PASS_OCT_2025,
-            }));
+                password,
+                url
+            });
+
         });
+
+         */
 
         test.afterEach(async () => {
             await context?.close();
@@ -63,6 +73,21 @@ test.describe(
 
             const tab = 'Authorizations';
             const gridId = '[id="authorizations-grid"]';
+
+
+
+            const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+            const url = env.DEFAULT_URL_2;
+
+
+            // Act
+            const { page, browser } = await logIn3({
+                loginID,
+                password,
+                url
+            });
+
+
 
             try {
                 //--------------------------------

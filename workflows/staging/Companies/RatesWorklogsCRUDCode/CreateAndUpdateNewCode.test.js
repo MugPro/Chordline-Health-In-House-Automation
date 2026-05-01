@@ -3,10 +3,11 @@
 import { test, expect } from '@playwright/test';
 
 // 🔧 Update this path to match where your helpers live
-import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3, waitUntilLoaded} from '../../../../helpers/Node20Helpers.js';
 
 // For random numbers/values
 import { faker } from '@faker-js/faker';
+import {env} from "../../../../environments/staging.env.js";
 
 /**
  * This test:
@@ -36,7 +37,21 @@ test('Create and update new Code rate', async () => {
     }).format(rate);
 
     // Log in
-    const { page } = await logIn({ loginID });
+    //const { page } = await logIn({ loginID });
+
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
 
     // Navigate to Tools > Companies > Codes (via Rates)
     await page.getByText(`Tools`).hover();

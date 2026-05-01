@@ -36,6 +36,7 @@ async function maybeHandleNotificationOk(page, {
 test.describe('Text Comment is added to the not auto approved Next Action.', () => {
     let browser, context, page;
 
+    /*
     test.beforeEach(async () => {
         const loginID = 'AuthNotAutoAppr';
 
@@ -50,6 +51,8 @@ test.describe('Text Comment is added to the not auto approved Next Action.', () 
         });
 
     });
+
+     */
 
     test.afterEach(async () => {
         await context?.close();
@@ -71,6 +74,20 @@ test.describe('Text Comment is added to the not auto approved Next Action.', () 
         const team = 'Case Team';
         const reviewer = `${loginID} Qaw`; // for reference; not strictly needed unless your UI requires it
         const bedLevel = 'NICU';
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL_2;
+
+
+        // Act
+        const { page, browser } = await logIn3({
+            loginID,
+            password,
+            url
+        });
+
+
 
 
         //--------------------------------

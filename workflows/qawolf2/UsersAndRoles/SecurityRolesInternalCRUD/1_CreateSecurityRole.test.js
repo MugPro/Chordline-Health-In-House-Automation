@@ -168,10 +168,11 @@ import {
     waitUntilLoaded,
     reportCleanupFailed,
     grabSecurityRoles,
-    updateCheckBoxIdFromFlatTreeData,
+    updateCheckBoxIdFromFlatTreeData, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
 import { logIn } from '../../../../helpers/Node20Helpers.js';
 import * as helpers from "../../../../helpers/Node20Helpers.js";
+import {env} from "../../../../environments/qawolf2.env.js";
 
 test('Security Roles - CRUD with random privileges selection', async () => {
     //--------------------------------
@@ -184,11 +185,29 @@ test('Security Roles - CRUD with random privileges selection', async () => {
     const securityRoleName = `internalTestCRUD`;
     const securityRoleNameEdit = `internalTestCRUD-edit`;
 
+
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL_2;
+
+
+    // Act
+    const { page, browser } = await logIn3({
+        loginID,
+        password,
+        url
+    });
+
+
+
+    /*
     const { browser, page } = await helpers.logIn({
         url: process.env.DEFAULT_URL_2,
         loginID,
         password: process.env.DEFAULT_PASS_OCT_2025,
     });
+
+     */
 
     // Navigate to Security Roles
     await page.getByText(`Tools`).hover();
@@ -305,4 +324,8 @@ test('Security Roles - CRUD with random privileges selection', async () => {
             page.locator(`input[id="${role.checkboxId}"]`)
         ).toBeChecked({ timeout: 5000 });
     }
+
+
+    await browser.close();
+
 });

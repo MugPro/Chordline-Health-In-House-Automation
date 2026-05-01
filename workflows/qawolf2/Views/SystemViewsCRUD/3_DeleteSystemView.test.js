@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as helpers from '../../../../helpers/Node20Helpers.js';
 import { env } from '../../../../environments/qawolf2.env.js';
-import {logIn} from "../../../../helpers/Node20Helpers.js";
+import {logIn, logIn3} from "../../../../helpers/Node20Helpers.js";
 
 test('Delete all QAW Views', async () => {
     //--------------------------------
@@ -23,11 +23,15 @@ test('Delete all QAW Views', async () => {
 
 
 
-    const { page, browser } = await logIn({
-        loginID: 'SystemViewCRUD',
-        password: 'fasdfafs123A@',
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL_2;
+
+    // Act
+    const { page, browser } = await logIn3({
+        loginID,
+        password,
+        url,
         slowMo: 800,
-        url: 'https://qawolf2.tcshealthcare.com/login.jsp'
     });
 
 

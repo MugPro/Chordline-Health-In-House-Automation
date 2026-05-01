@@ -6,7 +6,8 @@
 import { env } from '../../../../environments/staging.env.js';
 
 import { test, expect } from '@playwright/test';
-import { logIn, waitUntilLoaded, reportCleanupFailed } from '../../../../helpers/Node20Helpers.js';
+import {logIn, waitUntilLoaded, reportCleanupFailed, logIn3} from '../../../../helpers/Node20Helpers.js';
+
 
 /**
  * Optional: Lightweight fallback reporter in case your helpers file
@@ -41,7 +42,26 @@ test.describe('Assessments - Create Assessment', () => {
         };
 
         // Log in (launches its own browser/context)
-        const { page, context, browser } = await logIn({ loginID, slowMo: 800 });
+        //const { page, context, browser } = await logIn({ loginID, slowMo: 800 });
+
+
+
+
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL;
+
+
+
+
+
+        // Sign in to the app
+        const { page, context, browser } = await logIn3({ loginID, password,
+            url, slowMo: 800 });
+
+
+
+
 
         await waitUntilLoaded(page);
 

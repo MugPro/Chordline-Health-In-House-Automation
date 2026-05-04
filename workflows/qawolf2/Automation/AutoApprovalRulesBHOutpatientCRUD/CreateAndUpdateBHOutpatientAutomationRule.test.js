@@ -18,9 +18,16 @@ test('Create BH Outpatient Automation Rule', async () => {
 
     //const password = '8VSzI$^QsXuq57HI5541';
 
-
+/*
     const loginID = 'AdvancedSearch';
     const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+
+ */
+
+
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
+
     const url = env.DEFAULT_URL_2;
 
     // Act

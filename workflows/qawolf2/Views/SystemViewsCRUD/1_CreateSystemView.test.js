@@ -12,7 +12,7 @@ test('Create a System View', async () => {
     const viewNameEdited = `${viewName} - edited`;
 
 
-    const password = env.DEFAULT_PASS_JUNE_2025;   // ✅ use env wrapper
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
     const url = env.DEFAULT_URL_2;
 
 

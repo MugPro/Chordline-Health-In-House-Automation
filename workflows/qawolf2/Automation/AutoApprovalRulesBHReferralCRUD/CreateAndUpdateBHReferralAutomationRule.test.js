@@ -14,9 +14,16 @@ test('Create BH Referral Automation Rule', async () => {
     const ruleNameEdited = `${ruleName} - edit`;
 
 
-
+/*
     const loginID = 'AdvancedSearch';
     const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+
+ */
+
+
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
+
     const url = env.DEFAULT_URL_2;
 
     // Act

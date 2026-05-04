@@ -53,8 +53,8 @@ async function selectProvider(page, providerFieldName, providerName) {
 // Test
 //--------------------------------
 test('Create Observation Authorization', async () => {
-    const loginID = 'AdvancedSearch';
-    const password = process.env.DEFAULT_PASS_OCT_2025;
+    //const loginID = 'AdvancedSearch';
+    //const password = process.env.DEFAULT_PASS_OCT_2025;
     const member = {
         name: 'Blackwell, Megan',
         insuranceCompany: 'Excellent Health Plan',
@@ -77,6 +77,11 @@ test('Create Observation Authorization', async () => {
         day: '2-digit',
         year: 'numeric',
     });
+
+
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
+
 
     // Login
     const { page, browser } = await helpers.logIn3({

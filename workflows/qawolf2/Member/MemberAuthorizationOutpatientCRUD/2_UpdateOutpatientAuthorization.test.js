@@ -90,8 +90,11 @@ test('Update Outpatient Authorization', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
+    /*
     const loginID = 'AdvancedSearch';
     const password = process.env.DEFAULT_PASS_OCT_2025;
+
+     */
 
     const member = {
         name: 'Blackwell, Megan',
@@ -115,6 +118,9 @@ test('Update Outpatient Authorization', async () => {
         day: '2-digit',
         year: 'numeric',
     });
+
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
     const { page } = await helpers.logIn3({
         loginID,

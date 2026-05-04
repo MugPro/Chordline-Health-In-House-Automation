@@ -538,8 +538,11 @@ test('Create Outpatient Authorization', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
+    /*
     const loginID = 'AdvancedSearch';
     const password = process.env.DEFAULT_PASS_OCT_2025;
+
+     */
 
     const member = {
         name: 'Blackwell, Megan',
@@ -556,6 +559,9 @@ test('Create Outpatient Authorization', async () => {
     const authStatus = 'In Progress';
     const team = 'Case Team';
     const provider = "St. Catherine's Hospital";
+
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
     //--------------------------------
     // Login

@@ -550,8 +550,11 @@ test('UpdateObservationAuthorization', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
+    /*
     const loginID = 'AdvancedSearch';
     const password = process.env.DEFAULT_PASS_OCT_2025;
+
+     */
     const member = {
         name: 'Blackwell, Megan',
         insuranceCompany: 'Excellent Health Plan',
@@ -574,6 +577,9 @@ test('UpdateObservationAuthorization', async () => {
         day: '2-digit',
         year: 'numeric',
     });
+
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
     // Login
     const { page } = await helpers.logIn3({

@@ -6,7 +6,7 @@ test('Create Inpatient Automation Rule', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
-    const loginID = `AdvancedSearch`;
+    //const loginID = `AdvancedSearch`;
     const randomFourDigit = Math.floor(1000 + Math.random() * 9000);
     const automationName = `QA Wolf Rule name ${randomFourDigit}`;
     const birthGender = `Female`;
@@ -15,9 +15,17 @@ test('Create Inpatient Automation Rule', async () => {
     const editedRuleName = `${automationName} - edited`;
     const birthGenderUpdated = `Female`;
 
-
+/*
     const password = process.env.DEFAULT_PASS_OCT_2025;
     const url = env.DEFAULT_URL_2;
+
+ */
+
+    const url = env.DEFAULT_URL_2;
+
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
+
 
     const { page } = await helpers.logIn3({
         loginID,

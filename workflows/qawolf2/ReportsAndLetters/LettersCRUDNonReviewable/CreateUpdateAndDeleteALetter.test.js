@@ -17,8 +17,11 @@ test('CreateALetter', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
+    /*
     const loginID = `AdvancedSearch`;
     const password = process.env.DEFAULT_PASS_OCT_2025;
+
+     */
     const moduleValue = "Member Detail";
     const baseLetterName = `QA Wolf letter`; // base name for cleanup
 
@@ -26,7 +29,10 @@ test('CreateALetter', async () => {
 
     const updateTemplate = 'HRA Education Pages';
 
-    const url = process.env.DEFAULT_URL_2;
+    //const url = process.env.DEFAULT_URL_2;
+
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
     // Sign in
     const { page, browser } = await helpers.logIn3({

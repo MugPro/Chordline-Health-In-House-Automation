@@ -101,11 +101,14 @@ test('Security Roles - Delete existing role', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
-    const loginID = `emailUsers`;
+   // const loginID = `emailUsers`;
     const securityRoleNameEdit = `internalTestCRUD-edit`;
 
-    const password = env.DEFAULT_PASS_OCT_2025;
+    //const password = env.DEFAULT_PASS_OCT_2025;
     const url = env.DEFAULT_URL_2;
+
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
     //--------------------------------
     // Act - Login

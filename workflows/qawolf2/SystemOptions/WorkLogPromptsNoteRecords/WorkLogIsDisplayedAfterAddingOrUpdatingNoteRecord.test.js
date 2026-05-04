@@ -108,7 +108,7 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
         //--------------------------------
         // Arrange:
         //--------------------------------
-        const loginID = `WorkLogPNoteRec`;
+       // const loginID = `WorkLogPNoteRec`;
         const memberName = `Dillinger, James`;
         const status1 = `Pending`; // ["Closed", "Completed", "Pending"]
         const reason = `Member Activity`; // ["Member Activity", "Member Question", "Provider Question"]
@@ -117,9 +117,11 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
 
 
 
-        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+       // const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
         const url = env.DEFAULT_URL_2;
 
+        const loginID = 'LoginIdTest1';
+        const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
         // Act
         const { page, browser } = await logIn3({

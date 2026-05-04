@@ -129,7 +129,7 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
         //--------------------------------
         // Arrange:
         //--------------------------------
-        const loginID = `WorkLogPMedica`;
+        //const loginID = `WorkLogPMedica`;
         const memberName = `Studabaker, Missy`;
         const specialInstructions = `Editing medication ${Date.now()}`;
         const medRecon = `Created medRecon ${Date.now()}`;
@@ -137,8 +137,11 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
 
 
 
-        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        //const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
         const url = env.DEFAULT_URL_2;
+
+        const loginID = 'LoginIdTest1';
+        const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
         // Act
         const { page, browser } = await logIn3({

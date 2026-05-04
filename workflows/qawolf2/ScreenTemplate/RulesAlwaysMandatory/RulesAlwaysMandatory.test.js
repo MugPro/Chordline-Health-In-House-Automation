@@ -143,14 +143,17 @@ test('RulesAlwaysMandatory', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
-    const loginID = `AlwaysMandatory`;
+    //const loginID = `AlwaysMandatory`;
     const screenTemplateGroup = `Authorization - OP`;
     const defaultTemplate = `${screenTemplateGroup} - Default`;
     const screenName = `${defaultTemplate} - Copy`;
     const mandatoryRadioButton = `Radio Button:`;
 
-    const password = env.DEFAULT_PASS_OCT_2025;
+    //const password = env.DEFAULT_PASS_OCT_2025;
     const url = env.DEFAULT_URL_2;
+
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
     //--------------------------------
     // Act

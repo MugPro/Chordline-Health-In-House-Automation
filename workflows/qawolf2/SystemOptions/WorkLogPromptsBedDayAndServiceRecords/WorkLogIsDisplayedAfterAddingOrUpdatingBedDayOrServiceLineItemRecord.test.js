@@ -59,7 +59,7 @@ test.describe(
             // Arrange:
             //--------------------------------
             const today = Date.now();
-            const loginID = 'TouchRecord';
+            //const loginID = 'TouchRecord';
             const userName = 'Touch Record';
             const lastFirstName = 'Ace, Clancy';
             const authorizationType = 'Inpatient';
@@ -76,9 +76,12 @@ test.describe(
 
 
 
-            const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+           // const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
             const url = env.DEFAULT_URL_2;
 
+
+            const loginID = 'LoginIdTest1';
+            const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
             // Act
             const { page, browser } = await logIn3({

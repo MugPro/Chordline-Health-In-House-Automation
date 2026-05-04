@@ -473,7 +473,7 @@ test.describe('Work Log Prompt – Compliance Appeal', () => {
         //--------------------------------
         // Arrange:
         //--------------------------------
-        const loginID = `WorkLogPCDAA`;
+       // const loginID = `WorkLogPCDAA`;
         const memberName = `Chin, Huang`;
         const complianceType = `Appeal`;
         const team = `Compliance Team`;
@@ -490,8 +490,11 @@ test.describe('Work Log Prompt – Compliance Appeal', () => {
 
 
 
-        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        //const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
         const url = env.DEFAULT_URL_2;
+
+        const loginID = 'LoginIdTest1';
+        const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
         // Act
         const { page, browser } = await logIn3({

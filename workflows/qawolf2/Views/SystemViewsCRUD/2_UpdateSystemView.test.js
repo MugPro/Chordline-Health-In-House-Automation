@@ -7,7 +7,7 @@ test('Update a System View', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
-    const loginID = `SystemViewCRUD`;
+   // const loginID = `SystemViewCRUD`;
     const viewName = `QAWolf view name`;
     const viewNameEdited = `${viewName} - edited`;
 
@@ -24,8 +24,11 @@ test('Update a System View', async () => {
 
 
 
-    const password = env.DEFAULT_PASS_JUNE_2025;   // ✅ use env wrapper
+   // const password = env.DEFAULT_PASS_JUNE_2025;   // ✅ use env wrapper
     const url = env.DEFAULT_URL_2;
+
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
 
     // Act

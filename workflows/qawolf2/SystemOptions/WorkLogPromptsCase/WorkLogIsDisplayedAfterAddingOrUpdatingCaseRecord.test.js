@@ -54,16 +54,18 @@ test.describe('Work Log Prompt – Case Record', () => {
         //--------------------------------
         // Arrange:
         //--------------------------------
-        const loginID = `WorkLogPCase`;
+        //const loginID = `WorkLogPCase`;
         const memberName = `Dillon, Rebecca`;
         const enrollRestrictions = `Updating case record ${Date.now()}`;
         const tab = `Case`;
         const gridId = `[id="member-case-grid"]`;
 
 
-        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        //const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
         const url = env.DEFAULT_URL_2;
 
+        const loginID = 'LoginIdTest1';
+        const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
         // Act
         const { page, browser } = await logIn3({

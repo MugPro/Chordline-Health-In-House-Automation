@@ -633,7 +633,7 @@ test('2_EditExternalUser', async () => {
     // Arrange
     //--------------------------------
     //const loginID = `ExternalUserCrud`;
-    const loginID = `emailUsers`;
+    //const loginID = `emailUsers`;
     const group = `Users`;
     const tab = `External`;
     const logInId = `QA-ExUserC`; // original login ID
@@ -660,9 +660,11 @@ test('2_EditExternalUser', async () => {
     // Login
     //--------------------------------
 
-    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    //const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
     const url = env.DEFAULT_URL_2;
 
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
     // Act
     const { page, browser } = await logIn3({

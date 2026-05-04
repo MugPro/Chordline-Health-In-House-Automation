@@ -48,7 +48,7 @@ test.describe('Work Log Prompt – Compliance Note Records', () => {
         // Arrange:
         //--------------------------------
         const today = Date.now();
-        const loginID = `WorkLogPrompts`;
+        //const loginID = `WorkLogPrompts`;
         const userName = `WorkLog Prompts`;
         const lastFirstName = `Ace, Clancy`;
         const authorizationType = `Inpatient`;
@@ -64,8 +64,11 @@ test.describe('Work Log Prompt – Compliance Note Records', () => {
 
 
 
-        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        //const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
         const url = env.DEFAULT_URL_2;
+
+        const loginID = 'LoginIdTest1';
+        const password = env.DEFAULT_PASSWORD;   // ✅ use env wrappers
 
         // Act
         const { page, browser } = await logIn3({

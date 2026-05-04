@@ -9,14 +9,17 @@ test('AddNewFieldWholeNumber', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
-    const loginID = 'FieldNumber';
+    //const loginID = 'FieldNumber';
     const screenTemplateGroup = 'Medical Review - RF';
     const defaultTemplate = `${screenTemplateGroup} - Default`;
     const copyTemplate = `${defaultTemplate} - Copy`;
 
 
-    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    //const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
     const url = env.DEFAULT_URL_2;
+
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
     // Act
     const { page, browser } = await logIn3({

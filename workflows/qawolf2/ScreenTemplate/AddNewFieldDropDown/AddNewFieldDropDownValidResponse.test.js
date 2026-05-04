@@ -658,7 +658,7 @@ test('AddNewFieldDropDownValidResponse', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
-    const loginID = `ValidResponse`;
+    //const loginID = `ValidResponse`;
     const screenTemplateGroup = `Medical Review - OP`;
     const defaultTemplate = `${screenTemplateGroup} - Default`;
     const copyTemplate = `${defaultTemplate} - Copy`;
@@ -667,8 +667,11 @@ test('AddNewFieldDropDownValidResponse', async () => {
     const randomResponse = validResponses[Math.floor(Math.random() * validResponses.length)];
 
 
-    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    //const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
     const url = env.DEFAULT_URL_2;
+
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
     // Act
     const { page, browser } = await logIn3({

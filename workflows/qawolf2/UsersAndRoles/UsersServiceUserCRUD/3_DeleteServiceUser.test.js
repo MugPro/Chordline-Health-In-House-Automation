@@ -120,7 +120,7 @@ test('3_DeleteServiceUser', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
-    const loginID = `emailUsers`;
+    //const loginID = `emailUsers`;
     const group = `Users`;
     const tab = `Service`;
 
@@ -128,8 +128,11 @@ test('3_DeleteServiceUser', async () => {
     const serviceNameEdit = `ServUserC-edit`;
     const logInId = `QA-${serviceName}`;
 
-    const password = env.DEFAULT_PASS_OCT_2025;
+   // const password = env.DEFAULT_PASS_OCT_2025;
     const url = env.DEFAULT_URL_2;
+
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
     //--------------------------------
     // Login

@@ -63,14 +63,17 @@ test.describe('Work Log Prompt – Member Plan (Care Plan & Plan Components)', (
             //--------------------------------
         // Arrange:
         //--------------------------------
-        const loginID = `WorkLogMedPlan`;
+        //const loginID = `WorkLogMedPlan`;
         const memberName = `Blackwell, Pauline`;
         const assessment = `Demo Assessment`;
         const memDesc = `${loginID}${Date.now()}`;
 
 
-            const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+            //const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
             const url = env.DEFAULT_URL_2;
+
+            const loginID = 'LoginIdTest1';
+            const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
             // Act
             const { page, browser } = await logIn3({

@@ -122,15 +122,18 @@ test('3_DeleteExternalUser', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
-    const loginID = `emailUsers`;
+   // const loginID = `emailUsers`;
     const group = `Users`;
     const tab = `External`;
 
     const logInId = `QA-ExUserC`;          // original login id
     const firstNameEdit = `ExUserC2-edit`; // edited first name
 
-    const password = env.DEFAULT_PASS_OCT_2025;
+    //const password = env.DEFAULT_PASS_OCT_2025;
     const url = env.DEFAULT_URL_2;
+
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
     //--------------------------------
     // Login

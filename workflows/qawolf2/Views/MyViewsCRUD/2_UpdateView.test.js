@@ -97,11 +97,13 @@ test('Update My View', async () => {
     const viewNameEdited = `${viewName} - edited`;
 
 
-    const loginID = 'SystemViewCRUD';
+    //const loginID = 'SystemViewCRUD';
 
-    const password = env.DEFAULT_PASS_JUNE_2025;   // ✅ use env wrapper
+   // const password = env.DEFAULT_PASS_JUNE_2025;   // ✅ use env wrapper
     const url = env.DEFAULT_URL_2;
 
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
     // Act
     const { page, browser } = await logIn3({

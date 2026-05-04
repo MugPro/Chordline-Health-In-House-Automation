@@ -233,7 +233,7 @@ test('New User Setup workflow (without inbox check)', async () => {
     //--------------------------------
     // Arrange
     //--------------------------------
-    const loginID = `emailUsers`;
+    //const loginID = `emailUsers`;
     const loginID2 = `NewUserReset`;
     const firstName = `NewUserReset`;
     const lastName = `Qaw`;
@@ -254,9 +254,11 @@ test('New User Setup workflow (without inbox check)', async () => {
 
 
 
-    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    //const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
     const url = env.DEFAULT_URL_2;
 
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
     // Act
     const { page, browser } = await logIn3({

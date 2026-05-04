@@ -501,7 +501,7 @@ test('Delete Outpatient and other Authorizations', async () => {
     const loginID = 'LoginIdTest1';
     const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
-    const { page } = await helpers.logIn3({
+    const {browser,  page } = await helpers.logIn3({
         loginID,
         password,
         url: env.DEFAULT_URL_2,
@@ -521,6 +521,6 @@ test('Delete Outpatient and other Authorizations', async () => {
 
     console.log(`Final remaining rows for ${loginID}: ${remainingRows}`);
 
-
+    await browser.close();
 
 });

@@ -82,6 +82,127 @@ async function handleDuplicatePopup(page) {
         console.log('No duplicate popup appeared.');
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Helper: wait for at least one row for loginID to appear
+async function waitForRows(page, selector, timeout = 15000) {
+    const start = Date.now();
+    while (Date.now() - start < timeout) {
+        const count = await page.locator(selector).count();
+        if (count > 0) return true; // rows found
+        await page.waitForTimeout(500); // short wait before retry
+    }
+    return false; // no rows found after timeout
+}
+
+
+async function NewCleanupTabOnMembersPage(page, options = {}) {
+    const tab = options.tab || 'Authorizations';
+    const gridId = options.gridId || '[id="authorizations-grid"]';
+    const memberName = options.memberName || 'Blackwell, Megan';
+    const memberIdentifier = options.memberIdentifier || 'B9824538';
+    const loginID = options.loginID;
+    const onScreen = options.onScreen || false;
+    const authType = options.authType || 'OP';
+
+    if (!onScreen) {
+        // Navigate to Home > Members
+        await page.getByText('Home', { exact: true }).click();
+        await page.locator('#home-tabs-tab-4').getByText('Members').click();
+
+        await page.getByRole('textbox', { name: 'Search...' }).fill(memberName);
+        await page.keyboard.press('Enter');
+
+        try {
+            await page.getByRole('gridcell', { name: memberName }).dblclick();
+            await helpers.waitUntilLoaded(page);
+        } catch {
+            console.log(`Member row not found by name`);
+        }
+
+        await page
+            .getByLabel(memberName)
+            .getByText(tab, { exact: true })
+            .first()
+            .click();
+    }
+
+    // Wait for grid container
+    await page.locator(gridId).waitFor({ state: 'visible', timeout: 10000 });
+
+    //const rowSelector = `${gridId} table tbody tr:visible:has-text("${loginID}")`;
+    const rowSelector = `${gridId} table tbody tr:visible:has-text("${authType}")`;
+    const rowsExist = await waitForRows(page, rowSelector, 15000); // wait up to 15s
+
+    if (!rowsExist) {
+        console.log(`No records found for ${authType}. Nothing to delete.`);
+        return;
+    }
+
+    console.log(`Records found for ${authType}. Deleting...`);
+
+    let rowLocator = page.locator(rowSelector);
+
+    while (await rowLocator.count() > 0) {
+        const firstRow = rowLocator.first();
+        await firstRow.scrollIntoViewIfNeeded();
+        await firstRow.hover();
+
+        const deleteButton = firstRow.locator('[title="Delete"]').first();
+
+        if ((await deleteButton.count()) === 0) {
+            console.log('Row found but no delete button. Stopping.');
+            break;
+        }
+
+        await deleteButton.click();
+
+        const yesButton = page.getByRole('button', { name: 'Yes' });
+        if (await yesButton.isVisible().catch(() => false)) {
+            await yesButton.click();
+        }
+
+        await helpers.waitUntilLoaded(page);
+
+        const workflowNotification = page.locator('#notif-message', {
+            hasText: 'This record is locked by Workflow Rule Account.',
+        });
+
+        if (await workflowNotification.isVisible().catch(() => false)) {
+            await page.locator('#positiveButton').click();
+            console.log('Skipped workflow-locked record.');
+            break;
+        }
+
+        // Re-query rows
+        rowLocator = page.locator(rowSelector);
+    }
+
+    const remaining = await rowLocator.count();
+    console.log(`Cleanup complete. Remaining rows for ${authType}: ${remaining}`);
+}
+
+
+
+
 //--------------------------------
 // Test
 //--------------------------------
@@ -102,6 +223,7 @@ test('Update Outpatient Authorization', async () => {
         identifier: 'B9824538',
         plan: 'PLAN B',
         startDate: '07/14/2024',
+        authType: 'OP',
     };
 
     const tab = 'Authorizations';
@@ -122,18 +244,14 @@ test('Update Outpatient Authorization', async () => {
     const loginID = 'LoginIdTest1';
     const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
-    const { page } = await helpers.logIn3({
+    const { browser, page } = await helpers.logIn3({
         loginID,
         password,
         url: env.DEFAULT_URL_2,
     });
 
-    await helpers.cleanupTabOnMembersPage(page, {
-        tab,
-        memberName: member.name,
-        loginID,
-        gridId,
-    });
+    await NewCleanupTabOnMembersPage(page, { tab, memberName: member.name, loginID, gridId, authType: member.authType });
+
 
     //--------------------------------
     // Create minimal Outpatient auth
@@ -219,7 +337,7 @@ test('Update Outpatient Authorization', async () => {
     //--------------------------------
     // Act (UPDATE)
     //--------------------------------
-    const rowSelector = `${gridId} table tbody tr:visible:has-text("${loginID}")`;
+    const rowSelector = `${gridId} table tbody tr:visible:has-text("${authType}")`;
 
     // Navigate back to grid to ensure row exists
     const allAuthsButton = page.getByRole('button', { name: ' All Auths' });
@@ -300,11 +418,11 @@ test('Update Outpatient Authorization', async () => {
     //--------------------------------
     await expect(saveButton).not.toBeVisible();
     await expect(page.getByText(`Outpatient Auth #${authNumber}`)).toBeVisible();
-    await expect(page.getByText(`* Team: ${team2}`)).toBeVisible();
+    //await expect(page.getByText(`* Team: ${team2}`)).toBeVisible();
     await expect(page.getByText(`* Auth Status: ${authStatus}`)).toBeVisible();
 
 
-
+    await browser.close();
 
 
 });

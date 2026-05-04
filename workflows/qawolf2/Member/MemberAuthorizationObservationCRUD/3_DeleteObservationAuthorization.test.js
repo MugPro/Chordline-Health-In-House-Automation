@@ -136,7 +136,7 @@ async function waitForRows(page, selector, timeout = 15000) {
     return false; // no rows found after timeout
 }
 
-export async function cleanupTabOnMembersPage(page, options = {}) {
+async function cleanupTabOnMembersPage(page, options = {}) {
     const tab = options.tab || 'Authorizations';
     const gridId = options.gridId || '[id="authorizations-grid"]';
     const memberName = options.memberName || 'Blackwell, Megan';
@@ -233,7 +233,7 @@ test('Delete Outpatient and other Authorizations', async () => {
     const loginID = 'LoginIdTest1';
     const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
-    const { page } = await helpers.logIn3({
+    const {browser,  page } = await helpers.logIn3({
         loginID,
         password,
         url: env.DEFAULT_URL_2,
@@ -253,6 +253,6 @@ test('Delete Outpatient and other Authorizations', async () => {
 
     console.log(`Final remaining rows for ${loginID}: ${remainingRows}`);
 
-
+    await browser.close();
 
 });

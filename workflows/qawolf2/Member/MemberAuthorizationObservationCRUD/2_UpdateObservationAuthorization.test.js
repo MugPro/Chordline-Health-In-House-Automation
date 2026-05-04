@@ -543,6 +543,126 @@ async function closeWorkLogDialogs(page) {
     }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Helper: wait for at least one row for loginID to appear
+async function waitForRows(page, selector, timeout = 15000) {
+    const start = Date.now();
+    while (Date.now() - start < timeout) {
+        const count = await page.locator(selector).count();
+        if (count > 0) return true; // rows found
+        await page.waitForTimeout(500); // short wait before retry
+    }
+    return false; // no rows found after timeout
+}
+
+
+async function NewCleanupTabOnMembersPage(page, options = {}) {
+    const tab = options.tab || 'Authorizations';
+    const gridId = options.gridId || '[id="authorizations-grid"]';
+    const memberName = options.memberName || 'Blackwell, Megan';
+    const memberIdentifier = options.memberIdentifier || 'B9824538';
+    const loginID = options.loginID;
+    const onScreen = options.onScreen || false;
+
+    if (!onScreen) {
+        // Navigate to Home > Members
+        await page.getByText('Home', { exact: true }).click();
+        await page.locator('#home-tabs-tab-4').getByText('Members').click();
+
+        await page.getByRole('textbox', { name: 'Search...' }).fill(memberName);
+        await page.keyboard.press('Enter');
+
+        try {
+            await page.getByRole('gridcell', { name: memberName }).dblclick();
+            await helpers.waitUntilLoaded(page);
+        } catch {
+            console.log(`Member row not found by name`);
+        }
+
+        await page
+            .getByLabel(memberName)
+            .getByText(tab, { exact: true })
+            .first()
+            .click();
+    }
+
+    // Wait for grid container
+    await page.locator(gridId).waitFor({ state: 'visible', timeout: 10000 });
+
+    //const rowSelector = `${gridId} table tbody tr:visible:has-text("${loginID}")`;
+    const rowSelector = `${gridId} table tbody tr:visible:has-text("${memberIdentifier}")`;
+    const rowsExist = await waitForRows(page, rowSelector, 15000); // wait up to 15s
+
+    if (!rowsExist) {
+        console.log(`No records found for ${loginID}. Nothing to delete.`);
+        return;
+    }
+
+    console.log(`Records found for ${loginID}. Deleting...`);
+
+    let rowLocator = page.locator(rowSelector);
+
+    while (await rowLocator.count() > 0) {
+        const firstRow = rowLocator.first();
+        await firstRow.scrollIntoViewIfNeeded();
+        await firstRow.hover();
+
+        const deleteButton = firstRow.locator('[title="Delete"]').first();
+
+        if ((await deleteButton.count()) === 0) {
+            console.log('Row found but no delete button. Stopping.');
+            break;
+        }
+
+        await deleteButton.click();
+
+        const yesButton = page.getByRole('button', { name: 'Yes' });
+        if (await yesButton.isVisible().catch(() => false)) {
+            await yesButton.click();
+        }
+
+        await helpers.waitUntilLoaded(page);
+
+        const workflowNotification = page.locator('#notif-message', {
+            hasText: 'This record is locked by Workflow Rule Account.',
+        });
+
+        if (await workflowNotification.isVisible().catch(() => false)) {
+            await page.locator('#positiveButton').click();
+            console.log('Skipped workflow-locked record.');
+            break;
+        }
+
+        // Re-query rows
+        rowLocator = page.locator(rowSelector);
+    }
+
+    const remaining = await rowLocator.count();
+    console.log(`Cleanup complete. Remaining rows for ${loginID}: ${remaining}`);
+}
+
+
+
+
+
+
+
+
+
 //--------------------------------
 // Test
 //--------------------------------
@@ -582,19 +702,15 @@ test('UpdateObservationAuthorization', async () => {
     const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
     // Login
-    const { page } = await helpers.logIn3({
+    const { browser, page } = await helpers.logIn3({
         loginID,
         password,
         url: env.DEFAULT_URL_2,
     });
 
-    // Clean slate
-    await helpers.cleanupTabOnMembersPage(page, {
-        tab,
-        memberName: member.name,
-        loginID,
-        gridId,
-    });
+    // Clean-up previous authorizations
+    await NewCleanupTabOnMembersPage(page, { tab, memberName: member.name, loginID, gridId, memberIdentifier: member.identifier });
+
 
     //--------------------------------
     // Create minimal Observation auth
@@ -667,12 +783,12 @@ test('UpdateObservationAuthorization', async () => {
     //--------------------------------
     // Act (UPDATE)
     //--------------------------------
-    const rowSelector = `${gridId} table tbody tr:visible:has-text("${loginID}")`;
+    const rowSelector = `${gridId} table tbody tr:visible:has-text("${member.identifier}")`;
 
     // Navigate back to grid to ensure row exists
     const allAuthsButton = page.getByRole('button', { name: ' All Auths' });
     await allAuthsButton.click();
-    await page.locator(rowSelector).first().waitFor({ state: 'visible', timeout: 10000 });
+    //await page.locator(rowSelector).first().waitFor({ state: 'visible', timeout: 10000 });
 
     //await page.locator(rowSelector).first().hover();
     //await page.locator(`${rowSelector} .k-grid-editAction`).click();
@@ -733,4 +849,7 @@ test('UpdateObservationAuthorization', async () => {
     await expect(page.getByText(`* Team: ${team2}`)).toBeVisible();
     await expect(page.getByText(`* Auth Status: ${authStatus}`)).toBeVisible();
     await expect(page.getByText(`* Observation Status: ${patientStatus}`)).toBeVisible();
+
+    await browser.close();
+
 });

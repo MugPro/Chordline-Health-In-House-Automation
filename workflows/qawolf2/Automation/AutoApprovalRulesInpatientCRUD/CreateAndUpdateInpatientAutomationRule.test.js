@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import * as helpers from '../../../../helpers/Node20Helpers.js';
 import { env } from '../../../../environments/qawolf2.env.js';
+import {waitUntilLoaded} from "../../../../helpers/Node20Helpers.js";
 
 test('Create Inpatient Automation Rule', async () => {
     //--------------------------------
@@ -33,6 +34,8 @@ test('Create Inpatient Automation Rule', async () => {
         password,
         url,
     });
+
+    await waitUntilLoaded(page);
 
     //--------------------------------
     // Navigate to Automation

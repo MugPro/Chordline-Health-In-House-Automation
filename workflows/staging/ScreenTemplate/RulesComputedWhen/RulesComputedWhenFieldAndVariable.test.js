@@ -942,6 +942,7 @@ test.describe('Rules – Computed When (Field and Variable)', () => {
 
             await waitUntilLoaded(page);
 
+            /*
             // Click the "Edit Screen - Internal" text
             await page
                 .getByLabel(`Edit Screen - Internal`)
@@ -950,6 +951,9 @@ test.describe('Rules – Computed When (Field and Variable)', () => {
 
             await waitUntilLoaded(page);
 
+             */
+
+            /*
             try {
                 await page.getByRole(`gridcell`, { name: screenName }).click();
                // await waitUntilLoaded(page);
@@ -963,6 +967,22 @@ test.describe('Rules – Computed When (Field and Variable)', () => {
                 await page.getByRole(`gridcell`, { name: screenName }).click();
                // await waitUntilLoaded(page);
             }
+
+             */
+
+
+
+            await page.getByRole('dialog', { name: 'Edit Screen - Internal' }).getByLabel('Close').click();
+
+
+            await waitUntilLoaded(page);
+            await page.getByRole(`gridcell`, { name: screenName }).click();
+            //await waitUntilLoaded(page);
+
+
+
+
+
 
             // Click the "   Authorization - IP - BH" row
             await page

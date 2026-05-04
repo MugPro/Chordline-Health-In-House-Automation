@@ -144,6 +144,8 @@ test.describe(
                 page.getByRole('button', { name: ' Field' }).first(),
             );
 
+            await waitUntilLoaded(page);
+
             // Wait for radio options to be present
             await expect(page.getByLabel('After')).toBeVisible();
 

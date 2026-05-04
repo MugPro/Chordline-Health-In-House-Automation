@@ -4,8 +4,9 @@ import {
     logIn,
     waitUntilLoaded,
     cleanupScreenTemplateCopy,
-    copyDefaultScreenTemplate,
+    copyDefaultScreenTemplate, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 /* -------------------------------------------
    Small helpers to pause after actions
@@ -50,10 +51,28 @@ test.describe(
                 const memberFirstName1 = 'James';
                 const memberLastName1 = 'Dillinger';
 
+                /*
                 const { page } = await logIn({
                     loginID,
                     slowMo: 500,
                 });
+
+                 */
+
+                const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+                const url = env.DEFAULT_URL;
+
+
+
+
+
+                // Sign in to the app
+                const { page, context, browser } = await logIn3({ loginID, password,
+                    url, slowMo: 500 });
+
+
+
+
 
                 await waitUntilLoaded(page);
 

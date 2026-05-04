@@ -4,8 +4,9 @@ import {
     logIn,
     waitUntilLoaded,
     cleanupScreenTemplateCopy,
-    reportCleanupFailed,
+    reportCleanupFailed, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 /* -------------------------------------------
    Small helpers to pause after fills/clicks
@@ -49,7 +50,21 @@ test.describe(
                 'Utilization Management Activity',
             ];
 
-            const { page } = await logIn({ loginID });
+            //const { page } = await logIn({ loginID });
+
+            const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+            const url = env.DEFAULT_URL;
+
+
+
+
+
+            // Sign in to the app
+            const { page, context, browser } = await logIn3({ loginID, password,
+                url });
+
+
+
             await waitUntilLoaded(page);
 
             //--------------------------------

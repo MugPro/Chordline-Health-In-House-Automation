@@ -143,8 +143,9 @@ import { fileURLToPath } from 'node:url';
 import {
     logIn,
     waitUntilLoaded,
-    cleanupImportedUsers2
+    cleanupImportedUsers2, logIn3
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 
 const FILL_CLICK_PAUSE_MS = 20;
@@ -194,7 +195,20 @@ test('Import Users and validate imported list is correct', async () => {
     const firstNames = [`Test`];
 
     // Sign in to the app
-    const { page } = await logIn({ loginID });
+    //const { page } = await logIn({ loginID });
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
     await waitUntilLoaded(page);
 
     // Ensure a clean state (idempotent)

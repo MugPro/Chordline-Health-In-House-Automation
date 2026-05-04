@@ -4,8 +4,9 @@ import {
     logIn,
     waitUntilLoaded,
     cleanupScreenTemplateCopy,
-    reportCleanupFailed,
+    reportCleanupFailed, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 /* -------------------------------------------
    Small helpers to pause after fills/clicks
@@ -43,7 +44,20 @@ test.describe(
             const fieldTextAfter = `Should appear AFTER *Team`;
             const fieldTextBefore = `Should appear BEFORE *Team`;
 
-            const { page } = await logIn({ loginID, slowMo: 400 });
+            //const { page } = await logIn({ loginID, slowMo: 400 });
+
+            const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+            const url = env.DEFAULT_URL;
+
+
+
+
+
+            // Sign in to the app
+            const { page, context, browser } = await logIn3({ loginID, password,
+                url, slowMo: 400 });
+
+
             await waitUntilLoaded(page);
 
             //--------------------------------

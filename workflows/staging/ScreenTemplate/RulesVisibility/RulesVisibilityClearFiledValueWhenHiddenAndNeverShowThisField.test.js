@@ -4,8 +4,9 @@ import {
     logIn,
     waitUntilLoaded,
     cleanupScreenTemplateCopy,
-    copyDefaultScreenTemplate,
+    copyDefaultScreenTemplate, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 const ACTION_PAUSE_MS = 10;
 
@@ -41,7 +42,19 @@ test.describe(
                 const admittedType = 'Emergency';
                 const submittedBy = 'QA Wolf';
 
-                const { page } = await logIn({ loginID });
+                //const { page } = await logIn({ loginID });
+
+                const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+                const url = env.DEFAULT_URL;
+
+
+
+
+
+                // Sign in to the app
+                const { page, context, browser } = await logIn3({ loginID, password,
+                    url });
+
                 await waitUntilLoaded(page);
 
                 //--------------------------------

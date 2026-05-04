@@ -5,8 +5,9 @@ import {
     waitUntilLoaded,
     cleanupScreenTemplateCopy,
     copyDefaultScreenTemplate,
-    closeScreenTemplateModal,
+    closeScreenTemplateModal, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 const ACTION_PAUSE_MS = 300;
 
@@ -43,7 +44,19 @@ test.describe(
                 const variableConditionValue = '20';
                 const loginID = 'RulesVisiblity';
 
-                const { page } = await logIn({ loginID });
+                //const { page } = await logIn({ loginID });
+
+                const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+                const url = env.DEFAULT_URL;
+
+
+
+
+
+                // Sign in to the app
+                const { page, context, browser } = await logIn3({ loginID, password,
+                    url });
+
                 await waitUntilLoaded(page);
 
                 //--------------------------------

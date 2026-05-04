@@ -5,8 +5,9 @@ import {
     waitUntilLoaded,
     cleanupScreenTemplateCopy,
     copyDefaultScreenTemplate,
-    reportCleanupFailed,
+    reportCleanupFailed, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 /* -------------------------------------------
    Small helpers to pause after actions
@@ -57,7 +58,21 @@ test.describe('Rules – Default when (Field and Variable)', () => {
         const fieldText = 'Default text when Team is Compliance';
         defaultVal = 'Default Value text';
 
-        ({ page } = await logIn({ loginID, slowMo: 300 }));
+       // ({ page } = await logIn({ loginID, slowMo: 300 }));
+
+        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        const url = env.DEFAULT_URL;
+
+
+
+
+
+        // Sign in to the app
+        const { page, context, browser } = await logIn3({ loginID, password,
+            url, slowMo: 300 });
+
+
+
 
         /*
         try {

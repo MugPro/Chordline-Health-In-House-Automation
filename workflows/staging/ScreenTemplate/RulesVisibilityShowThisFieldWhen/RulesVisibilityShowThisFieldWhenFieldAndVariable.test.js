@@ -9,8 +9,9 @@ import {
     cleanupScreenTemplateCopy,
     copyDefaultScreenTemplate,
     closeScreenTemplateModal,
-    viewMemberCardTemplate,
+    viewMemberCardTemplate, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 
 const ACTION_PAUSE_MS = 600;
@@ -55,7 +56,19 @@ test.describe(
             const templateType = 'BH Observation';
             const loginID = '398042';
 
-            const { page } = await logIn({ loginID, slowMo: 750 });
+            //const { page } = await logIn({ loginID, slowMo: 750 });
+
+            const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+            const url = env.DEFAULT_URL;
+
+
+
+
+
+            // Sign in to the app
+            const { page, context, browser } = await logIn3({ loginID, password,
+                url, slowMo: 750 });
+
 
             await cleanupScreenTemplateCopy(page, {
                 screenName,

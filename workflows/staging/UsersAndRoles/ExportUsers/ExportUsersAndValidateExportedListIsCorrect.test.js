@@ -105,7 +105,8 @@ import fs from 'node:fs';
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import { test, expect } from '@playwright/test';
-import { logIn, waitUntilLoaded } from '../../../../helpers/Node20Helpers.js';
+import {logIn, logIn3, waitUntilLoaded} from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 const FILL_CLICK_PAUSE_MS = 20;
 const pause = (page, ms = FILL_CLICK_PAUSE_MS) => page.waitForTimeout(ms);
@@ -162,12 +163,24 @@ test('Export Users and validate exported list is correct (column-aware)', async 
     // Arrange:
     //--------------------------------
     const loginID = `ExportUsers`;
-    const password = process.env.DEFAULT_PASS_OCT_2025;
 
     // Expectations (first names)
     const expectedFirstNames = ['Eric', 'Kim', 'Danita'];
 
-    const { page } = await logIn({ loginID, password });
+    //const { page } = await logIn({ loginID, password });
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
     await waitUntilLoaded(page);
 
     //--------------------------------

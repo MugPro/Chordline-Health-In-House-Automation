@@ -4,8 +4,9 @@ import { test, expect } from '@playwright/test';
 import {
     logIn,
     waitUntilLoaded,
-    cleanMemberRoles
+    cleanMemberRoles, logIn3
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 /* -------------------------------------------
    Small helpers to pause after fills/clicks
@@ -37,7 +38,20 @@ test('Create, edit, and delete Member Role', async () => {
     const loginID = `RulesMandatoryWhen`;
 
     // Sign in to the app
-    const { page } = await logIn({ loginID });
+    //const { page } = await logIn({ loginID });
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
 
     // Clean-up: Member roles (idempotent)
     await cleanMemberRoles(page);

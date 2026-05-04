@@ -5,8 +5,9 @@ import { faker } from '@faker-js/faker';
 import {
     logIn,
     waitUntilLoaded,
-    cleanUpUser,
+    cleanUpUser, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 /* -------------------------------------------
    Small helpers to pause after fills/clicks
@@ -47,12 +48,25 @@ test('Create, edit, and delete Internal User', async () => {
     const symbol = faker.helpers.arrayElement(['!', '@', '#', '$', '%', '^', '&', '*']);
     const rest = faker.internet.password({ length: 8, memorable: false });
 
-    const password = faker.helpers
+    const password2 = faker.helpers
         .shuffle([upper, lower, number, symbol, ...rest])
         .join('');
 
     // Sign in
-    const { page } = await logIn({ loginID });
+    //const { page } = await logIn({ loginID });
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
 
     // Cleanup (idempotent)
     await cleanUpUser(page, { firstName });
@@ -97,13 +111,13 @@ test('Create, edit, and delete Internal User', async () => {
 
 
 
-    await page.locator(`#user_password`).fill(password);
+    await page.locator(`#user_password`).fill(password2);
     //await page.locator('#user_password_confirm').click();
     // await waitUntilLoaded(page);
 
     await page.locator('#user_password_confirm').click();
     await waitUntilLoaded(page);
-    await page.keyboard.type(password);
+    await page.keyboard.type(password2);
 
 
 

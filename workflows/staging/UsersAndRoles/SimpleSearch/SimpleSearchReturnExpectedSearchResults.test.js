@@ -4,8 +4,9 @@ import { test, expect } from '@playwright/test';
 import {
     logIn,
     waitUntilLoaded,
-    cleanUpUser,
+    cleanUpUser, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 /* -------------------------------------------
    Small helpers to pause after fills/clicks
@@ -36,13 +37,41 @@ test('Simple search returns expected results', async () => {
     const lastName = `Assurance`;
     const title = `QAE`;
 
+    const password2 = env.DEFAULT_PASSWORD;
+
+
+    // Sanity: ensure DEFAULT_PASSWORD is present
+    if (!password2) {
+        test.skip(true, 'DEFAULT_PASSWORD env var is required for this test.');
+    }
+
+
+    /*
     // Sanity: ensure DEFAULT_PASSWORD is present
     if (!process.env.DEFAULT_PASSWORD) {
         test.skip(true, 'DEFAULT_PASSWORD env var is required for this test.');
     }
 
+     */
+
     // Sign in to the app
-    const { page } = await logIn({ loginID });
+   // const { page } = await logIn({ loginID });
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
+
+
+
+
 
     // Clean-up any pre-existing user(s) with same first name (idempotent)
     await cleanUpUser(page, { firstName });
@@ -106,13 +135,13 @@ test('Simple search returns expected results', async () => {
 
    // await waitUntilLoaded(page);
     //await page.locator('#user_password').click();
-    await page.locator(`#user_password`).fill(process.env.DEFAULT_PASSWORD);
+    await page.locator(`#user_password`).fill(password2);
     //await page.locator('#user_password_confirm').click();
    // await waitUntilLoaded(page);
 
     await page.locator('#user_password_confirm').click();
     await waitUntilLoaded(page);
-    await page.keyboard.type(process.env.DEFAULT_PASSWORD);
+    await page.keyboard.type(password2);
 
 
 

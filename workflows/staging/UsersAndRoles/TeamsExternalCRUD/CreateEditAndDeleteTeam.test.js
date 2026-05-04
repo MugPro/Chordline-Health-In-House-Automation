@@ -4,8 +4,9 @@ import { test, expect } from '@playwright/test';
 import {
     logIn,
     waitUntilLoaded,
-    cleanupTeam,
+    cleanupTeam, logIn3,
 } from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 /* -------------------------------------------
    Small helpers to pause after fills/clicks
@@ -34,7 +35,19 @@ test('Create, edit (assign lead), and delete Team (External)', async () => {
     const teamName = `QAW team`;
 
     // Sign in to the app
-    const { page } = await logIn({ loginID });
+    //const { page } = await logIn({ loginID });
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
 
     // Cleanup team name (idempotent)
     await cleanupTeam(page, { teamName, external: true });

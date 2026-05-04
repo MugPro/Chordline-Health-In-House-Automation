@@ -1,6 +1,12 @@
 import { test, expect } from '@playwright/test';
 // 🔧 Match your helpers location used in prior tests
-import { logIn, waitUntilLoaded, cleanUpStratificationRuleWithCheckIfExistsCondition } from '../../../../helpers/Node20Helpers.js';
+import {
+    logIn,
+    waitUntilLoaded,
+    cleanUpStratificationRuleWithCheckIfExistsCondition,
+    logIn3
+} from '../../../../helpers/Node20Helpers.js';
+import {env} from "../../../../environments/staging.env.js";
 
 /* -------------------------------------------
    Small helpers to pause after fills/clicks
@@ -40,7 +46,19 @@ test('Create, Update, and Delete a Stratification Rule', async () => {
     const ruleNameEdited = `QAW rule - edited`;
 
     // Sign in to the app
-    const { page } = await logIn({ loginID });
+   // const { page } = await logIn({ loginID });
+
+    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    const url = env.DEFAULT_URL;
+
+
+
+
+
+    // Sign in to the app
+    const { page, context, browser } = await logIn3({ loginID, password,
+        url });
+
 
     // Ensure test is idempotent by cleaning up any pre-existing rule
     await cleanUpStratificationRuleWithCheckIfExistsCondition(page, { ruleName });

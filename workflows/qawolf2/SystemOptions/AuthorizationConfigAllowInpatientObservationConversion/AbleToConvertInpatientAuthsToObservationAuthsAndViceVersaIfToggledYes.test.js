@@ -5,7 +5,7 @@ import {
     cleanupTabOnMembersPage,
     reportCleanupFailed,
     createAuthorizationForMember,
-    logIn3
+    logIn3, maybeHandleNotificationOk1
 } from '../../../../helpers/Node20Helpers.js';
 
 import * as dateFns from "date-fns";
@@ -147,6 +147,17 @@ async function NewCreateAuthorizationForMember(page, options = {}) {
         .click();
     await page.getByRole(`button`, { name: `Select`, exact: true }).click();
 
+
+    await maybeHandleNotificationOk1(page, {timeout: 7000});
+
+
+
+
+    await page
+        .locator(`[name="auth_provider_2_site_id"] ~ button[title="Lookup"]`)
+        .click();
+
+    /*
     // TODO: Need to make this dynamic possibly
     // Select Admitting Provider
     try {
@@ -166,6 +177,7 @@ async function NewCreateAuthorizationForMember(page, options = {}) {
 
 
 
+
     // Try to dimiss the notification
     try{
         await page.getByText(`Notification`, { exact: true}).waitFor();
@@ -173,6 +185,8 @@ async function NewCreateAuthorizationForMember(page, options = {}) {
     }catch{
         console.log("Notification did not appear.");
     }
+
+     */
 
 
 
@@ -199,6 +213,9 @@ async function NewCreateAuthorizationForMember(page, options = {}) {
 
 
     await page.getByRole(`button`, { name: `Select`, exact: true }).click();
+
+    await maybeHandleNotificationOk1(page, {timeout: 7000});
+
 
     // Click the "Save" button
     await page.getByRole(`button`, { name: ` Save` }).click();

@@ -3862,3 +3862,34 @@ export async function cleanUpEmailForMember2(page, options) {
     //--------------------------------
     await expect(emailCells).toHaveCount(0);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export async function maybeHandleNotificationOk1(
+    page,
+    { dialogName = 'Notification', okButtonName = 'Okay', timeout = 3000 } = {},
+) {
+    const dialog = page.getByRole('dialog', { name: dialogName });
+    const appeared = await dialog
+        .waitFor({ state: 'visible', timeout })
+        .then(() => true)
+        .catch(() => false);
+    if (!appeared) return false;
+    await dialog.getByRole('button', { name: okButtonName }).click({ timeout });
+    return true;
+}

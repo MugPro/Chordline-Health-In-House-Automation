@@ -1,3 +1,6 @@
+
+
+
 // WorkLogPromptsNoteRecords.test.js
 import { test, expect } from '@playwright/test';
 import {
@@ -26,11 +29,13 @@ async function maybeHandleNotificationOk(
 
 
 
-
+/*
 
 async function NewCleanupNotesFromMember(page, options = {}) {
     const onMemberPage = options.onMemberPage || false;
-    const loginID = options.loginID;
+    //const loginID = options.loginID;
+    const userName = options.userName;
+    const identifier = options.identifier || 'A8766431';
     const memberName = options.memberName;
 
     if (!onMemberPage) {
@@ -53,23 +58,23 @@ async function NewCleanupNotesFromMember(page, options = {}) {
     await page
         .locator(`#notes-anchor`)
         .getByRole(`textbox`, { name: `Search...` })
-        .fill(`${loginID}`);
+        .fill(`${userName}`);
     await page.keyboard.press("Enter");
     //await waitUntilLoaded(page);
 
     let count = await page
-        .locator(`[id="notes-child-grid"] table tbody tr:has-text("${loginID}")`)
+        .locator(`[id="notes-child-grid"] table tbody tr:has-text("${identifier}")`)
         .count();
 
     for (let i = 0; i < count; i++) {
         // Hover over the note and click the delete button
         await page
-            .locator(`[id="notes-child-grid"] table tbody tr:has-text("${loginID}")`)
+            .locator(`[id="notes-child-grid"] table tbody tr:has-text("${identifier}")`)
             .first()
             .hover();
         await page
             .locator(
-                `[id="notes-child-grid"] table tbody tr:has-text("${loginID}") [title="Delete"]`,
+                `[id="notes-child-grid"] table tbody tr:has-text("${identifier}") [title="Delete"]`,
             )
             .first()
             .click();
@@ -79,6 +84,60 @@ async function NewCleanupNotesFromMember(page, options = {}) {
         //await waitUntilLoaded(page);
     }
 }
+
+
+ */
+
+
+
+
+
+
+
+
+
+async function deleteAllNoteRecordsForUser(page, userName = 't2F t2L') {
+    // Go to Notes tab
+    await page.locator('[id="shortcuts"] [data-value="notes-anchor"]').click();
+
+    const searchBox = page
+        .locator('#notes-anchor')
+        .getByRole('textbox', { name: 'Search...' });
+
+    while (true) {
+        // Always re-search (critical)
+        await searchBox.fill(userName);
+        await page.keyboard.press('Enter');
+
+        // Small wait for grid refresh
+        await page.waitForTimeout(500);
+
+        // Find ANY note record row containing Created or Edited
+        const row = page.locator(
+            '#notes-child-grid table tbody tr:has-text("Note Record")'
+        ).first();
+
+        // If no matching row exists → STOP
+        if (await row.count() === 0) {
+            break;
+        }
+
+        // Delete the first matching row
+        await row.hover();
+        await row.locator('[title="Delete"]').click();
+
+        // Confirm delete
+        await page.getByRole('button', { name: 'Yes' }).click();
+
+        // Let the grid fully reload before next loop
+        await page.waitForTimeout(700);
+    }
+}
+
+
+
+
+
 
 
 
@@ -117,6 +176,8 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
 
         const userName = `t2F t2L`;
 
+        const identifier = 'A8766431';
+
        // const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
         const url = env.DEFAULT_URL_2;
 
@@ -130,6 +191,9 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
             url,
             slowMo: 600
         });
+
+
+
 
 
 
@@ -183,6 +247,24 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
         await page.locator('[id="shortcuts"] [data-value="notes-anchor"]').click();
 
         //await waitUntilLoaded(page);
+
+
+
+
+
+
+        await deleteAllNoteRecordsForUser(page, 't2F t2L');
+
+
+
+
+
+
+
+
+
+
+
 
         // + Note
         await page.getByRole('button', { name: ' \xa0Note' }).click();
@@ -245,7 +327,7 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
         await page
             .locator('#notes-anchor')
             .getByRole('textbox', { name: 'Search...' })
-            .fill(`${loginID} Qaw`);
+            .fill(userName);
         //await waitUntilLoaded(page);
         await page.keyboard.press('Enter');
 
@@ -311,7 +393,7 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
 
         //await waitUntilLoaded(page);
 
-        await page.getByRole('textbox', { name: 'Search...' }).fill(loginID);
+        await page.getByRole('textbox', { name: 'Search...' }).fill(identifier);
 
         //await waitUntilLoaded(page);
 
@@ -345,18 +427,7 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
 
         //await waitUntilLoaded(page);
 
-        try {
-            await NewCleanupNotesFromMember(page, {
-                onMemberPage: true,
-                loginID,
-                memberName,
-            });
-        } catch (e) {
-            await reportCleanupFailed({
-                dedupKey: 'cleanupNotesFromMember',
-                errorMsg: e.message,
-            });
-        }
+
 
         await browser.close();
 

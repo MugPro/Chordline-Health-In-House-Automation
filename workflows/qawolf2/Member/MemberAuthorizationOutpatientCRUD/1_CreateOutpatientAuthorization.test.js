@@ -684,7 +684,10 @@ test('Create Outpatient Authorization', async () => {
     const authorizationType = 'Outpatient';
     const authType = 'OP';
     const authStatus = 'In Progress';
-    const team = 'Case Team';
+    //const team = 'Case Team';
+
+    const team = 'UM Team';
+
     const provider = "St. Catherine's Hospital";
 
     const loginID = 'LoginIdTest1';

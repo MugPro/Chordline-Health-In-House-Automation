@@ -368,6 +368,7 @@ async function NewCleanupTabOnMembersPage(page, options = {}) {
     const memberId = options.memberId || ``;
     const loginID = options.loginID;
     const onScreen = options.onScreen || false;
+    const userName = options.userName;
 
     //await waitUntilLoaded(page);
 
@@ -401,7 +402,7 @@ async function NewCleanupTabOnMembersPage(page, options = {}) {
 
     // Grab the count of rows visible that are created by our user
     let count = await page
-        .locator(`${gridId} table tbody tr:visible:has-text("${loginID}")`)
+        .locator(`${gridId} table tbody tr:visible:has-text("${userName}")`)
         .count();
 
     //await waitUntilLoaded(page);
@@ -409,7 +410,7 @@ async function NewCleanupTabOnMembersPage(page, options = {}) {
     for (let i = 0; i < count; i++) {
         // Hover the first row created by our user and click the trash icon
         await page
-            .locator(`${gridId} table tbody tr:visible:has-text("${loginID}")`)
+            .locator(`${gridId} table tbody tr:visible:has-text("${userName}")`)
             .first()
             .hover();
 
@@ -417,7 +418,7 @@ async function NewCleanupTabOnMembersPage(page, options = {}) {
 
         await page
             .locator(
-                `${gridId} table tbody tr:visible:has-text("${loginID}") [title="Delete"]`,
+                `${gridId} table tbody tr:visible:has-text("${userName}") [title="Delete"]`,
             )
             .first()
             .click();
@@ -470,6 +471,8 @@ test.describe('Work Log Prompt – Medical Consult via Bed Day & Medical Review'
         const admitDate = dateFormat(today, 'MMddyyyyhhmmssaa');
         const authStatus = `In Progress`;
         const team = `Case Team`;
+
+        const userName = 't2F t2L';
 
 
         const loginID = 'LoginIdTest1';
@@ -717,7 +720,7 @@ test.describe('Work Log Prompt – Medical Consult via Bed Day & Medical Review'
             // Assert:
             //--------------------------------
             // Verify that new Work Log is visible (token from your spec)
-            await expect(page.locator(`:text("Medicall Consult")`).first()).toBeVisible();
+            await expect(page.locator(`:text("t2F t2L")`).first()).toBeVisible();
 
             // Verify that the Medical Review record context is visible in grid
             await expect(page.getByRole(`gridcell`, { name: `Add AvailableField` })).toBeVisible();
@@ -736,6 +739,7 @@ test.describe('Work Log Prompt – Medical Consult via Bed Day & Medical Review'
                     tab: 'Authorizations',
                     gridId: '[id="authorizations-grid"]',
                     memberName: lastFirstName,
+                    userName: userName,
                     loginID: loginID,
                     // omit onScreen so helper navigates to the member and tab
                 });

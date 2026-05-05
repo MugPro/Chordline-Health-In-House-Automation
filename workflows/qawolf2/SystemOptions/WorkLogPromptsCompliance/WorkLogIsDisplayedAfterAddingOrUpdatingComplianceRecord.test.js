@@ -247,6 +247,7 @@ async function NewCleanupTabOnMembersPage(page, options = {}) {
     const memberId = options.memberId || ``;
     const loginID = options.loginID;
     const onScreen = options.onScreen || false;
+    const userName  = options.userName;
 
     //await waitUntilLoaded(page);
 
@@ -280,7 +281,7 @@ async function NewCleanupTabOnMembersPage(page, options = {}) {
 
     // Grab the count of rows visible that are created by our user
     let count = await page
-        .locator(`${gridId} table tbody tr:visible:has-text("${loginID}")`)
+        .locator(`${gridId} table tbody tr:visible:has-text("${userName}")`)
         .count();
 
     //await waitUntilLoaded(page);
@@ -288,7 +289,7 @@ async function NewCleanupTabOnMembersPage(page, options = {}) {
     for (let i = 0; i < count; i++) {
         // Hover the first row created by our user and click the trash icon
         await page
-            .locator(`${gridId} table tbody tr:visible:has-text("${loginID}")`)
+            .locator(`${gridId} table tbody tr:visible:has-text("${userName}")`)
             .first()
             .hover();
 
@@ -296,7 +297,7 @@ async function NewCleanupTabOnMembersPage(page, options = {}) {
 
         await page
             .locator(
-                `${gridId} table tbody tr:visible:has-text("${loginID}") [title="Delete"]`,
+                `${gridId} table tbody tr:visible:has-text("${userName}") [title="Delete"]`,
             )
             .first()
             .click();
@@ -486,7 +487,7 @@ test.describe('Work Log Prompt – Compliance Appeal', () => {
         const tab = `Compliance`;
         const gridId = `[id="compliance-grid"]`;
 
-
+        const userName = 't2F t2L';
 
 
 
@@ -579,7 +580,8 @@ test.describe('Work Log Prompt – Compliance Appeal', () => {
         await page
             .locator(`[placeholder="Search..."]:visible`)
             .first()
-            .fill(`${loginID} Qaw`);
+            //.fill(`${loginID} Qaw`);
+            .fill(userName);
         await page.keyboard.press(`Enter`);
 
         // Expect exactly two work logs created by this user
@@ -611,6 +613,7 @@ test.describe('Work Log Prompt – Compliance Appeal', () => {
                 gridId,
                 memberName,
                 loginID,
+                userName,
                 onScreen: true,
             });
         } catch (e) {

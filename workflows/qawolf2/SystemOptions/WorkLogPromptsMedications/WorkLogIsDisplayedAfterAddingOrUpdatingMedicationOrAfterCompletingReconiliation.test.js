@@ -38,6 +38,8 @@ async function NewCleanupTabOnMembersPage(page, options = {}) {
     const memberId = options.memberId || ``;
     const loginID = options.loginID;
     const onScreen = options.onScreen || false;
+    const userName = options.userName;
+    const identifier = options.identifier || 'A6654521';
 
     //await waitUntilLoaded(page);
 
@@ -71,7 +73,7 @@ async function NewCleanupTabOnMembersPage(page, options = {}) {
 
     // Grab the count of rows visible that are created by our user
     let count = await page
-        .locator(`${gridId} table tbody tr:visible:has-text("${loginID}")`)
+        .locator(`${gridId} table tbody tr:visible:has-text("${identifier}")`)
         .count();
 
    // await waitUntilLoaded(page);
@@ -79,7 +81,7 @@ async function NewCleanupTabOnMembersPage(page, options = {}) {
     for (let i = 0; i < count; i++) {
         // Hover the first row created by our user and click the trash icon
         await page
-            .locator(`${gridId} table tbody tr:visible:has-text("${loginID}")`)
+            .locator(`${gridId} table tbody tr:visible:has-text("${identifier}")`)
             .first()
             .hover();
 
@@ -87,7 +89,7 @@ async function NewCleanupTabOnMembersPage(page, options = {}) {
 
         await page
             .locator(
-                `${gridId} table tbody tr:visible:has-text("${loginID}") [title="Delete"]`,
+                `${gridId} table tbody tr:visible:has-text("${identifier}") [title="Delete"]`,
             )
             .first()
             .click();
@@ -137,6 +139,8 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
 
         const userName = `t2F t2L`;
 
+        const identifier = 'A6654521';
+
         //const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
         const url = env.DEFAULT_URL_2;
 
@@ -161,7 +165,7 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
                 tab: 'Medications',
                 gridId: '[id="medications-grid"]',
                 memberName,
-                loginID,
+                identifier,
             });
 
             // Navigate to Member Detail tab
@@ -189,7 +193,7 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
                 await page
                     .locator('#worklogs-anchor')
                     .getByRole('textbox', { name: 'Search...' })
-                    .fill(loginID);
+                    .fill(userName);
                 await page.keyboard.press('Enter');
                 //await waitUntilLoaded(page);
 
@@ -204,13 +208,13 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
                     // Delete first row matching the user each time
                     await page
                         .locator(
-                            `[id="worklogs-child-grid"] table tbody tr:has-text("${loginID}")`
+                            `[id="worklogs-child-grid"] table tbody tr:has-text("Medications")`
                         )
                         .first()
                         .hover();
                     await page
                         .locator(
-                            `[id="worklogs-child-grid"] table tbody tr:has-text("${loginID}") [title="Delete"]`
+                            `[id="worklogs-child-grid"] table tbody tr:has-text("Medications") [title="Delete"]`
                         )
                         .first()
                         .click();
@@ -452,7 +456,7 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
 
        // await waitUntilLoaded(page);
 
-        await page.getByRole('textbox', { name: 'Search...' }).fill(userName);
+        await page.getByRole('textbox', { name: 'Search...' }).fill(identifier);
 
         //await waitUntilLoaded(page);
 
@@ -501,7 +505,7 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
                 tab: 'Medications',
                 gridId: '[id="medications-grid"]',
                 memberName,
-                loginID,
+                identifier,
                 onScreen: true,
             });
 
@@ -529,7 +533,7 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
                 await page
                     .locator('#worklogs-anchor')
                     .getByRole('textbox', { name: 'Search...' })
-                    .fill(loginID);
+                    .fill(userName);
               //  await waitUntilLoaded(page);
                 await page.keyboard.press('Enter');
                // await waitUntilLoaded(page);
@@ -543,13 +547,13 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
                 for (let i = 0; i < count2; i++) {
                     await page
                         .locator(
-                            `[id="worklogs-child-grid"] table tbody tr:has-text("${loginID}")`
+                            `[id="worklogs-child-grid"] table tbody tr:has-text("Medications")`
                         )
                         .first()
                         .hover();
                     await page
                         .locator(
-                            `[id="worklogs-child-grid"] table tbody tr:has-text("${loginID}") [title="Delete"]`
+                            `[id="worklogs-child-grid"] table tbody tr:has-text("Medications") [title="Delete"]`
                         )
                         .first()
                         .click();

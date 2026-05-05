@@ -106,4 +106,7 @@ test('AddNewFieldWholeNumber', async () => {
     await expect
         .poll(async () => Number(await numberInput.inputValue()))
         .toBe(0);
+
+    await browser.close();
+
 });

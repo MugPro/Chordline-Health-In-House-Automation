@@ -67,6 +67,10 @@ test.describe(
             const admitDate = dateFormat(today, 'MMddyyyyhhmmssaa'); // compact format as provided
             const authStatus = 'In Progress';
             const team = 'Case Team';
+
+            const loginID = 'LoginIdTest1';
+            const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
+
             const reviewer = `${loginID} Qaw`; // not strictly required unless UI needs it
             const formattedDate = dateFormat(new Date(), 'MM/dd/yyyy');
             const timeSpent = '120';
@@ -80,8 +84,6 @@ test.describe(
             const url = env.DEFAULT_URL_2;
 
 
-            const loginID = 'LoginIdTest1';
-            const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
             // Act
             const { page, browser } = await logIn3({
@@ -280,6 +282,9 @@ test.describe(
                     }
                 }
             }
+
+            //await browser.close();
+
         });
     }
 );

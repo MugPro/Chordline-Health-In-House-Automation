@@ -36,13 +36,18 @@ test('Auth first requested service from date defaults to the AdmitExpectedObserv
     //--------------------------------
 
     const today = Date.now();
-    const loginID = `AuthFirstReqSer`;
+   // const loginID = `AuthFirstReqSer`;
     const lastFirstName = `Ace, Clancy`;
     const authorizationType = `Inpatient`;
     const patientStatus = `Admitted`;
     const admitDate = dateFns.format(today, "MM dd yyyy hh mm ss aa"); // 07/25/2025 12:00:00 AM
     const authStatus = `In Progress`;
     const team = `Case Team`;
+
+
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
+
     const reviewer = `${loginID} Qaw`;
     const bedLevel = `NICU`;
     const numBedDays = "5";
@@ -50,7 +55,7 @@ test('Auth first requested service from date defaults to the AdmitExpectedObserv
 
 
 
-    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    //const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
     const url = env.DEFAULT_URL_2;
 
     // Act
@@ -282,7 +287,7 @@ test('Auth first requested service from date defaults to the AdmitExpectedObserv
 
 
 
-
+    await browser.close();
 
 
 });

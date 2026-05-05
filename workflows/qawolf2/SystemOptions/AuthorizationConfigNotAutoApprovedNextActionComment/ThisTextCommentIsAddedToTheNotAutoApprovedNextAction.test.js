@@ -64,7 +64,7 @@ test.describe('Text Comment is added to the not auto approved Next Action.', () 
         // Arrange:
         //--------------------------------
         const today = Date.now();
-        const loginID = 'AuthNotAutoAppr';
+       // const loginID = 'AuthNotAutoAppr';
         const username = 'Auth NotAutoAppr';
         const lastFirstName = 'Ace, Clancy';
         const authorizationType = 'Inpatient';
@@ -72,12 +72,20 @@ test.describe('Text Comment is added to the not auto approved Next Action.', () 
         const admitDate = dateFormat(today, 'MM dd yyyy hh mm ss aa'); // e.g., 07 25 2025 12 00 00 AM
         const authStatus = 'In Progress';
         const team = 'Case Team';
+
+
+        const loginID = 'LoginIdTest1';
+        const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
+
+
         const reviewer = `${loginID} Qaw`; // for reference; not strictly needed unless your UI requires it
         const bedLevel = 'NICU';
 
 
-        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+       // const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
         const url = env.DEFAULT_URL_2;
+
+
 
 
         // Act
@@ -315,6 +323,9 @@ test.describe('Text Comment is added to the not auto approved Next Action.', () 
                 // throw e;
             }
         }
+
+
+        //await browser.close();
 
     })
 });

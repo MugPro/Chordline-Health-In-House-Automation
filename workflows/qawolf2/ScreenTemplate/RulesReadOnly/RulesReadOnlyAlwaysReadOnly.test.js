@@ -107,6 +107,6 @@ test('RulesReadOnlyAlwaysReadOnly', async () => {
         page.getByRole(`radio`, { name: res2, exact: true })
     ).toBeDisabled();
 
-
+    await browser.close();
 
 });

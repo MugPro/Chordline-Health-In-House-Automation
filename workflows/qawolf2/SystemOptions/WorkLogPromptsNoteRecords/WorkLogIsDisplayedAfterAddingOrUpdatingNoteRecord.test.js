@@ -357,5 +357,8 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
                 errorMsg: e.message,
             });
         }
+
+        await browser.close();
+
     });
 });

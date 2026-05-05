@@ -100,4 +100,6 @@ test('AddNewFieldNumber', async () => {
     ).toBeVisible();
 
 
+    await browser.close();
+
 });

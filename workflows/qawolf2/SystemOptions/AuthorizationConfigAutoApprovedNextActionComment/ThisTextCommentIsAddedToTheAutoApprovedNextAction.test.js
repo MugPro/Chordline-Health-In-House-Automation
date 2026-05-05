@@ -50,7 +50,7 @@ test('Inpatient authorization creates next action and bed day correctly', async 
     //--------------------------------
     // Arrange
     //--------------------------------
-    const loginID = `AuthConfigAANACom`;
+    //const loginID = `AuthConfigAANACom`;
     const lastFirstName = `Johnson, Jane`;
     const authorizationType = `Inpatient`;
     const patientStatus = `Admitted`;
@@ -58,10 +58,15 @@ test('Inpatient authorization creates next action and bed day correctly', async 
     const admitDate = dateFns.format(today, "MM dd yyyy hh mm ss aa"); // Example: 07 25 2025 12 00 00 AM
     const authStatus = `In Progress`;
     const team = `Case Team`;
+
+
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
+
     const reviewer = `${loginID} Qaw`;
     const bedLevel = `ICU`;
 
-    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    //const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
     const url = env.DEFAULT_URL_2;
 
 
@@ -399,5 +404,8 @@ test('Inpatient authorization creates next action and bed day correctly', async 
 
     await page.getByRole('button', { name: ' Save and Close' }).click();
 
+
+
+    await browser.close();
 
 });

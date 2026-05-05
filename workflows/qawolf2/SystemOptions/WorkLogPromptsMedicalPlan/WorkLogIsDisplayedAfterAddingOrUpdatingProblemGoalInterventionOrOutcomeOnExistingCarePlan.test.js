@@ -66,14 +66,16 @@ test.describe('Work Log Prompt – Member Plan (Care Plan & Plan Components)', (
         //const loginID = `WorkLogMedPlan`;
         const memberName = `Blackwell, Pauline`;
         const assessment = `Demo Assessment`;
+
+
+            const loginID = 'LoginIdTest1';
+            const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
+
         const memDesc = `${loginID}${Date.now()}`;
 
 
             //const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
             const url = env.DEFAULT_URL_2;
-
-            const loginID = 'LoginIdTest1';
-            const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
             // Act
             const { page, browser } = await logIn3({
@@ -375,5 +377,8 @@ test.describe('Work Log Prompt – Member Plan (Care Plan & Plan Components)', (
                 errorMsg: e.message,
             });
         }
+
+            await browser.close();
+
     });
 });

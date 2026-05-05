@@ -619,5 +619,8 @@ test.describe('Work Log Prompt – Compliance Appeal', () => {
                 errorMsg: e.message,
             });
         }
+
+        await browser.close();
+
     });
 });

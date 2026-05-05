@@ -60,6 +60,10 @@ test.describe('Work Log Prompt – Contact Records', () => {
         const admitDate = dateFormat(today, 'MMddyyyyhhmmssaa'); // compact format
         const authStatus = `In Progress`;
         const team = `Case Team`;
+
+        const loginID = 'LoginIdTest1';
+        const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
+
         const reviewer = `${loginID} Qaw`;
         const formattedDate = dateFormat(new Date(), 'MM/dd/yyyy');
         const tab = 'Authorizations';
@@ -73,9 +77,6 @@ test.describe('Work Log Prompt – Contact Records', () => {
 
         //const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
         const url = env.DEFAULT_URL_2;
-
-        const loginID = 'LoginIdTest1';
-        const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
         // Act
         const { page, browser } = await logIn3({
@@ -313,5 +314,8 @@ test.describe('Work Log Prompt – Contact Records', () => {
                 errorMsg: e.message,
             });
         }
+
+        //await browser.close();
+
     });
 });

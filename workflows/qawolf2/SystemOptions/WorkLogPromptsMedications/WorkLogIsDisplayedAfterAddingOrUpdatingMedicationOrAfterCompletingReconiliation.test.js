@@ -567,5 +567,8 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
                 errorMsg: e.message,
             });
         }
+
+        await browser.close();
+
     });
 });

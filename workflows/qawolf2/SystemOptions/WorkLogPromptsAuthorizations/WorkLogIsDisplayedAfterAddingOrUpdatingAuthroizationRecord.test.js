@@ -57,7 +57,7 @@ test.describe('Work Log appears (with correct Completed By & Activity Date) afte
         // Arrange:
         //--------------------------------
         const today = Date.now();
-        const loginID = 'AuthorizationRecord';
+        //const loginID = 'AuthorizationRecord';
         const displayName = 'Authorization Record'; // display name that appears in grids/fields
         const lastFirstName = 'Ace, Clancy';
 
@@ -67,6 +67,11 @@ test.describe('Work Log appears (with correct Completed By & Activity Date) afte
         const admitDate = dateFormat(today, 'MMddyyyyhhmmssaa'); // e.g., 07252025120000AM
         const authStatus = 'In Progress';
         const team = 'Case Team';
+
+
+        const loginID = 'LoginIdTest1';
+        const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
+
         const reviewer = `${loginID} Qaw`; // not strictly required by UI unless needed
         const todayDate = dateFormat(new Date(), 'MM/dd/yyyy');
 
@@ -75,7 +80,7 @@ test.describe('Work Log appears (with correct Completed By & Activity Date) afte
 
 
 
-        const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+        //const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
         const url = env.DEFAULT_URL_2;
 
 
@@ -289,5 +294,8 @@ test.describe('Work Log appears (with correct Completed By & Activity Date) afte
                 }
             }
         }
+
+        //await browser.close();
+
     });
 });

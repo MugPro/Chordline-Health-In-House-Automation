@@ -150,5 +150,6 @@ test('RulesReadOnlyWhenExpression', async ({}, testInfo) => {
     await expect(yesRadio).toBeVisible();
     await expect(noRadio).toBeVisible();
 
+    await browser.close();
 
 });

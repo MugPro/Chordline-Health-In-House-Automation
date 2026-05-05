@@ -238,4 +238,7 @@ test('RulesAlwaysMandatory', async () => {
             { maxDiffPixelRatio: 0.5 }
         );
     }
+
+    await browser.close();
+
 });

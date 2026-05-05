@@ -53,6 +53,12 @@ test.describe('Work Log Prompt – Compliance Notice Records', () => {
         const admitDate = dateFormat(today, 'MM dd yyyy hh mm ss aa'); // "07 25 2025 12 00 00 AM" style
         const authStatus = `In Progress`;
         const team = `Case Team`;
+
+
+
+        const loginID = 'LoginIdTest1';
+        const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
+
         const reviewer = `${loginID} Qaw`;
         const timeSpent = `60`;
         const formattedDate = dateFormat(new Date(), 'MM/dd/yyyy');
@@ -61,9 +67,6 @@ test.describe('Work Log Prompt – Compliance Notice Records', () => {
 
         //const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
         const url = env.DEFAULT_URL_2;
-
-        const loginID = 'LoginIdTest1';
-        const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
         // Act
         const { page, browser } = await logIn3({
@@ -320,5 +323,8 @@ test.describe('Work Log Prompt – Compliance Notice Records', () => {
         // Activity Date/Time starts with today's date (MM/dd/yyyy)
         const inputValue = await page.locator('#work_activity_date').inputValue();
         expect(inputValue.split(' ')[0]).toBe(formattedDate);
+
+        await browser.close();
+
     });
 });

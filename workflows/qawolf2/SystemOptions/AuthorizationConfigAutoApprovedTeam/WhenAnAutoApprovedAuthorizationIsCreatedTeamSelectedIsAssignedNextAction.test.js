@@ -34,20 +34,25 @@ test('When an auto approved Authorization is created, the team selected is assig
     //--------------------------------
     const bedLevel = `Behavioral Health`;
     const today = Date.now();
-    const loginID = `TouchRecord`;
+   // const loginID = `TouchRecord`;
     const lastFirstName = `Ace, Clancy`;
     const authorizationType = `Inpatient`;
     const patientStatus = `Admitted`;
     const admitDate = dateFns.format(today, "MM dd yyyy hh mm ss aa"); // 07/25/2025 12:00:00 AM
     const authStatus = `In Progress`;
     const team = `Case Team`;
+
+
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
+
     const reviewer = `${loginID} Qaw`;
 
 
 
 
 
-    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+    //const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
     const url = env.DEFAULT_URL_2;
 
 
@@ -329,7 +334,7 @@ test('When an auto approved Authorization is created, the team selected is assig
 
 
 
-
+    await browser.close();
 
 
 });

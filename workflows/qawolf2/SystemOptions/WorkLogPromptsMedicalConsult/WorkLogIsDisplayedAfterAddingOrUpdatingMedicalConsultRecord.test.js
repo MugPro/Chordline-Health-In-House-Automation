@@ -470,6 +470,11 @@ test.describe('Work Log Prompt – Medical Consult via Bed Day & Medical Review'
         const admitDate = dateFormat(today, 'MMddyyyyhhmmssaa');
         const authStatus = `In Progress`;
         const team = `Case Team`;
+
+
+        const loginID = 'LoginIdTest1';
+        const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
+
         const reviewer = `${loginID} Qaw`;
         const incrementType = `12`;
         const formattedDate = dateFormat(today, 'MM/dd/yyyy hh:mm:ss a');
@@ -480,9 +485,6 @@ test.describe('Work Log Prompt – Medical Consult via Bed Day & Medical Review'
 
        // const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
         const url = env.DEFAULT_URL_2;
-
-        const loginID = 'LoginIdTest1';
-        const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
         // Act
         const { page, browser } = await logIn3({
@@ -748,5 +750,9 @@ test.describe('Work Log Prompt – Medical Consult via Bed Day & Medical Review'
             }
         }
 
+
+        await browser.close();
+
     })
+
 });

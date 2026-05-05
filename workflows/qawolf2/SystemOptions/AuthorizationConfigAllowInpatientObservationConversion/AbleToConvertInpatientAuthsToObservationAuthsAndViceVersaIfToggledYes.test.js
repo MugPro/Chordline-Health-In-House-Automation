@@ -238,12 +238,18 @@ test('AbleToConvertObservationAuthsIntoInpatientAuthsAndViceVera', async () => {
     //--------------------------------
     const today = Date.now();
     //const loginID = `AuthConfigAANACom`;
+    //const loginID = 'LoginIdTest1';
     const lastFirstName = `Ace, Clancy`;
     const authorizationType = `Inpatient`;
     const patientStatus = `Admitted`;
     const admitDate = format(today, "MM dd yyyy hh mm ss aa");
     const authStatus = `In Progress`;
     const team = `Case Team`;
+
+
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
+
     const reviewer = `${loginID} Qaw`;
 
     //--------------------------------
@@ -253,8 +259,8 @@ test('AbleToConvertObservationAuthsIntoInpatientAuthsAndViceVera', async () => {
    // const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
     const url = env.DEFAULT_URL_2;
 
-    const loginID = 'LoginIdTest1';
-    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
+
+    //const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
     // Act
     const { page, browser } = await logIn3({
@@ -482,6 +488,6 @@ test('AbleToConvertObservationAuthsIntoInpatientAuthsAndViceVera', async () => {
     await expect(page.getByText(`Auth Conversion`)).toBeVisible();
 
 
-
+    await browser.close();
 
 });

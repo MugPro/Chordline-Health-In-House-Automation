@@ -131,6 +131,11 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
         const lastFirstName = `Bannister, Robert`;
         const authorizationType = `Inpatient`;
         const team = `Case Team`;
+
+
+        const loginID = 'LoginIdTest1';
+        const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
+
         const reviewer = `${loginID} Qaw`;
         const patientStatus = `Admitted`;
 
@@ -151,9 +156,6 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
 
        // const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
         const url = env.DEFAULT_URL_2;
-
-        const loginID = 'LoginIdTest1';
-        const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
         // Act
         const { page, browser } = await logIn3({
@@ -401,5 +403,8 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
                 errorMsg: e.message,
             });
         }
+
+        await browser.close();
+
     });
 });

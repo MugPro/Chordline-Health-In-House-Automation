@@ -855,4 +855,7 @@ test('AddNewFieldDropDownValidResponse', async () => {
     await page.context().browser().close();
 
      */
+
+    await browser.close();
+
 });

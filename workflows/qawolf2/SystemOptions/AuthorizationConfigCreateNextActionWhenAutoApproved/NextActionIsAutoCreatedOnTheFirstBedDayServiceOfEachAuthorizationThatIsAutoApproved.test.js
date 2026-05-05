@@ -20,7 +20,7 @@ test('Next Action is auto created on the first Bed Day Service of each Authoriza
     //-
 
     const today = Date.now();
-    const loginID = `AuthCreateBedDay`;
+    //const loginID = `AuthCreateBedDay`;
     const username = `Auth Create`;
     const lastFirstName = `Ace, Clancy`;
     const authorizationType = `Inpatient`;
@@ -28,10 +28,15 @@ test('Next Action is auto created on the first Bed Day Service of each Authoriza
     const admitDate = dateFns.format(today, "MM dd yyyy hh mm ss aa"); // 07/25/2025 12:00:00 AM
     const authStatus = `In Progress`;
     const team = `Case Team`;
+
+
+    const loginID = 'LoginIdTest1';
+    const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
+
     const reviewer = `${loginID} Qaw`;
     const bedLevel = `NICU`;
 
-    const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
+   // const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
     const url = env.DEFAULT_URL_2;
 
 
@@ -391,6 +396,6 @@ test('Next Action is auto created on the first Bed Day Service of each Authoriza
         await expect(row).toContainText(text);
     }
 
-
+    await browser.close();
 
 });

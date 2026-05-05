@@ -69,7 +69,11 @@ test.describe(
             //--------------------------------
             const today = Date.now();
             //const loginID = 'AuthReqServBuff';
-            const username = 'Auth ReqServBuff'; // display name used in your grids
+            //const username = 'Auth ReqServBuff'; // display name used in your grids
+
+
+            const username = `t2F t2L`;
+
             const lastFirstName = 'Ace, Clancy';
             const authorizationType = 'Inpatient';
             const patientStatus = 'Admitted';
@@ -236,10 +240,21 @@ test.describe(
                 await page.locator('input[name="auli_requested_bed_level_input"]').fill(bedLevel);
                 await page.getByRole('option', { name: bedLevel }).click();
 
+
+                /*
                 // Requested Units
                 const spin1 = page.getByRole('spinbutton').first();
                 //await spin1.click();
                 await spin1.fill(numBedDays);
+
+                 */
+
+
+                await page.getByRole('spinbutton').click();
+                await page.locator('#auli_requested_units').fill('5');
+                await page.locator('#auli_requested_units').press('Enter');
+
+
 
                 await waitUntilLoaded(page);
 
@@ -281,12 +296,9 @@ test.describe(
                 await page.getByRole('option', { name: bedLevel }).click();
 
 
-                const spin2 = page.getByRole('spinbutton').first();
-                //await spin2.click();
-
-                await spin2.fill(numBedDays2);
-
-                await waitUntilLoaded(page);
+                await page.getByRole('spinbutton').click();
+                await page.locator('#auli_requested_units').fill('1');
+                await page.locator('#auli_requested_units').press('Enter');
 
                 await page.getByRole('button', { name: ' Save', exact: true }).click();
                 await waitUntilLoaded(page);

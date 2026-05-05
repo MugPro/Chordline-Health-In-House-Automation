@@ -133,6 +133,8 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
         const team = `Case Team`;
 
 
+        const userName = `t2F t2L`;
+
         const loginID = 'LoginIdTest1';
         const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
@@ -349,7 +351,7 @@ test.describe('Work Log Prompt – Authorizations: Medical Review', () => {
         // Double click the Medical Review row by user & due date (weekDateFormat)
         await page
             .locator(
-                `[id="medicalreviews-child-grid"] table tbody tr:has-text("${loginID}"):has-text("${weekDateFormat}")`
+                `[id="medicalreviews-child-grid"] table tbody tr:has-text("${userName}"):has-text("${weekDateFormat}")`
             )
             .dblclick();
        // await waitUntilLoaded(page);

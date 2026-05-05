@@ -49,7 +49,11 @@ test.describe('Work Log Prompt – Compliance Note Records', () => {
         //--------------------------------
         const today = Date.now();
         //const loginID = `WorkLogPrompts`;
-        const userName = `WorkLog Prompts`;
+        //const userName = `WorkLog Prompts`;
+
+
+        const userName = `t2F t2L`;
+
         const lastFirstName = `Ace, Clancy`;
         const authorizationType = `Inpatient`;
         const patientStatus = `Admitted`;

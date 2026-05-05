@@ -46,7 +46,11 @@ test.describe('Work Log Prompt – Compliance Notice Records', () => {
         //--------------------------------
         const today = Date.now();
         //const loginID = `NoticeRecord`;
-        const userName = `Notice Record`;
+        //const userName = `Notice Record`;
+
+
+        const userName = `t2F t2L`;
+
         const lastFirstName = `Ace, Clancy`;
         const authorizationType = `Inpatient`;
         const patientStatus = `Admitted`;

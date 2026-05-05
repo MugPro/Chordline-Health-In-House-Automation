@@ -45,7 +45,11 @@ test.describe('Work Log Prompt – Touch Records (Phone Call)', () => {
         //--------------------------------
         const today = Date.now();
         //const loginID = `TouchRecord`;
-        const userName = `Touch Record`;
+        //const userName = `Touch Record`;
+
+
+        const userName = `t2F t2L`;
+
         const lastFirstName = `Ace, Clancy`;
         const authorizationType = `Inpatient`;
         const patientStatus = `Admitted`;

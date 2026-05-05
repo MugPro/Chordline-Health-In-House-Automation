@@ -135,7 +135,7 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
         const medRecon = `Created medRecon ${Date.now()}`;
         const comment = `${Date.now()}`;
 
-
+        const userName = `t2F t2L`;
 
         //const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
         const url = env.DEFAULT_URL_2;
@@ -452,7 +452,7 @@ test.describe('Work Log Prompt – Medications (Add, Edit, Reconciliation)', () 
 
        // await waitUntilLoaded(page);
 
-        await page.getByRole('textbox', { name: 'Search...' }).fill(loginID);
+        await page.getByRole('textbox', { name: 'Search...' }).fill(userName);
 
         //await waitUntilLoaded(page);
 

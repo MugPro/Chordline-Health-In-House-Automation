@@ -115,7 +115,7 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
         const noteSummary = `Note Record Created ${Date.now()}`;
         const noteSummaryEdit = `Note Record Edited ${Date.now()}`;
 
-
+        const userName = `t2F t2L`;
 
        // const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
         const url = env.DEFAULT_URL_2;
@@ -251,10 +251,10 @@ test.describe('Work Log Prompt – Member Detail: Note Records', () => {
 
         //await waitUntilLoaded(page);
 
-        // Double click the row containing noteSummary + loginID
+        // Double click the row containing noteSummary + username
         await page
             .locator(
-                `[id="notes-child-grid"] table tbody tr:has-text("${noteSummary}"):has-text("${loginID}")`
+                `[id="notes-child-grid"] table tbody tr:has-text("${noteSummary}"):has-text("${userName}")`
             )
             .dblclick();
         //await waitUntilLoaded(page);

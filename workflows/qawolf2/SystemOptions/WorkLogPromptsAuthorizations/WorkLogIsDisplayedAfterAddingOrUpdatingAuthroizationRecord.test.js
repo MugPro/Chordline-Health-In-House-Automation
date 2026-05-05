@@ -58,7 +58,12 @@ test.describe('Work Log appears (with correct Completed By & Activity Date) afte
         //--------------------------------
         const today = Date.now();
         //const loginID = 'AuthorizationRecord';
-        const displayName = 'Authorization Record'; // display name that appears in grids/fields
+        //const displayName = 'Authorization Record'; // display name that appears in grids/fields
+
+        const displayName = 't2F t2L'; // display name that appears in grids/fields
+
+
+
         const lastFirstName = 'Ace, Clancy';
 
         const authorizationType = 'Inpatient';

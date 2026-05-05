@@ -92,6 +92,13 @@ test.describe('Authorization Config - Default Diagnosis = No Default', () => {
         const admitDate = format(today, 'MM dd yyyy hh mm ss aa');
         const authStatus = 'In Progress';
         const team = 'Case Team';
+
+
+
+        const loginID = 'LoginIdTest1';
+        const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
+
+
         const reviewer = `${loginID} Qaw`;
         const diag1 = 'A00 - Cholera';
         const diag2 = 'A01.0 - Typhoid fever';
@@ -102,8 +109,6 @@ test.describe('Authorization Config - Default Diagnosis = No Default', () => {
         const url = env.DEFAULT_URL_2;
 
 
-        const loginID = 'LoginIdTest1';
-        const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
         // Act
         const { page, browser } = await logIn3({

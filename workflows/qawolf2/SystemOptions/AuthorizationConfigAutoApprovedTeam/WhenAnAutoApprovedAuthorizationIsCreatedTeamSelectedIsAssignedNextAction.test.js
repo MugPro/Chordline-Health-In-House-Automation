@@ -6,7 +6,7 @@ import {
     waitUntilLoaded,
     cleanupTabOnMembersPage,
     reportCleanupFailed,
-    logIn3
+    logIn3, maybeHandleNotificationOk1
 } from '../../../../helpers/Node20Helpers.js';
 import * as dateFns from "date-fns";
 import { format } from 'date-fns';
@@ -220,10 +220,18 @@ test('When an auto approved Authorization is created, the team selected is assig
 
 
 
-
+/*
 // Handle the "Notification" pop up for admitting hospital duplicate
     await expect(page.getByText(`Notification`, { exact: true })).toBeVisible();
     await page.getByRole(`button`, { name: `Okay` }).click();
+
+
+ */
+
+
+
+    await maybeHandleNotificationOk1(page, {timeout: 7000});
+
 
 
 
@@ -254,6 +262,14 @@ test('When an auto approved Authorization is created, the team selected is assig
         .first()
         .click();
     await page.getByRole(`button`, { name: `Select`, exact: true }).click();
+
+
+
+
+    await maybeHandleNotificationOk1(page, {timeout: 7000});
+
+
+
     // Click the "Save" button
     await page.getByRole(`button`, { name: ` Save` }).click();
     //await waitUntilLoaded(page);

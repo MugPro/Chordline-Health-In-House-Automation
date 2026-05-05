@@ -34,6 +34,90 @@ async function maybeHandleNotificationOk(
     return true;
 }
 
+
+
+
+
+
+
+
+
+
+async function NewCleanupTabOnMembersPage(page, options = {}) {
+    const tab = options.tab || `Compliance`;
+    const gridId = options.gridId || `[id="compliance-grid"]`; // [`[id="authorizations-grid"]`, `[id="member-coverage-grid"]` ]
+    const memberName = options.memberName || `Blackwell, Megan`;
+    const memberId = options.memberId || ``;
+    const loginID = options.loginID;
+    const onScreen = options.onScreen || false;
+
+    //await waitUntilLoaded(page);
+
+    if (!onScreen) {
+        // Navigate to Home > Members
+        await page.getByText(`Home`, { exact: true }).click();
+        await page.locator(`#home-tabs-tab-4`).getByText(`Members`).click();
+
+        // Fill search bar
+        await page.getByRole(`textbox`, { name: `Search...` }).fill(memberName);
+        await page.keyboard.press("Enter");
+
+        //await waitUntilLoaded(page);
+
+        // Double click the member name row
+        try {
+            await page.getByRole(`gridcell`, { name: memberName }).dblclick();
+            // await waitUntilLoaded(page);
+        } catch {
+            await page.getByRole(`gridcell`, { name: memberId }).dblclick();
+            // await waitUntilLoaded(page);
+        }
+
+        // Navigate to tab on members page
+        await page
+            .getByLabel(memberName)
+            .getByText(tab, { exact: true })
+            .first()
+            .click();
+    }
+
+    // Grab the count of rows visible that are created by our user
+    let count = await page
+        .locator(`${gridId} table tbody tr:visible:has-text("${loginID}")`)
+        .count();
+
+    //await waitUntilLoaded(page);
+
+    for (let i = 0; i < count; i++) {
+        // Hover the first row created by our user and click the trash icon
+        await page
+            .locator(`${gridId} table tbody tr:visible:has-text("${loginID}")`)
+            .first()
+            .hover();
+
+        //await waitUntilLoaded(page);
+
+        await page
+            .locator(
+                `${gridId} table tbody tr:visible:has-text("${loginID}") [title="Delete"]`,
+            )
+            .first()
+            .click();
+
+        // await waitUntilLoaded(page);
+
+        // Click Yes button on the warning pop up
+        await page.getByRole(`button`, { name: `Yes` }).click();
+        //await waitUntilLoaded(page);
+    }
+}
+
+
+
+
+
+
+
 test.describe(
     'Requested Service From Buffer (+1) is applied on new POBS (Bed Day) line items',
     () => {
@@ -62,6 +146,14 @@ test.describe(
             await context?.close();
             await browser?.close();
         });
+
+
+
+
+
+
+
+
 
         test('The selected buffer days are correctly added to Requested Service From date on new POBS line items', async () => {
             //--------------------------------
@@ -101,7 +193,8 @@ test.describe(
             const { page, browser } = await logIn3({
                 loginID,
                 password,
-                url
+                url,
+                slowMo: 800
             });
 
 
@@ -349,7 +442,7 @@ test.describe(
                 //--------------------------------
                 try {
                     await waitUntilLoaded(page);
-                    await cleanupTabOnMembersPage(page, {
+                    await NewCleanupTabOnMembersPage(page, {
                         tab: 'Authorizations',
                         gridId: '[id="authorizations-grid"]',
                         memberName: lastFirstName,

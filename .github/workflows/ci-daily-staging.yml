@@ -2,8 +2,9 @@ name: CI Daily – Staging
 
 on:
   schedule:
-    # Runs daily at around 5 AM PT (11:00 UTC)
-    - cron: '0 12 * * *'
+    # Runs daily at around 11:30 AM PT (18:00 UTC)
+    # 6.5 h difference!
+    - cron: '0 18 * * *'
   workflow_dispatch:
 
 jobs:

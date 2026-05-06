@@ -244,6 +244,84 @@ import {logIn, waitUntilLoaded, reportCleanupFailed, logIn3} from '../../../../h
 import * as helpers from "../../../../helpers/Node20Helpers.js";
 import {env} from "../../../../environments/qawolf2.env.js";
 
+
+
+async function deleteExternalUserIfExists(page, group, tab, logInId) {
+    //--------------------------------
+    // Navigate to Users
+    //--------------------------------
+    await page.getByText('Tools').click();
+    await page.getByText('Users & Roles').click();
+    await page
+        .getByRole('treeitem', { name: group })
+        .locator('span')
+        .first()
+        .click();
+
+    await waitUntilLoaded(page);
+
+    //--------------------------------
+    // Switch to External tab
+    //--------------------------------
+    await page.getByRole('tab', { name: tab }).click();
+    const externalTabPanel = page.getByRole('tabpanel', { name: tab });
+    await expect(externalTabPanel).toBeVisible({ timeout: 20000 });
+    await waitUntilLoaded(page);
+
+    //--------------------------------
+    // Search for the user
+    //--------------------------------
+    await externalTabPanel.getByPlaceholder('Search...').fill(logInId);
+    await externalTabPanel.locator('#admin-search-button').click();
+    await waitUntilLoaded(page);
+
+    //--------------------------------
+    // Delete ALL matching users
+    //--------------------------------
+    const userCells = page.getByRole('gridcell', {
+        name: logInId,
+        exact: true
+    });
+
+    let count = await userCells.count();
+
+    if (count === 0) {
+        console.log(`✅ External user "${logInId}" not found. Continuing test.`);
+        return;
+    }
+
+    console.log(`🗑️ Found ${count} user(s) with loginId "${logInId}". Deleting...`);
+
+    while ((await userCells.count()) > 0) {
+        await userCells.first().click();
+
+        const deleteButton = page.locator(
+            'tr[aria-selected="true"] button.delete-button'
+        );
+
+        await deleteButton.waitFor({ state: 'visible', timeout: 3000 });
+        await deleteButton.click();
+
+        await page.getByRole('button', { name: 'Yes' }).click();
+
+        await waitUntilLoaded(page);
+    }
+
+    console.log(`✅ All external users "${logInId}" deleted.`);
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
 test('1_CreateExternalUser', async () => {
     //--------------------------------
     // Arrange
@@ -255,7 +333,10 @@ test('1_CreateExternalUser', async () => {
     const firstName = `ExUserC2`;
     const lastName = `QAWolf2`;
     const title = `QAE2`;
-    const logInId = `QA-${firstName}`;
+    //const logInId = `QA-${firstName}`;
+
+    const logInId = `QA-ExUserC`;          // original login id
+
     const accessJustification = `Service Account`;
     const emailAddress = faker.internet.email({ firstName });
     const externalAccessType = `Local Administrator`;
@@ -282,6 +363,30 @@ test('1_CreateExternalUser', async () => {
         url,
         slowMo: 1000
     });
+
+
+
+
+
+
+
+
+
+
+
+    await deleteExternalUserIfExists(page, group, tab, logInId);
+
+// ✅ test continues here
+    ``
+
+
+
+
+
+
+
+
+    await page.getByLabel('Close').click();
 
     //--------------------------------
     // Navigate to Users

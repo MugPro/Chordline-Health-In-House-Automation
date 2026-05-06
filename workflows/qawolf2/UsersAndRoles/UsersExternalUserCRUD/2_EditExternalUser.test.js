@@ -637,6 +637,9 @@ test('2_EditExternalUser', async () => {
     const group = `Users`;
     const tab = `External`;
     const logInId = `QA-ExUserC`; // original login ID
+
+
+
     const securityRole = `External User`;
     const memberRole = `All Member Access`;
 
@@ -699,11 +702,11 @@ test('2_EditExternalUser', async () => {
     //--------------------------------
     // Search and open existing user
     //--------------------------------
-    await externalTabPanel.getByPlaceholder('Search...').fill(firstName);
+    await externalTabPanel.getByPlaceholder('Search...').fill(logInId);
     await externalTabPanel.locator('#admin-search-button').click();
     await waitUntilLoaded(page);
 
-    await page.getByRole('gridcell', { name: firstName, exact: true }).dblclick();
+    await page.getByRole('gridcell', { name: logInId, exact: true }).dblclick();
 
     //--------------------------------
     // Click Edit

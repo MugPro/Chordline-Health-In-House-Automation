@@ -47,6 +47,7 @@ test('1_CreateServiceUser', async () => {
     //--------------------------------
     //await waitUntilLoaded(page);
 
+    await waitUntilLoaded(page);
 
 
     await page
@@ -55,18 +56,20 @@ test('1_CreateServiceUser', async () => {
         .waitFor({ state: 'visible', timeout: 20000 });
 
 
-
+    await waitUntilLoaded(page);
 
     //--------------------------------
     // Switch to External tab PROPERLY
     //--------------------------------
     await page.getByRole('tab', { name: tab }).click();
 
+    await waitUntilLoaded(page);
+
     await expect(
         page.getByRole('tabpanel', { name: tab })
     ).toBeVisible({ timeout: 20000 });
 
-    //await waitUntilLoaded(page);
+    await waitUntilLoaded(page);
 
     const serviceTabPanel = page.getByRole('tabpanel', { name: tab });
 
@@ -102,6 +105,8 @@ test('1_CreateServiceUser', async () => {
     // Act - Create Service User
     //--------------------------------
     await page.getByRole('button', { name: '  New' }).click();
+
+    await waitUntilLoaded(page);
 
     await page.locator('#user_first_name').fill(serviceName);
     await page.locator('#user_login_name').fill(logInId);

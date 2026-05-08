@@ -255,7 +255,10 @@ test.describe('Text Comment is added to the not auto approved Next Action.', () 
         await waitUntilLoaded(page);
         // Requested Bed Level
         await page.locator('input[name="auli_requested_bed_level_input"]').fill(bedLevel);
+        await waitUntilLoaded(page);
         await page.getByRole('option', {name: bedLevel}).click();
+
+        await waitUntilLoaded(page);
 
         // Requested Units
         const spin = page.getByRole('spinbutton').first();

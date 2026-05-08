@@ -1102,4 +1102,8 @@ test('Advanced Search - Stable Random Column Filter (Hardened)', async () => {
         }
 
     }
+
+
+    await browser.close();
+
 });

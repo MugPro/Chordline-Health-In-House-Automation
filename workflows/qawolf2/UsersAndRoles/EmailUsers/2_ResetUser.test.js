@@ -135,7 +135,7 @@ test('New User Setup fully automated with MailSlurp', async () => {
 import { test, expect } from '@playwright/test';
 import * as helpers from '../../../../helpers/Node20Helpers.js';
 import {env} from "../../../../environments/qawolf2.env.js";
-import {logIn3} from "../../../../helpers/Node20Helpers.js";
+import {logIn3, waitUntilLoaded} from "../../../../helpers/Node20Helpers.js";
 
 test('Reset User — Scenario 1 (admin cannot reset own account)', async () => {
     //--------------------------------
@@ -179,6 +179,11 @@ test('Reset User — Scenario 1 (admin cannot reset own account)', async () => {
     // Click Send
     const sendButton = page.getByRole('button', { name: 'Send' });
     await sendButton.click();
+
+
+    await waitUntilLoaded(page);
+
+    await waitUntilLoaded(page);
 
     //--------------------------------
     // Assert Scenario 1

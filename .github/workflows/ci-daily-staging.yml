@@ -4,7 +4,7 @@ on:
   schedule:
     # Runs daily at around 11:30 AM PT (18:00 UTC)
     # 6.5 h difference!
-    - cron: '0 18 * * *'
+    - cron: '0 18 * * 1-5'
   workflow_dispatch:
 
 jobs:

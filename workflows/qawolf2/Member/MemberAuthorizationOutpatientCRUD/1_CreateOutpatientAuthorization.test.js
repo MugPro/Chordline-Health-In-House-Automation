@@ -700,6 +700,7 @@ test('Create Outpatient Authorization', async () => {
         loginID,
         password,
         url: env.DEFAULT_URL_2,
+        slowMo: 700
     });
 
     //--------------------------------

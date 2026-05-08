@@ -1,3 +1,4 @@
+
 import { test, expect } from '@playwright/test';
 import * as helpers from '../../../../helpers/Node20Helpers.js';
 import { env } from '../../../../environments/qawolf2.env.js';
@@ -234,7 +235,7 @@ test('Update Outpatient Authorization', async () => {
     const team2 = 'Compliance Team';
     const provider = "St. Catherine's Hospital";
 
-    const todaysDateDay = new Date().getDate();
+    //const todaysDateDay = new Date().getDate();
     const todaysDate = new Date().toLocaleDateString('en-us', {
         month: '2-digit',
         day: '2-digit',
@@ -248,6 +249,7 @@ test('Update Outpatient Authorization', async () => {
         loginID,
         password,
         url: env.DEFAULT_URL_2,
+        slowMo: 700
     });
 
     await NewCleanupTabOnMembersPage(page, { tab, memberName: member.name, loginID, gridId, authType: member.authType });
@@ -280,10 +282,14 @@ test('Update Outpatient Authorization', async () => {
         .first()
         .click();
 
+
+    /*
     await page.locator('.k-calendar')
         .getByRole('gridcell', { name: `${todaysDateDay}` })
         .first()
         .click();
+
+     */
 
     await selectRequiredDropdown(
         page,
@@ -429,90 +435,3 @@ test('Update Outpatient Authorization', async () => {
 
 
 
-
-
-
-
-
-
-
-    /*
-
-
-    //--------------------------------
-    // Capture auth number
-    //--------------------------------
-    const authNumber = (
-        await page.getByText('Outpatient Auth #').innerText()
-    ).split('#')[1];
-
-    //--------------------------------
-    // Act (UPDATE)
-    //--------------------------------
-    await page.getByRole('button', { name: ' All Auths' }).click();
-
-    const row = page.locator(
-        `${gridId} table tbody tr:visible:has-text("${authNumber}")`
-    );
-
-    await row.waitFor({ state: 'visible', timeout: 10000 });
-
-    const editButton = row.locator('.k-grid-editAction');
-    await row.hover();
-    await expect(editButton).toBeEnabled();
-    await editButton.click();
-
-    await expect(saveButton).not.toBeEnabled();
-    expect(await page.locator('#auth_request_date').inputValue())
-        .toContain(todaysDate);
-
-    // Change team
-    await page.locator('span [title="Clear"]').first().click();
-    await page
-        .locator(`[data-bind="attr: { class: fields.auth_team_reference_id.inputClass }"] [type="button"]`)
-        .click();
-    await page.getByRole('option').getByText(team2).click();
-
-    await expect(saveButton).toBeEnabled();
-    await saveButton.click();
-    await helpers.waitUntilLoaded(page);
-
-    //--------------------------------
-    // Assert
-    //--------------------------------
-    await expect(saveButton).not.toBeVisible();
-    await expect(page.getByText(`Outpatient Auth #${authNumber}`))
-        .toBeVisible();
-
-    await expect(page.getByText(`* Team: ${team2}`))
-        .toBeVisible();
-
-    await expect(page.getByText(`* Auth Status: ${authStatus}`))
-        .toBeVisible();
-
-    await expect(page.getByText(`* Auth Decision: Pending`))
-        .toBeVisible();
-
-    //--------------------------------
-    // Assert in grid
-    //--------------------------------
-    await page.getByRole('button', { name: ' All Auths' }).click();
-
-    const updatedRow = page.locator(
-        `${gridId} table tbody tr:visible:has-text("${authNumber}")`
-    );
-
-    const rowText = await updatedRow.innerText();
-
-    [
-        authNumber,
-        member.identifier,
-        authType,
-        team2,
-        'Pending',
-        provider
-    ].forEach(str => expect(rowText).toContain(str));
-});
-
-
-     */

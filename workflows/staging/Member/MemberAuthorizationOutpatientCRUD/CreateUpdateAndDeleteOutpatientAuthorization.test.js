@@ -99,9 +99,16 @@ test('Create, Update, and Delete an Outpatient Authorization', async () => {
 
 
     // Sign in to the app
+    /*
     const { page, context, browser } = await logIn3({ loginID, password,
         url });
 
+     */
+
+
+
+    const { page, context, browser } = await logIn({ loginID, password,
+        url });
 
 
     // Idempotent cleanup

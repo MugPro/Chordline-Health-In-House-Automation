@@ -60,6 +60,8 @@ test.describe('Work Log Prompt – Case Record', () => {
         const tab = `Case`;
         const gridId = `[id="member-case-grid"]`;
 
+        const userName = 't2F t2L';
+
 
         //const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
         const url = env.DEFAULT_URL_2;
@@ -73,6 +75,8 @@ test.describe('Work Log Prompt – Case Record', () => {
             password,
             url
         });
+
+        await waitUntilLoaded(page);
 
 
         //--------------------------------
@@ -166,7 +170,7 @@ test.describe('Work Log Prompt – Case Record', () => {
         await page
             .locator(`[placeholder="Search..."]:visible`)
             .first()
-            .fill(`${loginID} Qaw`);
+            .fill(userName);
 
         await page.keyboard.press(`Enter`);
 

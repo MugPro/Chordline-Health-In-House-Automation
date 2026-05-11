@@ -32,7 +32,7 @@ test.describe('Care Plan Template - Create and Edit Problem', () => {
 
         // Sign in to the app
         const { page, context, browser } = await logIn3({ loginID, password,
-            url, slowMo: 700 });
+            url, slowMo: 1000 });
 
 
         await waitUntilLoaded(page);
@@ -57,6 +57,8 @@ test.describe('Care Plan Template - Create and Edit Problem', () => {
             // Click the "+ New" button
             // NOTE: \u00A0 is a non-breaking space rendered from &nbsp;
             await page.getByRole('button', { name: ' \u00A0New' }).click();
+
+            await waitUntilLoaded(page);
 
             // Wait for loading
            // await waitUntilLoaded(page);

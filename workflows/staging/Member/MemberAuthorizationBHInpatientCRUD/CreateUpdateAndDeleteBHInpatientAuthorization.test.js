@@ -1,3 +1,4 @@
+
 import { test, expect } from '@playwright/test';
 import {
     logIn,
@@ -7,9 +8,7 @@ import {
 } from '../../../../helpers/Node20Helpers.js';
 import {env} from "../../../../environments/staging.env.js";
 
-/* -------------------------------------------
-   Small helpers (match your existing pattern)
--------------------------------------------- */
+
 const PAUSE_MS = 1400;
 const pause = (page, ms = PAUSE_MS) => page.waitForTimeout(ms);
 const clickAndWait = async (page, locator) => {
@@ -170,15 +169,7 @@ test('Create, Update, and Delete a BH Inpatient Authorization', async () => {
 
 
     // Clean up any existing authorizations for idempotency
-    /*
-    await cleanupTabOnMembersPage(page, {
-        tab,
-        memberName: member.name,
-        loginID,
-        gridId,
-    });
 
-     */
 
 
 
@@ -435,13 +426,7 @@ test('Create, Update, and Delete a BH Inpatient Authorization', async () => {
     //--------------------------------
     // Act: DELETE
     //--------------------------------
-    /*
-    await page.locator(row).hover();
-    await page.locator(`${row} [title="Delete"]`).click();
-    await page.getByRole(`button`, { name: `Yes` }).click();
-    await waitUntilLoaded(page);
 
-     */
 
 
 

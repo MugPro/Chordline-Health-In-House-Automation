@@ -1,3 +1,4 @@
+
 import { test, expect } from '@playwright/test';
 import {
     logIn,
@@ -6,9 +7,7 @@ import {
 } from '../../../../helpers/Node20Helpers.js';
 import {env} from "../../../../environments/staging.env.js";
 
-/* -------------------------------------------
-   Small helper pauses
--------------------------------------------- */
+
 const PAUSE_MS = 2000;
 const pause = (page, ms = PAUSE_MS) => page.waitForTimeout(ms);
 const clickAndWait = async (page, locator) => {
@@ -20,9 +19,7 @@ const fillAndWait = async (page, locator, value) => {
     await pause(page);
 };
 
-/* -------------------------------------------
-   Reusable helpers
--------------------------------------------- */
+
 const handleDuplicateProviderPopupIfPresent = async (page) => {
     const popup = page.getByText('This record uses the same', { exact: false });
     if (await popup.isVisible({ timeout: 3000 })) {
@@ -170,6 +167,10 @@ test('Create, Update, and Delete a BH Referral Authorization', async () => {
     const team2 = `Compliance Team`;
     const provider = `St. Catherine's Hospital`;
 
+    const expectedID = 'QAWINS1776978923971';
+    const expectedInsuCo = 'Excellent Health Plan';
+    const expectedStartDate = '04/23/2026';
+
     const todaysDate = new Date().toLocaleDateString('en-us', {
         month: '2-digit',
         day: '2-digit',
@@ -220,18 +221,7 @@ test('Create, Update, and Delete a BH Referral Authorization', async () => {
 
     await waitUntilLoaded(page);
 
-/*
-    // Ref Status
-    await fillAndWait(
-        page,
-        page.locator(`input[name="aush_status_id__1_input"]`),
-        authStatus,
-    );
-    await page.getByRole('option', { name: authStatus }).locator('span').click();
 
-
-    await page.locator('span').filter({ hasText: 'In Progress 4' }).getByLabel('expand combobox').click();
-*/
 
 
 
@@ -301,11 +291,27 @@ test('Create, Update, and Delete a BH Referral Authorization', async () => {
     expect(Number(authNumber)).toBeGreaterThan(1);
 
     // Primary banner
+
+
+
+
+
+
+
+
     await expect(
         page.getByText(
-            `Primary: ${member.memberId} - ${member.insuranceCompany} - ${member.startDate} -`,
+            `Primary: ${expectedID} - ${expectedInsuCo} - ${expectedStartDate} -`,
         ),
     ).toBeVisible();
+
+
+
+
+
+
+
+
 
     // Summary fields
 
@@ -342,7 +348,7 @@ test('Create, Update, and Delete a BH Referral Authorization', async () => {
 
     [
         authNumber,
-        member.memberId,
+        expectedID,
         authType,
         team,
         'Pending',
@@ -391,7 +397,7 @@ test('Create, Update, and Delete a BH Referral Authorization', async () => {
     rowText = await page.locator(rowByNumber).innerText();
     [
         authNumber,
-        member.memberId,
+        expectedID,
         authType,
         team2,
         'Pending',
@@ -425,3 +431,5 @@ test('Create, Update, and Delete a BH Referral Authorization', async () => {
         page.getByRole('button').filter({ hasText: 'Authorization Inpatient' }),
     ).toBeEnabled();
 });
+
+

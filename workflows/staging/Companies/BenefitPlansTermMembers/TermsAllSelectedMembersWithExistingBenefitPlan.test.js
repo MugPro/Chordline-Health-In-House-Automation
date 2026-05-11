@@ -62,9 +62,17 @@ test.describe('Term Members — All selected members with existing benefit plan'
 
 
         // Sign in to the app
+        /*
         const { page, context, browser } = await logIn3({ loginID, password,
             url, slowMo: 10 });
 
+         */
+
+
+
+
+        const { page, context, browser } = await logIn({ loginID, password,
+            url, slowMo: 10 });
 
 
 

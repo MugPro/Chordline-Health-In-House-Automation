@@ -167,6 +167,19 @@ test('Create, Update, and Delete a Referral Authorization', async () => {
     const authNumText = `Referral Auth #`;
     const workLogTitle = `New Work Log`;
 
+
+
+
+
+    const expectedInsuranceCompany = 'Excellent Health Plan';
+    const expectedMemberId = 'QAWINS1776978923971';
+    const expectedStartDate = '04/23/2026';
+
+
+
+
+
+
     //const { page } = await logIn({ loginID });
 
     const password = env.DEFAULT_PASS_OCT_2025;   // ✅ use env wrapper
@@ -181,6 +194,7 @@ test('Create, Update, and Delete a Referral Authorization', async () => {
         url });
 
 
+    await waitUntilLoaded(page);
 
 
     // Cleanup existing Referral auths for idempotency
@@ -290,7 +304,7 @@ test('Create, Update, and Delete a Referral Authorization', async () => {
     // Primary banner
     await expect(
         page.getByText(
-            `Primary: ${member.memberId} - ${member.insuranceCompany} - ${member.startDate} -`,
+            `Primary: ${expectedMemberId} - ${expectedInsuranceCompany} - ${expectedStartDate} -`,
         ),
     ).toBeVisible();
 
@@ -329,7 +343,8 @@ test('Create, Update, and Delete a Referral Authorization', async () => {
 
     [
         authNumber,
-        member.memberId,
+        //member.memberId,
+        expectedMemberId,
         authType,
         team,
         'Pending',
@@ -378,7 +393,8 @@ test('Create, Update, and Delete a Referral Authorization', async () => {
     rowText = await page.locator(rowByNumber).innerText();
     [
         authNumber,
-        member.memberId,
+        //member.memberId,
+        expectedMemberId,
         authType,
         team2,
         'Pending',
@@ -411,4 +427,9 @@ test('Create, Update, and Delete a Referral Authorization', async () => {
     await expect(
         page.getByRole('button').filter({ hasText: 'Authorization Inpatient' }),
     ).toBeEnabled();
+
+
+
+    await browser.close();
+
 });

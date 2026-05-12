@@ -2,7 +2,7 @@
 import { test, expect } from '@playwright/test';
 import * as helpers from '../../../../helpers/Node20Helpers.js';
 import {env} from "../../../../environments/qawolf2.env.js";
-import {logIn3} from "../../../../helpers/Node20Helpers.js";
+import {logIn3, waitUntilLoaded} from "../../../../helpers/Node20Helpers.js";
 
 
 test('AddNewFieldWholeNumber', async () => {
@@ -26,8 +26,10 @@ test('AddNewFieldWholeNumber', async () => {
         loginID,
         password,
         url,
-        slowMo: 400,
+        slowMo: 700,
     });
+
+    await waitUntilLoaded(page);
 
     //--------------------------------
     // Clean up & setup
@@ -86,7 +88,12 @@ test('AddNewFieldWholeNumber', async () => {
     //--------------------------------
     // Act: Increment
     //--------------------------------
+
+    await waitUntilLoaded(page);
+
     await dialog.getByLabel('Increase value').click();
+
+    await waitUntilLoaded(page);
 
     //--------------------------------
     // Assert: value increments to a whole number
@@ -99,6 +106,8 @@ test('AddNewFieldWholeNumber', async () => {
     // Act: Decrement
     //--------------------------------
     await dialog.getByLabel('Decrease value').click();
+
+    await waitUntilLoaded(page);
 
     //--------------------------------
     // Assert: value returns to 0

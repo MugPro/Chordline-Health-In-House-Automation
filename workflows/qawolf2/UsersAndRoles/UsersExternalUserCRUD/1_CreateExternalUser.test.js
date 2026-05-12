@@ -366,7 +366,7 @@ test('1_CreateExternalUser', async () => {
 
 
 
-
+    await waitUntilLoaded(page);
 
 
 
@@ -387,6 +387,8 @@ test('1_CreateExternalUser', async () => {
 
 
     await page.getByLabel('Close').click();
+
+    await waitUntilLoaded(page);
 
     //--------------------------------
     // Navigate to Users
@@ -519,8 +521,49 @@ test('1_CreateExternalUser', async () => {
     await page.locator('#user_city').fill(city);
     await page.locator('#user_zip').fill(zipCode);
 
+
+
+/*
     await page.locator('input[name="user_state_id_input"]').fill(state);
     await page.getByText(state).click();
+
+ */
+
+
+/*
+    await page.locator('input[name="user_state_id_input"]').click();
+    await page.locator('input[name="user_state_id_input"]').fill(state);
+    await page.getByRole('option', { name: state }).click();
+    await page.locator('input[name="user_state_id_input"]').press('Tab');
+
+ */
+
+
+
+    const stateInput = page.locator('input[name="user_state_id_input"]');
+    const expandButton = stateInput.locator(
+        'xpath=following-sibling::button[@aria-label="expand combobox"]'
+    );
+
+    await expandButton.click();
+    await stateInput.fill(state);
+    await stateInput.press('Enter');
+
+    await expect(stateInput).toHaveValue(state);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     await page.locator('#user_password').fill(password);
 

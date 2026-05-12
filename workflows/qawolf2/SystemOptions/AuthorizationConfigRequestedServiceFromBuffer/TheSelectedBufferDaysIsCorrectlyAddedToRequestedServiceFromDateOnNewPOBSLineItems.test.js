@@ -194,7 +194,7 @@ test.describe(
                 loginID,
                 password,
                 url,
-                slowMo: 800
+                slowMo: 1000
             });
 
 
@@ -222,6 +222,8 @@ test.describe(
                 } catch {
                     await page.locator('#AuthConfig_RequestedServiceFromBuffer_\\+1').check();
                 }
+
+                await waitUntilLoaded(page);
 
                 // Save & Close System Options
                 await page.getByRole('button', { name: 'Save and Close' }).click();
@@ -460,7 +462,7 @@ test.describe(
                 }
             }
 
-            //await browser.close();
+            await browser.close();
 
         });
     }

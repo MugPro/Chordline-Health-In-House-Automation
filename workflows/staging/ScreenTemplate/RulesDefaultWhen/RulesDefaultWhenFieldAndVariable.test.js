@@ -69,7 +69,7 @@ test.describe('Rules – Default when (Field and Variable)', () => {
 
         // Sign in to the app
         const { page, context, browser } = await logIn3({ loginID, password,
-            url, slowMo: 300 });
+            url, slowMo: 600 });
 
 
 

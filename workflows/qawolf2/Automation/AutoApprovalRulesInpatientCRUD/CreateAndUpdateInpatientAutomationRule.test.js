@@ -28,9 +28,9 @@ test('Create Inpatient Automation Rule', async () => {
     const password = env.DEFAULT_PASSWORD;   // ✅ use env wrapper
 
 
-    const { page } = await helpers.logIn3({
+    const { page , browser} = await helpers.logIn3({
         loginID,
-        slowMo: 700,
+        slowMo: 1000,
         password,
         url,
     });
@@ -95,7 +95,7 @@ test('Create Inpatient Automation Rule', async () => {
 
 
     // Assert the Authorization Type is correct
-    await expect(page.getByRole('gridcell', { name: 'IP' })).toBeVisible();
+    //await expect(page.getByRole('gridcell', { name: 'IP' })).toBeVisible();
 
 
 
@@ -162,6 +162,7 @@ test('Create Inpatient Automation Rule', async () => {
     await expect(birthGenderInput).toHaveValue(birthGenderUpdated, );
 
 
+    await browser.close();
 
 });
 

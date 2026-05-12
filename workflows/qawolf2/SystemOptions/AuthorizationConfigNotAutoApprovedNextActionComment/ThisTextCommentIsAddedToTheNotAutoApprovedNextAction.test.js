@@ -260,9 +260,29 @@ test.describe('Text Comment is added to the not auto approved Next Action.', () 
 
         await waitUntilLoaded(page);
 
+
+        /*
         // Requested Units
         const spin = page.getByRole('spinbutton').first();
         await spin.fill('200');
+
+         */
+
+
+        await page.getByText('Request', { exact: true }).first().click();
+        await page.getByRole('spinbutton').click();
+        await page.getByRole('button', { name: 'Increase value' }).click();
+        await page.locator('#auli_requested_units').fill('200');
+        await page.locator('#auli_requested_units').press('Enter');
+
+
+
+
+
+
+
+
+
 
         await waitUntilLoaded(page);
 
@@ -328,7 +348,7 @@ test.describe('Text Comment is added to the not auto approved Next Action.', () 
         }
 
 
-        //await browser.close();
+        await browser.close();
 
     })
 });

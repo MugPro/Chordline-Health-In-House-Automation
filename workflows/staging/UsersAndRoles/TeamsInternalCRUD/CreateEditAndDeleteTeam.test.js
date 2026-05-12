@@ -129,7 +129,7 @@ test('Create, edit (assign lead), and delete Team (Internal)', async () => {
     // Click the randomly selected first name cell
     await page.locator(`:text-is("${firstNames[randomIndex]}")`).click();
 
-    //await waitUntilLoaded(page);
+    await waitUntilLoaded(page);
 
     // Click the "Select" button in the modal
     await page.locator("button#transfer").click();
@@ -190,6 +190,9 @@ test('Create, edit (assign lead), and delete Team (Internal)', async () => {
     //--------------------------------
     await expect(page.getByRole(`gridcell`, { name: teamName })).not.toBeVisible();
     await expect(page.getByText(`${selectedFirstName}`)).not.toBeVisible();
+
+
+    await browser.close();
 
     // Optionally: await page.close();
 });

@@ -240,9 +240,25 @@ test.describe('Authorization Config - Default Diagnosis = First Diagnosis', () =
         await page.locator('input[name="auli_requested_bed_level_input"]').fill(bedLevel);
         await page.getByRole('option', { name: bedLevel }).click();
 
+
+        await waitUntilLoaded(page);
+
+        /*
         // Requested Units
         const spin = page.getByRole('spinbutton').first();
         await spin.fill('1');
+
+         */
+        await page.getByText('Request', { exact: true }).first().click();
+
+
+        await page.getByRole('button', { name: 'Increase value' }).click();
+        await page.locator('#auli_requested_units').click();
+        await page.locator('#auli_requested_units').fill('1');
+        await page.locator('#auli_requested_units').press('Enter');
+
+
+        await waitUntilLoaded(page);
 
         // Save & Close Bed Day
         await page.getByRole('button', { name: ' Save and Close', exact: true }).click();
@@ -272,7 +288,7 @@ test.describe('Authorization Config - Default Diagnosis = First Diagnosis', () =
             page.locator('#diagnosis-anchor div').filter({ hasText: 'Diagnosis' })
         ).toBeVisible();
 
-       // await browser.close();
+        await browser.close();
 
     });
 });

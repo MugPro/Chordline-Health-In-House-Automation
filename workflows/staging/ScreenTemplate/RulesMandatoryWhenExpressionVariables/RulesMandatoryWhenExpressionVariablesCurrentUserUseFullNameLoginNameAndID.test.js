@@ -806,9 +806,17 @@ const customScreenName = `${loginID}${Date.now()}`;
 
 
 
-
+/*
                 // Sign in to the app
                 const { page, context, browser } = await logIn3({ loginID, password,
+                    url });
+
+ */
+
+
+
+                // Sign in to the app
+                const { page, context, browser } = await logIn({ loginID, password,
                     url });
 
 

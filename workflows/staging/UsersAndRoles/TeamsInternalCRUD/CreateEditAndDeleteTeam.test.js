@@ -13,7 +13,7 @@ import {env} from "../../../../environments/staging.env.js";
 /* -------------------------------------------
    Small helpers to pause after fills/clicks
    ------------------------------------------- */
-const FILL_CLICK_PAUSE_MS = 20;
+const FILL_CLICK_PAUSE_MS = 400;
 
 const pause = (page, ms = FILL_CLICK_PAUSE_MS) => page.waitForTimeout(ms);
 

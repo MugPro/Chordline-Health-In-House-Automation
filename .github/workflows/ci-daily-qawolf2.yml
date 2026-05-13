@@ -1,43 +1,45 @@
-name: CI Daily – QAWOLF2
 
-on:
-  schedule:
+
+# name: CI Daily – QAWOLF2
+
+# on:
+ # schedule:
     # Runs daily at around 10:00 AM PT (16:30 UTC)
-    - cron: '30 16 * * 1-5'
-  workflow_dispatch:
+   # - cron: '30 16 * * 1-5'
+ # workflow_dispatch:
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
+#jobs:
+#  test:
+  #  runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
+   # steps:
+     # - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+     # - uses: actions/setup-node@v4
+     #   with:
+        #  node-version: '20'
 
-      - name: Install dependencies
-        run: npm install
+      # - name: Install dependencies
+     #    run: npm install
 
-      - name: Install Playwright
-        run: npx playwright install --with-deps chromium
+     # - name: Install Playwright
+      #  run: npx playwright install --with-deps chromium
 
-      - name: Set Environment Variables (QAWOLF2)
-        run: |
-          echo "DEFAULT_URL=${{ secrets.QAWOLF2_DEFAULT_URL }}" >> $GITHUB_ENV
-          echo "DEFAULT_URL_2=${{ secrets.QAWOLF2_DEFAULT_URL_2 }}" >> $GITHUB_ENV
-          echo "DEFAULT_LOGIN=${{ secrets.QAWOLF2_DEFAULT_LOGIN }}" >> $GITHUB_ENV
-          echo "DEFAULT_PASSWORD=${{ secrets.QAWOLF2_DEFAULT_PASSWORD }}" >> $GITHUB_ENV
-          echo "DEFAULT_PASS_JUNE_2025=${{ secrets.QAWOLF2_DEFAULT_PASS_JUNE_2025 }}" >> $GITHUB_ENV
-          echo "DEFAULT_PASS_OCT_2025=${{ secrets.QAWOLF2_DEFAULT_PASS_OCT_2025 }}" >> $GITHUB_ENV
-          echo "QAWA_API_KEY=${{ secrets.QAWOLF2_QAWA_API_KEY }}" >> $GITHUB_ENV
+     # - name: Set Environment Variables (QAWOLF2)
+     #   run: |
+       #   echo "DEFAULT_URL=${{ secrets.QAWOLF2_DEFAULT_URL }}" >> $GITHUB_ENV
+       #   echo "DEFAULT_URL_2=${{ secrets.QAWOLF2_DEFAULT_URL_2 }}" >> $GITHUB_ENV
+       #   echo "DEFAULT_LOGIN=${{ secrets.QAWOLF2_DEFAULT_LOGIN }}" >> $GITHUB_ENV
+       #   echo "DEFAULT_PASSWORD=${{ secrets.QAWOLF2_DEFAULT_PASSWORD }}" >> $GITHUB_ENV
+        #  echo "DEFAULT_PASS_JUNE_2025=${{ secrets.QAWOLF2_DEFAULT_PASS_JUNE_2025 }}" >> $GITHUB_ENV
+        #  echo "DEFAULT_PASS_OCT_2025=${{ secrets.QAWOLF2_DEFAULT_PASS_OCT_2025 }}" >> $GITHUB_ENV
+        #  echo "QAWA_API_KEY=${{ secrets.QAWOLF2_QAWA_API_KEY }}" >> $GITHUB_ENV
 
-      - name: Run Playwright Tests (QAWOLF2)
-        run: |
-          npx playwright test --project=qawolf2
+    #  - name: Run Playwright Tests (QAWOLF2)
+      #  run: |
+        #  npx playwright test --project=qawolf2
 
-      - name: Upload test results
+    #  - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:

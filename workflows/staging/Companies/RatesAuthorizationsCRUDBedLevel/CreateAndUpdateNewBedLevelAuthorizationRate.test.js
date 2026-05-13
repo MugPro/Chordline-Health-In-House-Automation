@@ -44,7 +44,7 @@ test('Create and update new Bed Level Authorization Rate', async () => {
 
     // Sign in to the app
     const { page, context, browser } = await logIn3({ loginID, password,
-        url, slowMo: 450 });
+        url, slowMo: 1000 });
 
 
 
@@ -55,7 +55,7 @@ test('Create and update new Bed Level Authorization Rate', async () => {
     // Clean-up baseline: deactivate all authorizations in rates tab
     await deactivateAllRateAuthorizations(page);
 
-    //await waitUntilLoaded(page);
+    await waitUntilLoaded(page);
 
     //--------------------------------
     // Act: Create a new Bed Level authorization rate
@@ -230,4 +230,9 @@ test('Create and update new Bed Level Authorization Rate', async () => {
     await deactivateAllRateAuthorizations(page);
 
  */
+
+
+
+    await browser.close();
+
 });

@@ -813,12 +813,24 @@ test('create, update and delete appeal', async () => {
     await clickAndWait(page, page.getByRole('menu').getByText('Appeal'));
     await waitUntilLoaded(page);
 
+
+
+    await page.locator('input[name="cpch_team_reference_id_input"]').fill(team);
+    await page.locator('input[name="cpch_team_reference_id_input"]').press('Enter');
+
+
+
+
+
+    /*
     await fillAndWait(
         page,
         page.locator('input[name="cpch_team_reference_id_input"]'),
         team,
     );
     await clickAndWait(page, page.getByText(team));
+
+     */
 
     await fillAndWait(
         page,
@@ -977,12 +989,27 @@ test('create, update and delete appeal', async () => {
     await clickAndWait(page, page.getByRole('button', { name: ' Edit' }));
     await waitUntilLoaded(page);
 
+
+
+
+
+    await page.locator('input[name="cpch_team_reference_id_input"]').fill(teamEdit);
+    await page.locator('input[name="cpch_team_reference_id_input"]').press('Enter');
+
+
+
+
+
+
+    /*
     await fillAndWait(
         page,
         page.locator('input[name="cpch_team_reference_id_input"]'),
         teamEdit,
     );
     await clickAndWait(page, page.getByText(teamEdit));
+
+     */
 
     const reasonFrame = page
         .frameLocator('[title="Editable area. Press F10 for toolbar."]')
@@ -1101,4 +1128,18 @@ test('create, update and delete appeal', async () => {
     }
 
     await expect(rowsLocator).toHaveCount(0);
+
+
+
+
+
+
+
+
+
+
+    await browser.close();
+
+
+
 });

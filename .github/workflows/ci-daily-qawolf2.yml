@@ -40,8 +40,8 @@
         #  npx playwright test --project=qawolf2
 
     #  - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-qawolf2
-          path: test-results/
+       # if: always()
+       # uses: actions/upload-artifact@v4
+       # with:
+        #  name: test-results-qawolf2
+         # path: test-results/

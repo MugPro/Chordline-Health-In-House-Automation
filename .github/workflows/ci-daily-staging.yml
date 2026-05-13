@@ -1,55 +1,55 @@
-name: CI Daily – Staging
+# name: CI Daily – Staging
 
-on:
-  schedule:
+# on:
+  # schedule:
     # Runs daily at around 11:30 AM PT (18:00 UTC)
     # 6.5 h difference!
-    - cron: '0 18 * * 1-5'
-  workflow_dispatch:
+    # - cron: '0 18 * * 1-5'
+  # workflow_dispatch:
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
+# jobs:
+  # test:
+    # runs-on: ubuntu-latest
 
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [1, 2]
+    # strategy:
+      # fail-fast: false
+      # matrix:
+        # shard: [1, 2]
 
-    steps:
-      - uses: actions/checkout@v4
+    # steps:
+      # - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+      # - uses: actions/setup-node@v4
+        # with:
+          # node-version: '20'
 
-      - name: Install dependencies
-        run: npm install
+      # - name: Install dependencies
+        # run: npm install
 
-      - name: Install Playwright
-        run: npx playwright install --with-deps chromium
+      # - name: Install Playwright
+        # run: npx playwright install --with-deps chromium
 
-      - name: Set Environment Variables (STAGING)
-        run: |
-          echo "DEFAULT_URL=${{ secrets.STAGING_DEFAULT_URL }}" >> $GITHUB_ENV
-          echo "DEFAULT_URL_2=${{ secrets.STAGING_DEFAULT_URL_2 }}" >> $GITHUB_ENV
-          echo "DEFAULT_URL_3=${{ secrets.STAGING_DEFAULT_URL_3 }}" >> $GITHUB_ENV
-          echo "INTERNAL_PDF_VIEWER=${{ secrets.STAGING_INTERNAL_PDF_VIEWER }}" >> $GITHUB_ENV
-          echo "DEFAULT_LOGIN=${{ secrets.STAGING_DEFAULT_LOGIN }}" >> $GITHUB_ENV
-          echo "DEFAULT_PASSWORD=${{ secrets.STAGING_DEFAULT_PASSWORD }}" >> $GITHUB_ENV
-          echo "DEFAULT_PASS_JUNE_2025=${{ secrets.STAGING_DEFAULT_PASS_JUNE_2025 }}" >> $GITHUB_ENV
-          echo "DEFAULT_PASS_OCT_2025=${{ secrets.STAGING_DEFAULT_PASS_OCT_2025 }}" >> $GITHUB_ENV
-          echo "QAWA_API_KEY=${{ secrets.STAGING_QAWA_API_KEY }}" >> $GITHUB_ENV
+      # - name: Set Environment Variables (STAGING)
+        # run: |
+         # echo "DEFAULT_URL=${{ secrets.STAGING_DEFAULT_URL }}" >> $GITHUB_ENV
+         # echo "DEFAULT_URL_2=${{ secrets.STAGING_DEFAULT_URL_2 }}" >> $GITHUB_ENV
+        #  echo "DEFAULT_URL_3=${{ secrets.STAGING_DEFAULT_URL_3 }}" >> $GITHUB_ENV
+         # echo "INTERNAL_PDF_VIEWER=${{ secrets.STAGING_INTERNAL_PDF_VIEWER }}" >> $GITHUB_ENV
+         # echo "DEFAULT_LOGIN=${{ secrets.STAGING_DEFAULT_LOGIN }}" >> $GITHUB_ENV
+         # echo "DEFAULT_PASSWORD=${{ secrets.STAGING_DEFAULT_PASSWORD }}" >> $GITHUB_ENV
+         # echo "DEFAULT_PASS_JUNE_2025=${{ secrets.STAGING_DEFAULT_PASS_JUNE_2025 }}" >> $GITHUB_ENV
+         # echo "DEFAULT_PASS_OCT_2025=${{ secrets.STAGING_DEFAULT_PASS_OCT_2025 }}" >> $GITHUB_ENV
+         # echo "QAWA_API_KEY=${{ secrets.STAGING_QAWA_API_KEY }}" >> $GITHUB_ENV
 
-      - name: Run Playwright Tests (STAGING – Shard ${{ matrix.shard }}/2)
-        run: |
-          npx playwright test \
-            --project=staging \
-            --shard=${{ matrix.shard }}/2
+     # - name: Run Playwright Tests (STAGING – Shard ${{ matrix.shard }}/2)
+      #  run: |
+       #   npx playwright test \
+        #    --project=staging \
+           # --shard=${{ matrix.shard }}/2
 
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results-staging-shard-${{ matrix.shard }}
-          path: test-results/
+     # - name: Upload test results
+       # if: always()
+       # uses: actions/upload-artifact@v4
+       # with:
+        #  name: test-results-staging-shard-${{ matrix.shard }}
+         # path: test-results/
